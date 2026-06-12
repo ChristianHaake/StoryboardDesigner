@@ -1,23 +1,45 @@
+import { memo, useRef, useState } from 'react';
+import type { ChangeEvent } from 'react';
 import { useSortable } from '@dnd-kit/sortable';
 import { CSS } from '@dnd-kit/utilities';
 import type { Scene } from '../../types';
 import { useStoryboardStore } from '../../store/useStoryboardStore';
+import { resizeImage } from '../../utils/imageResizer';
 import AutoResizeTextarea from '../forms/AutoResizeTextarea';
-
-const labelClass = 'block text-xs font-medium uppercase tracking-wide text-gray-500';
+import { labelClass } from '../forms/fieldStyles';
 
 interface SceneCardProps {
   scene: Scene;
 }
 
-export default function SceneCard({ scene }: SceneCardProps) {
+function SceneCard({ scene }: SceneCardProps) {
+  const imageUrl = useStoryboardStore((s) => s.imageUrls[scene.id] ?? null);
   const updateScene = useStoryboardStore((s) => s.updateScene);
   const duplicateScene = useStoryboardStore((s) => s.duplicateScene);
   const deleteScene = useStoryboardStore((s) => s.deleteScene);
+  const setSceneImage = useStoryboardStore((s) => s.setSceneImage);
+  const removeSceneImage = useStoryboardStore((s) => s.removeSceneImage);
+
+  const fileInputRef = useRef<HTMLInputElement>(null);
+  const [imageError, setImageError] = useState(false);
 
   const { attributes, listeners, setNodeRef, transform, transition, isDragging } = useSortable({
     id: scene.id,
   });
+
+  async function handleFileChange(event: ChangeEvent<HTMLInputElement>) {
+    const file = event.target.files?.[0];
+    // Zurücksetzen, damit dieselbe Datei erneut wählbar ist.
+    event.target.value = '';
+    if (!file) return;
+    try {
+      setSceneImage(scene.id, await resizeImage(file));
+      setImageError(false);
+    } catch (error: unknown) {
+      console.warn('Bild konnte nicht verarbeitet werden:', error);
+      setImageError(true);
+    }
+  }
 
   return (
     <article
@@ -73,9 +95,51 @@ export default function SceneCard({ scene }: SceneCardProps) {
       </h3>
 
       <div className="mt-3 flex gap-4 max-sm:flex-col">
-        {/* Medien-Feld — Upload folgt in Sprint 3 */}
-        <div className="flex aspect-square w-48 shrink-0 items-center justify-center rounded-md border-2 border-dashed border-gray-300 text-center text-xs text-gray-400 max-sm:w-full print:border-gray-300">
-          Noch kein Bild
+        {/* Medien-Feld */}
+        <div className="relative w-48 shrink-0 max-sm:w-full">
+          {imageUrl ? (
+            <>
+              <button
+                type="button"
+                onClick={() => fileInputRef.current?.click()}
+                aria-label={`Bild der Szene ${scene.orderIndex + 1} ersetzen`}
+                className="block w-full"
+              >
+                <img
+                  src={imageUrl}
+                  alt={`Bild für Szene ${scene.orderIndex + 1}`}
+                  className="aspect-square w-full rounded-md object-cover print:rounded-none"
+                />
+              </button>
+              <button
+                type="button"
+                onClick={() => removeSceneImage(scene.id)}
+                aria-label={`Bild der Szene ${scene.orderIndex + 1} entfernen`}
+                className="absolute top-1.5 right-1.5 rounded-md bg-white/90 px-2 py-1 text-gray-600 shadow-sm hover:bg-red-50 hover:text-red-600 print:hidden"
+              >
+                <svg width="12" height="12" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="2" aria-hidden="true">
+                  <path d="M3 3l10 10M13 3L3 13" />
+                </svg>
+              </button>
+            </>
+          ) : (
+            <button
+              type="button"
+              onClick={() => fileInputRef.current?.click()}
+              className="flex aspect-square w-full items-center justify-center rounded-md border-2 border-dashed border-gray-300 text-center text-xs text-gray-400 hover:border-blue-500 hover:text-blue-600 print:border-gray-300"
+            >
+              <span className="print:hidden">
+                {imageError ? 'Bild nicht lesbar — JPG oder PNG verwenden' : '+ Bild hinzufügen'}
+              </span>
+            </button>
+          )}
+          <input
+            ref={fileInputRef}
+            type="file"
+            accept="image/*"
+            className="hidden"
+            onChange={handleFileChange}
+          />
         </div>
 
         <div className="min-w-0 flex-1 space-y-3">
@@ -117,3 +181,7 @@ export default function SceneCard({ scene }: SceneCardProps) {
     </article>
   );
 }
+
+// updateScene erhält Referenzen unveränderter Szenen — memo verhindert,
+// dass jeder Tastendruck alle Karten re-rendert.
+export default memo(SceneCard);

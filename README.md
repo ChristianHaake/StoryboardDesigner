@@ -27,12 +27,13 @@ Voraussetzung: Node.js ≥ 20.
 
 ## Deployment
 
-Das Deployment erfolgt auf **Cloudflare Pages**:
+Das Deployment erfolgt auf **Cloudflare** (Workers-Flow, statische Assets):
 
-1. Repository mit Cloudflare Pages verbinden.
-2. Build-Kommando: `npm run build`, Output-Verzeichnis: `dist`.
-3. Push/Merge in den `main`-Branch löst den Build automatisch aus (der Push selbst erfolgt manuell durch den Entwickler).
-4. SPA-Fallback für das Routing liegt in `public/_redirects`.
+1. Repository in Cloudflare unter Workers & Pages verbinden.
+2. Build-Befehl: `npm run build`, Bereitstellungsbefehl: `npx wrangler deploy`.
+3. Konfiguration liegt in [`wrangler.jsonc`](wrangler.jsonc) — serviert `dist/` mit SPA-Fallback (`not_found_handling: single-page-application`).
+4. Node-Version ist über [`.node-version`](.node-version) auf 22 gepinnt (Vite 8 braucht ≥ 22.12).
+5. Push/Merge in den `main`-Branch löst den Build automatisch aus (der Push selbst erfolgt manuell durch den Entwickler).
 
 ## Projektdokumente
 

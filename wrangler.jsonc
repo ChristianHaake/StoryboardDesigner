@@ -1,0 +1,10 @@
+{
+  // Cloudflare Workers: statische Auslieferung von dist/ ohne Worker-Script.
+  "name": "storyboardcreator",
+  "compatibility_date": "2025-01-01",
+  "assets": {
+    "directory": "./dist",
+    // SPA-Fallback: unbekannte Routen liefern index.html (react-router, Sprint 5).
+    "not_found_handling": "single-page-application"
+  }
+}

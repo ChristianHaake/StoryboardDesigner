@@ -1,9 +1,15 @@
 import { get, set } from 'idb-keyval';
 import type { StoryboardProject } from '../types';
 
-// IndexedDB statt localStorage: ab Sprint 3 hängen Bild-Blobs am Projekt.
+// IndexedDB statt localStorage: Bild-Blobs hängen am Projekt und werden
+// per Structured Clone nativ mitgespeichert.
 const AUTOSAVE_KEY = 'currentProject';
 const DEBOUNCE_MS = 1000;
+
+export interface AutosavePayload {
+  project: StoryboardProject;
+  images: Record<string, Blob>;
+}
 
 let timer: number | undefined;
 let pending = false;
@@ -13,14 +19,14 @@ export function hasPendingAutosave(): boolean {
   return pending;
 }
 
-export function scheduleAutosave(project: StoryboardProject): void {
+export function scheduleAutosave(payload: AutosavePayload): void {
   pending = true;
   // Sequenznummer: ein noch laufender älterer Save darf pending nicht
   // zurücksetzen, wenn inzwischen neuere Änderungen anstehen.
   const seq = ++saveSeq;
   window.clearTimeout(timer);
   timer = window.setTimeout(() => {
-    void set(AUTOSAVE_KEY, project)
+    void set(AUTOSAVE_KEY, payload)
       .then(() => {
         if (seq === saveSeq) pending = false;
       })
@@ -32,9 +38,15 @@ export function scheduleAutosave(project: StoryboardProject): void {
   }, DEBOUNCE_MS);
 }
 
-export async function loadAutosave(): Promise<StoryboardProject | undefined> {
+export async function loadAutosave(): Promise<AutosavePayload | undefined> {
   try {
-    return await get<StoryboardProject>(AUTOSAVE_KEY);
+    const stored = await get<AutosavePayload | StoryboardProject>(AUTOSAVE_KEY);
+    if (!stored) return undefined;
+    // Legacy-Format (vor Sprint 3): nacktes StoryboardProject ohne Bilder.
+    if (!('project' in stored)) {
+      return { project: stored, images: {} };
+    }
+    return stored;
   } catch (error: unknown) {
     console.warn('Autosave konnte nicht geladen werden:', error);
     return undefined;
