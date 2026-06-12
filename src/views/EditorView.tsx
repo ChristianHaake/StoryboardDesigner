@@ -6,7 +6,7 @@ import {
   useSensor,
   useSensors,
 } from '@dnd-kit/core';
-import type { DragEndEvent } from '@dnd-kit/core';
+import type { Announcements, DragEndEvent, UniqueIdentifier } from '@dnd-kit/core';
 import {
   SortableContext,
   sortableKeyboardCoordinates,
@@ -17,10 +17,12 @@ import AutoResizeTextarea from '../components/forms/AutoResizeTextarea';
 import SceneCard from '../components/cards/SceneCard';
 import { useStoryboardStore } from '../store/useStoryboardStore';
 import type { MetaData } from '../types';
+import { inputClass, labelClass } from '../components/forms/fieldStyles';
 
-const inputClass =
-  'w-full bg-transparent text-gray-900 outline-none placeholder:text-gray-400 print:placeholder:text-transparent';
-const labelClass = 'block text-xs font-medium uppercase tracking-wide text-gray-500';
+const screenReaderInstructions = {
+  draggable:
+    'Zum Aufnehmen einer Szene Leertaste oder Eingabetaste drücken. Mit den Pfeiltasten verschieben, zum Ablegen erneut Leertaste oder Eingabetaste drücken. Escape bricht ab.',
+};
 
 export default function EditorView() {
   const metaData = useStoryboardStore((s) => s.metaData);
@@ -42,6 +44,17 @@ export default function EditorView() {
       moveScene(String(active.id), String(over.id));
     }
   }
+
+  // Deutsche Screenreader-Ansagen (dnd-kit-Defaults sind Englisch).
+  const position = (id: UniqueIdentifier) => scenes.findIndex((s) => s.id === id) + 1;
+  const announcements: Announcements = {
+    onDragStart: ({ active }) => `Szene an Position ${position(active.id)} aufgenommen.`,
+    onDragOver: ({ over }) =>
+      over ? `Szene über Position ${position(over.id)} bewegt.` : 'Szene über keiner Ablageposition.',
+    onDragEnd: ({ over }) =>
+      over ? `Szene an Position ${position(over.id)} abgelegt.` : 'Verschieben abgebrochen.',
+    onDragCancel: () => 'Verschieben abgebrochen.',
+  };
 
   return (
     <main>
@@ -172,7 +185,12 @@ export default function EditorView() {
           <h2 className="text-sm font-semibold uppercase tracking-wide text-gray-700">
             Storyboard
           </h2>
-          <DndContext sensors={sensors} collisionDetection={closestCenter} onDragEnd={handleDragEnd}>
+          <DndContext
+            sensors={sensors}
+            collisionDetection={closestCenter}
+            onDragEnd={handleDragEnd}
+            accessibility={{ announcements, screenReaderInstructions }}
+          >
             <SortableContext
               items={scenes.map((scene) => scene.id)}
               strategy={verticalListSortingStrategy}
