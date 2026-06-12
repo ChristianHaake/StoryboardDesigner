@@ -4,6 +4,19 @@ const de = {
   common: {
     appTitle: 'StoryboardCreator',
   },
+  brand: {
+    tagline: 'Workshop für digitale Formate',
+    localPill: 'Inhalte bleiben lokal',
+    eduNotice:
+      'Diese App arbeitet vollständig in deinem Browser — Texte und Bilder bleiben auf deinem Gerät.',
+    eduNoticeLink: 'Datenschutz',
+    forEducators: 'Für Lehrkräfte',
+  },
+  hero: {
+    kicker: 'PLANEN · GESTALTEN · DRUCKEN',
+    title: 'Erstelle dein Storyboard.',
+    subtitle: 'Plane Film, Fotostory oder Rede Szene für Szene — ohne Konto, direkt im Browser.',
+  },
   language: {
     label: 'Sprache',
     de: 'DE',

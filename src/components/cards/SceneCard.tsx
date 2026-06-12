@@ -56,12 +56,18 @@ function SceneCard({ scene }: SceneCardProps) {
     <article
       ref={setNodeRef}
       style={{ transform: CSS.Transform.toString(transform), transition }}
-      className={`group relative break-inside-avoid rounded-xl border border-gray-200 bg-white p-4 transition-[border-color,box-shadow] hover:border-gray-300 hover:shadow-sm sm:p-5 print:rounded-none print:border-gray-300 print:p-3 ${
+      className={`group relative break-inside-avoid rounded-xl border border-slate-200 bg-white p-4 shadow-sm transition-[border-color,box-shadow] hover:border-slate-300 hover:shadow-md sm:p-5 print:rounded-none print:border-gray-300 print:p-3 print:shadow-none ${
         isDragging ? 'z-10 border-blue-300 bg-white opacity-95 shadow-xl' : ''
       }`}
     >
       <div className="mb-3 flex min-h-11 items-center justify-between gap-3 print:min-h-0">
-        <h3 className="text-xs font-bold tracking-[0.14em] text-gray-700 uppercase">
+        <h3 className="flex items-center gap-2.5 text-xs font-bold tracking-[0.14em] text-gray-700 uppercase">
+          <span
+            aria-hidden="true"
+            className="inline-flex size-6 items-center justify-center rounded-md bg-blue-50 text-xs font-bold text-blue-700 tabular-nums print:bg-transparent print:text-gray-700"
+          >
+            {n}
+          </span>
           {t('scene.title', { n })}
         </h3>
         <div className="flex items-center gap-1 print:hidden">
