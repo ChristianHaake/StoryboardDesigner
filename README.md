@@ -19,6 +19,7 @@ npm install
 npm run dev      # Dev-Server (Vite)
 npm run build    # Produktions-Build nach dist/
 npm run preview  # Produktions-Build lokal testen
+npm test         # Automatisierte Tests einmalig ausführen
 npm run lint     # ESLint
 npm run format   # Prettier
 ```
@@ -35,11 +36,13 @@ Das Deployment erfolgt auf **Cloudflare** (Workers-Flow, statische Assets):
 4. Node-Version ist über [`.node-version`](.node-version) auf 22 gepinnt (Vite 8 braucht ≥ 22.12).
 5. Push/Merge in den `main`-Branch löst den Build automatisch aus (der Push selbst erfolgt manuell durch den Entwickler).
 
+Vor Veröffentlichung müssen die Platzhalter in Impressum und Datenschutzerklärung ersetzt sowie Druck/PDF auf den eingesetzten iPads getestet werden.
+
 ## Projektdokumente
 
 - [ARCHITECTURE.md](ARCHITECTURE.md) — technischer Überblick (Ist-Zustand, Datenfluss, Entscheidungen)
 - [Codingplan.md](Codingplan.md) — Architektur, Datenmodell, Kernfunktionen
 - [UIX-Codingplan.md](UIX-Codingplan.md) — UI/UX-Konzept (A4-Dokument, WYSIWYG)
-- [Sprint-Planung.md](Sprint-Planung.md) — Sprints 1–5
+- [Sprint-Planung.md](Sprint-Planung.md) — Sprints 1–6
 - [RulesofWorking.md](RulesofWorking.md) — Entwicklungsvorgaben
 - [CHANGELOG.md](CHANGELOG.md) — Änderungshistorie

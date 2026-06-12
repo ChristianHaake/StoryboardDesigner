@@ -5,7 +5,7 @@
 
 ## Verantwortlicher
 
-*[Name und Kontaktdaten des Verantwortlichen einfügen]*
+_[Name und Kontaktdaten des Verantwortlichen einfügen]_
 
 ## Das Wichtigste vorab
 
@@ -28,7 +28,7 @@ die App hat darauf keinen Zugriff.
 
 ## Hosting
 
-Die App wird über Cloudflare Pages ausgeliefert. Beim Aufruf der Seite verarbeitet
+Die App wird über Cloudflare Workers Static Assets ausgeliefert. Beim Aufruf der Seite verarbeitet
 Cloudflare technisch notwendige Verbindungsdaten (insbesondere die IP-Adresse) zur
 Bereitstellung und Absicherung des Dienstes. Details:
 [Cloudflare Privacy Policy](https://www.cloudflare.com/privacypolicy/).
@@ -42,4 +42,4 @@ Berichtigungs- und Löschansprüche bei uns ins Leere — es ist schlicht nichts
 Für die Verbindungsdaten beim Hosting wende dich an den Verantwortlichen (oben)
 oder an Cloudflare.
 
-*Stand: Juni 2026*
+_Stand: Juni 2026_

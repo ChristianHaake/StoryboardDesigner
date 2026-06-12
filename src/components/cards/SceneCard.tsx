@@ -7,6 +7,7 @@ import { useStoryboardStore } from '../../store/useStoryboardStore';
 import { resizeImage } from '../../utils/imageResizer';
 import AutoResizeTextarea from '../forms/AutoResizeTextarea';
 import { labelClass } from '../forms/fieldStyles';
+import { MAX_SCENES } from '../../utils/projectCodec';
 
 interface SceneCardProps {
   scene: Scene;
@@ -19,6 +20,7 @@ function SceneCard({ scene }: SceneCardProps) {
   const deleteScene = useStoryboardStore((s) => s.deleteScene);
   const setSceneImage = useStoryboardStore((s) => s.setSceneImage);
   const removeSceneImage = useStoryboardStore((s) => s.removeSceneImage);
+  const sceneLimitReached = useStoryboardStore((s) => s.scenes.length >= MAX_SCENES);
 
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [imageError, setImageError] = useState(false);
@@ -70,10 +72,19 @@ function SceneCard({ scene }: SceneCardProps) {
         <button
           type="button"
           onClick={() => duplicateScene(scene.id)}
+          disabled={sceneLimitReached}
           aria-label={`Szene ${scene.orderIndex + 1} duplizieren`}
-          className="rounded-md border border-gray-300 bg-white px-2 py-1 text-gray-500 hover:bg-gray-100"
+          className="rounded-md border border-gray-300 bg-white px-2 py-1 text-gray-500 hover:bg-gray-100 disabled:cursor-not-allowed disabled:opacity-40"
         >
-          <svg width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.5" aria-hidden="true">
+          <svg
+            width="14"
+            height="14"
+            viewBox="0 0 16 16"
+            fill="none"
+            stroke="currentColor"
+            strokeWidth="1.5"
+            aria-hidden="true"
+          >
             <rect x="5" y="5" width="9" height="9" rx="1" />
             <path d="M11 5V3a1 1 0 0 0-1-1H3a1 1 0 0 0-1 1v7a1 1 0 0 0 1 1h2" />
           </svg>
@@ -84,7 +95,15 @@ function SceneCard({ scene }: SceneCardProps) {
           aria-label={`Szene ${scene.orderIndex + 1} löschen`}
           className="rounded-md border border-gray-300 bg-white px-2 py-1 text-gray-500 hover:bg-red-50 hover:text-red-600"
         >
-          <svg width="14" height="14" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="1.5" aria-hidden="true">
+          <svg
+            width="14"
+            height="14"
+            viewBox="0 0 16 16"
+            fill="none"
+            stroke="currentColor"
+            strokeWidth="1.5"
+            aria-hidden="true"
+          >
             <path d="M2 4h12M5.5 4V2.5a1 1 0 0 1 1-1h3a1 1 0 0 1 1 1V4M6 7v5M10 7v5M3.5 4l.7 9.3a1 1 0 0 0 1 .7h5.6a1 1 0 0 0 1-.7L12.5 4" />
           </svg>
         </button>
@@ -96,7 +115,7 @@ function SceneCard({ scene }: SceneCardProps) {
 
       <div className="mt-3 flex gap-4 max-sm:flex-col">
         {/* Medien-Feld */}
-        <div className="relative w-48 shrink-0 max-sm:w-full">
+        <div className={`relative w-48 shrink-0 max-sm:w-full ${imageUrl ? '' : 'print:hidden'}`}>
           {imageUrl ? (
             <>
               <button
@@ -117,7 +136,15 @@ function SceneCard({ scene }: SceneCardProps) {
                 aria-label={`Bild der Szene ${scene.orderIndex + 1} entfernen`}
                 className="absolute top-1.5 right-1.5 rounded-md bg-white/90 px-2 py-1 text-gray-600 shadow-sm hover:bg-red-50 hover:text-red-600 print:hidden"
               >
-                <svg width="12" height="12" viewBox="0 0 16 16" fill="none" stroke="currentColor" strokeWidth="2" aria-hidden="true">
+                <svg
+                  width="12"
+                  height="12"
+                  viewBox="0 0 16 16"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth="2"
+                  aria-hidden="true"
+                >
                   <path d="M3 3l10 10M13 3L3 13" />
                 </svg>
               </button>

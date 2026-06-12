@@ -22,14 +22,14 @@ export default function TopBar() {
     if (!file) return;
     const state = useStoryboardStore.getState();
     if (
-      state.touched &&
+      state.hasContent &&
       !window.confirm('Aktuelles Projekt ersetzen? Es wird durch die geladene Datei überschrieben.')
     ) {
       return;
     }
     try {
       const { project, images } = await importProject(file);
-      useStoryboardStore.getState().loadProject(project, images);
+      useStoryboardStore.getState().loadProject(project, images, true);
       state.clearErrorMessage();
     } catch (err: unknown) {
       state.setErrorMessage(

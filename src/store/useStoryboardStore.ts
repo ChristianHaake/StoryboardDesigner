@@ -1,8 +1,13 @@
 import { create } from 'zustand';
-import type { MetaData, PrePlanning, Scene, StoryboardProject } from '../types';
+import type {
+  CustomFieldDefinition,
+  MetaData,
+  PrePlanning,
+  Scene,
+  StoryboardProject,
+} from '../types';
 import { generateId } from '../utils/idGenerator';
-
-export const PROJECT_VERSION = '1.0';
+import { MAX_SCENES, PROJECT_VERSION } from '../utils/projectCodec';
 
 function createEmptyScene(orderIndex: number): Scene {
   return {
@@ -46,6 +51,7 @@ function renumber(scenes: Scene[]): Scene[] {
 interface StoryboardState {
   metaData: MetaData;
   prePlanning: PrePlanning;
+  fieldDefinitions?: CustomFieldDefinition[];
   scenes: Scene[];
   /** Bild-Blobs pro Szene (Key = scene.id). Leben außerhalb der data.json;
    *  Scene.imageFileName wird erst beim ZIP-Export vergeben. */
@@ -56,6 +62,8 @@ interface StoryboardState {
   /** true sobald der Nutzer in dieser Sitzung irgendetwas verändert hat —
    *  Guard gegen Überschreiben frischer Eingaben durch den Autosave-Restore. */
   touched: boolean;
+  /** true sobald ein Projekt geladen oder Inhalt verändert wurde. */
+  hasContent: boolean;
   /** Zuletzt gelöschte Szene für Rückgängig-Snackbar (inkl. Bild). */
   lastDeleted: { scene: Scene; index: number; image: Blob | null } | null;
   /** Nutzer-Fehlermeldung (z. B. Import fehlgeschlagen) für den Notification-Stack. */
@@ -73,28 +81,43 @@ interface StoryboardState {
   setErrorMessage: (message: string) => void;
   clearErrorMessage: () => void;
   moveScene: (activeId: string, overId: string) => void;
-  loadProject: (project: StoryboardProject, images?: Record<string, Blob>) => void;
+  loadProject: (
+    project: StoryboardProject,
+    images?: Record<string, Blob>,
+    markTouched?: boolean,
+  ) => void;
 }
 
 export const useStoryboardStore = create<StoryboardState>((set) => ({
   metaData: createInitialMetaData(),
   prePlanning: initialPrePlanning,
+  fieldDefinitions: undefined,
   scenes: [],
   images: {},
   imageUrls: {},
   touched: false,
+  hasContent: false,
   lastDeleted: null,
   errorMessage: null,
 
   updateMetaData: (patch) =>
-    set((state) => ({ touched: true, metaData: { ...state.metaData, ...patch } })),
+    set((state) => ({
+      touched: true,
+      hasContent: true,
+      metaData: { ...state.metaData, ...patch },
+    })),
 
   updatePrePlanning: (patch) =>
-    set((state) => ({ touched: true, prePlanning: { ...state.prePlanning, ...patch } })),
+    set((state) => ({
+      touched: true,
+      hasContent: true,
+      prePlanning: { ...state.prePlanning, ...patch },
+    })),
 
   updateScene: (id, patch) =>
     set((state) => ({
       touched: true,
+      hasContent: true,
       scenes: state.scenes.map((scene) => (scene.id === id ? { ...scene, ...patch } : scene)),
     })),
 
@@ -103,6 +126,7 @@ export const useStoryboardStore = create<StoryboardState>((set) => ({
       if (state.imageUrls[id]) URL.revokeObjectURL(state.imageUrls[id]);
       return {
         touched: true,
+        hasContent: true,
         images: { ...state.images, [id]: blob },
         imageUrls: { ...state.imageUrls, [id]: URL.createObjectURL(blob) },
       };
@@ -116,17 +140,23 @@ export const useStoryboardStore = create<StoryboardState>((set) => ({
       const imageUrls = { ...state.imageUrls };
       delete images[id];
       delete imageUrls[id];
-      return { touched: true, images, imageUrls };
+      return { touched: true, hasContent: true, images, imageUrls };
     }),
 
   addScene: () =>
-    set((state) => ({
-      touched: true,
-      scenes: [...state.scenes, createEmptyScene(state.scenes.length)],
-    })),
+    set((state) =>
+      state.scenes.length >= MAX_SCENES
+        ? state
+        : {
+            touched: true,
+            hasContent: true,
+            scenes: [...state.scenes, createEmptyScene(state.scenes.length)],
+          },
+    ),
 
   duplicateScene: (id) =>
     set((state) => {
+      if (state.scenes.length >= MAX_SCENES) return state;
       const index = state.scenes.findIndex((scene) => scene.id === id);
       if (index === -1) return state;
       const original = state.scenes[index];
@@ -141,6 +171,7 @@ export const useStoryboardStore = create<StoryboardState>((set) => ({
       const originalImage = state.images[id];
       return {
         touched: true,
+        hasContent: true,
         scenes: renumber(scenes),
         // Blob-Referenz teilen ist ok — Blobs sind immutable. Eigene URL pro Szene.
         ...(originalImage
@@ -163,6 +194,7 @@ export const useStoryboardStore = create<StoryboardState>((set) => ({
       delete imageUrls[id];
       return {
         touched: true,
+        hasContent: true,
         lastDeleted: { scene: state.scenes[index], index, image: state.images[id] ?? null },
         scenes: renumber(state.scenes.filter((scene) => scene.id !== id)),
         images,
@@ -173,11 +205,18 @@ export const useStoryboardStore = create<StoryboardState>((set) => ({
   undoDelete: () =>
     set((state) => {
       if (!state.lastDeleted) return state;
+      if (state.scenes.length >= MAX_SCENES) {
+        return {
+          lastDeleted: null,
+          errorMessage: `Rückgängig nicht möglich: maximal ${MAX_SCENES} Szenen.`,
+        };
+      }
       const { scene, index, image } = state.lastDeleted;
       const scenes = [...state.scenes];
       scenes.splice(Math.min(index, scenes.length), 0, scene);
       return {
         touched: true,
+        hasContent: true,
         lastDeleted: null,
         scenes: renumber(scenes),
         ...(image
@@ -204,10 +243,10 @@ export const useStoryboardStore = create<StoryboardState>((set) => ({
       const scenes = [...state.scenes];
       const [moved] = scenes.splice(from, 1);
       scenes.splice(to, 0, moved);
-      return { touched: true, scenes: renumber(scenes) };
+      return { touched: true, hasContent: true, scenes: renumber(scenes) };
     }),
 
-  loadProject: (project, images = {}) =>
+  loadProject: (project, images = {}, markTouched = false) =>
     set((state) => {
       Object.values(state.imageUrls).forEach((url) => URL.revokeObjectURL(url));
       const imageUrls: Record<string, string> = {};
@@ -217,20 +256,26 @@ export const useStoryboardStore = create<StoryboardState>((set) => ({
       return {
         metaData: project.metaData,
         prePlanning: project.prePlanning,
+        fieldDefinitions: project.fieldDefinitions,
         scenes: renumber([...project.scenes].sort((a, b) => a.orderIndex - b.orderIndex)),
         images,
         imageUrls,
+        touched: markTouched,
+        hasContent: true,
         lastDeleted: null,
       };
     }),
 }));
 
 // Serialisiert den aktuellen State als data.json-Struktur (Autosave, Sprint 4: ZIP-Export).
-export function selectProject(state: Pick<StoryboardState, 'metaData' | 'prePlanning' | 'scenes'>): StoryboardProject {
+export function selectProject(
+  state: Pick<StoryboardState, 'metaData' | 'prePlanning' | 'fieldDefinitions' | 'scenes'>,
+): StoryboardProject {
   return {
     version: PROJECT_VERSION,
     metaData: state.metaData,
     prePlanning: state.prePlanning,
+    ...(state.fieldDefinitions ? { fieldDefinitions: state.fieldDefinitions } : {}),
     scenes: state.scenes,
   };
 }

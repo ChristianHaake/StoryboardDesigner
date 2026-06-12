@@ -18,6 +18,7 @@ import SceneCard from '../components/cards/SceneCard';
 import { useStoryboardStore } from '../store/useStoryboardStore';
 import type { MetaData } from '../types';
 import { inputClass, labelClass } from '../components/forms/fieldStyles';
+import { MAX_SCENES } from '../utils/projectCodec';
 
 const screenReaderInstructions = {
   draggable:
@@ -50,7 +51,9 @@ export default function EditorView() {
   const announcements: Announcements = {
     onDragStart: ({ active }) => `Szene an Position ${position(active.id)} aufgenommen.`,
     onDragOver: ({ over }) =>
-      over ? `Szene über Position ${position(over.id)} bewegt.` : 'Szene über keiner Ablageposition.',
+      over
+        ? `Szene über Position ${position(over.id)} bewegt.`
+        : 'Szene über keiner Ablageposition.',
     onDragEnd: ({ over }) =>
       over ? `Szene an Position ${position(over.id)} abgelegt.` : 'Verschieben abgebrochen.',
     onDragCancel: () => 'Verschieben abgebrochen.',
@@ -206,9 +209,10 @@ export default function EditorView() {
           <button
             type="button"
             onClick={addScene}
-            className="mt-4 w-full rounded-md border-2 border-dashed border-gray-300 py-4 text-sm font-medium text-gray-500 hover:border-blue-500 hover:text-blue-600 print:hidden"
+            disabled={scenes.length >= MAX_SCENES}
+            className="mt-4 w-full rounded-md border-2 border-dashed border-gray-300 py-4 text-sm font-medium text-gray-500 hover:border-blue-500 hover:text-blue-600 disabled:cursor-not-allowed disabled:opacity-50 disabled:hover:border-gray-300 disabled:hover:text-gray-500 print:hidden"
           >
-            + Szene hinzufügen
+            {scenes.length >= MAX_SCENES ? `Maximal ${MAX_SCENES} Szenen` : '+ Szene hinzufügen'}
           </button>
         </section>
       </A4Page>
