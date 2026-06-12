@@ -63,16 +63,22 @@ export default function EditorView() {
     <main>
       <A4Page>
         {/* Metadaten */}
-        <header className="border-b border-gray-300 pb-6">
+        <header className="border-b border-gray-200 pb-7">
+          <p className="mb-3 text-xs font-bold tracking-[0.16em] text-blue-700 uppercase print:text-gray-700">
+            Storyboard-Projekt
+          </p>
+          <label className={labelClass} htmlFor="projectName">
+            Projektname
+          </label>
           <input
+            id="projectName"
             type="text"
-            placeholder="Projektname"
-            aria-label="Projektname"
-            className={`${inputClass} text-3xl font-bold`}
+            placeholder="Titel des Projekts"
+            className={`${inputClass} text-xl font-bold tracking-tight sm:text-2xl print:text-2xl`}
             value={metaData.projectName}
             onChange={(e) => updateMetaData({ projectName: e.target.value })}
           />
-          <div className="mt-6 grid grid-cols-2 gap-x-8 gap-y-4 max-sm:grid-cols-1">
+          <div className="mt-5 grid grid-cols-2 gap-x-5 gap-y-4 max-sm:grid-cols-1">
             <div>
               <label className={labelClass} htmlFor="participants">
                 Beteiligte
@@ -133,9 +139,12 @@ export default function EditorView() {
         </header>
 
         {/* Pre-Planning */}
-        <section className="mt-6">
-          <h2 className="text-sm font-semibold uppercase tracking-wide text-gray-700">Planung</h2>
-          <div className="mt-4 space-y-4">
+        <section className="mt-7">
+          <div className="flex items-center gap-3">
+            <h2 className="text-xs font-bold tracking-[0.16em] text-gray-700 uppercase">Planung</h2>
+            <span className="h-px flex-1 bg-gray-200" aria-hidden="true" />
+          </div>
+          <div className="mt-4 grid grid-cols-2 gap-x-5 gap-y-4 max-sm:grid-cols-1">
             <div>
               <label className={labelClass} htmlFor="logline">
                 Logline
@@ -153,7 +162,7 @@ export default function EditorView() {
               </label>
               <AutoResizeTextarea
                 id="objective"
-                placeholder="Was soll das Publikum verstehen oder fühlen?"
+                placeholder="Was soll das Publikum mitnehmen?"
                 value={prePlanning.objective}
                 onChange={(e) => updatePrePlanning({ objective: e.target.value })}
               />
@@ -164,7 +173,7 @@ export default function EditorView() {
               </label>
               <AutoResizeTextarea
                 id="roles"
-                placeholder="Wer übernimmt welche Aufgabe?"
+                placeholder="Aufgaben in der Gruppe"
                 value={prePlanning.roles}
                 onChange={(e) => updatePrePlanning({ roles: e.target.value })}
               />
@@ -175,7 +184,7 @@ export default function EditorView() {
               </label>
               <AutoResizeTextarea
                 id="resources"
-                placeholder="Was wird benötigt? (Orte, Geräte, Requisiten …)"
+                placeholder="Orte, Geräte, Requisiten …"
                 value={prePlanning.resources}
                 onChange={(e) => updatePrePlanning({ resources: e.target.value })}
               />
@@ -184,10 +193,13 @@ export default function EditorView() {
         </section>
 
         {/* Szenen */}
-        <section className="mt-8">
-          <h2 className="text-sm font-semibold uppercase tracking-wide text-gray-700">
-            Storyboard
-          </h2>
+        <section className="mt-9">
+          <div className="flex items-center gap-3">
+            <h2 className="text-xs font-bold tracking-[0.16em] text-gray-700 uppercase">
+              Storyboard
+            </h2>
+            <span className="h-px flex-1 bg-gray-200" aria-hidden="true" />
+          </div>
           <DndContext
             sensors={sensors}
             collisionDetection={closestCenter}
@@ -198,7 +210,7 @@ export default function EditorView() {
               items={scenes.map((scene) => scene.id)}
               strategy={verticalListSortingStrategy}
             >
-              <div className="mt-4 space-y-4">
+              <div className="mt-4 space-y-3">
                 {scenes.map((scene) => (
                   <SceneCard key={scene.id} scene={scene} />
                 ))}
@@ -210,7 +222,7 @@ export default function EditorView() {
             type="button"
             onClick={addScene}
             disabled={scenes.length >= MAX_SCENES}
-            className="mt-4 w-full rounded-md border-2 border-dashed border-gray-300 py-4 text-sm font-medium text-gray-500 hover:border-blue-500 hover:text-blue-600 disabled:cursor-not-allowed disabled:opacity-50 disabled:hover:border-gray-300 disabled:hover:text-gray-500 print:hidden"
+            className="mt-4 min-h-12 w-full rounded-xl border border-dashed border-gray-300 bg-gray-50 px-4 text-sm font-semibold text-gray-600 transition-colors hover:border-blue-400 hover:bg-blue-50 hover:text-blue-700 focus-visible:border-blue-500 disabled:cursor-not-allowed disabled:opacity-50 disabled:hover:border-gray-300 disabled:hover:bg-gray-50 disabled:hover:text-gray-600 print:hidden"
           >
             {scenes.length >= MAX_SCENES ? `Maximal ${MAX_SCENES} Szenen` : '+ Szene hinzufügen'}
           </button>

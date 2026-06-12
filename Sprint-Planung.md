@@ -77,3 +77,33 @@ Die Entwicklung wird in fünf aufeinander aufbauende Sprints gegliedert. Jeder S
 - Print-Platzhalter und technische Dokumentation korrigieren.
 - **Extern offen:** Rechtstexte mit echten Verantwortlichendaten vervollständigen.
 - **Extern offen:** Druck/PDF auf Ziel-iPads und MDM-Konfiguration abnehmen.
+
+### 4. Sprint 7: Designsystem und App-Shell
+
+- **Ziel:** Die gesamte App verwendet ein konsistentes minimalistisches System.
+- Globale Farben, Typografie, Fokuszustände, Radien und Touch-Größen definieren.
+- Topbar für Desktop und Mobile neu strukturieren.
+- A4-Arbeitsfläche auf Smartphones als randlosen Dokument-Stream darstellen.
+- Footer, Notifications und Markdown-Seiten angleichen.
+- **Abnahme:** Kein horizontaler Overflow bei 390 px; alle Shell-Aktionen sind per Tastatur sichtbar fokussierbar.
+
+### 5. Sprint 8: Editor und Szenenkarten
+
+- **Ziel:** Eingaben sind klar erkennbar und Szenen kompakter bedienbar.
+- Metadaten und Planung in responsive Raster überführen.
+- Subtile Eingabeflächen für Inputs, Selects und Textareas einführen.
+- Projektname mit sichtbarem Label versehen.
+- Szenenkarten, Bildfeld, Kopfzeile und Kontextaktionen neu gestalten.
+- Touch-Ziele auf mindestens 44 × 44 px vergrößern.
+- Print-spezifische Darstellung ohne UI-Flächen erhalten.
+- **Abnahme:** CRUD, Bildwahl und Drag-and-Drop bleiben unverändert funktionsfähig.
+
+### 6. Sprint 9: Responsive und Qualitätsabnahme
+
+- **Ziel:** Redesign ist für Desktop, Tablet und Smartphone technisch abgenommen.
+- Browserprüfung bei 1280 × 720, 768 × 1024 und 390 × 844 durchführen.
+- Horizontalen Overflow, Touch-Ziele und sichtbare Interaktionszustände prüfen.
+- Tests, Lint und Produktionsbuild ausführen.
+- UIX-Dokumentation und Changelog aktualisieren.
+- **Abnahme:** Browser-Prüfungen sind erfolgreich; `npm test`, `npm run lint` und `npm run build` laufen fehlerfrei.
+- **Extern offen:** Finale Druck-/PDF-Abnahme auf echtem iPad und MDM-verwaltetem Zielgerät.
