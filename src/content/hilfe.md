@@ -30,6 +30,16 @@ Mit einem guten Storyboard weiß beim Dreh jede:r, was zu tun ist.
 - **Duplizieren:** Das Kopier-Symbol erstellt eine Kopie der Szene direkt darunter.
 - **Löschen:** Das Papierkorb-Symbol löscht die Szene. Falls das ein Versehen war: Unten erscheint kurz „Rückgängig" — tippe schnell darauf.
 
+## Zusatzfelder und Formatvorlagen
+
+Über **Felder konfigurieren** neben der Storyboard-Überschrift kannst du bis zu
+20 Zusatzfelder für alle Szenen hinzufügen, umbenennen oder löschen. Beim
+Löschen verschwinden auch die zugehörigen Einträge aus allen Szenen.
+
+Die Formate Film, Fotostory und Rede besitzen passende Feldvorlagen. Ein
+Formatwechsel ergänzt nur fehlende Vorlagenfelder. Eigene Felder und bereits
+eingetragene Werte bleiben erhalten.
+
 ## Speichern und Laden
 
 Dein Browser merkt sich deine Arbeit automatisch auf **diesem Gerät**.

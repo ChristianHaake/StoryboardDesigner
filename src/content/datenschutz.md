@@ -1,45 +1,75 @@
 # Datenschutzerklärung
 
-> **ENTWURF** — vor Veröffentlichung durch Verantwortliche:n prüfen und vervollständigen
-> (Verantwortlicher, Kontaktdaten, ggf. schulrechtliche Vorgaben des Bundeslandes).
+## 1. Verantwortlicher
 
-## Verantwortlicher
+Verantwortlich für die Datenverarbeitung auf dieser Website:
 
-_[Name und Kontaktdaten des Verantwortlichen einfügen]_
+Christian Haake  
+Alte Ziegelei 7  
+26197 Großenkneten  
+Deutschland
 
-## Das Wichtigste vorab
+E-Mail: {mein Vorname}{mein Nachname}@gmail.com
 
-Der StoryboardCreator funktioniert vollständig in deinem Browser.
-**Es werden keine personenbezogenen Daten an uns übertragen, gespeichert oder ausgewertet.**
+## 2. Bereitstellung der Website
 
-- Keine Benutzerkonten, keine Anmeldung
-- Keine Cookies, kein Tracking, keine Analyse-Dienste
-- Keine Übertragung deiner Inhalte (Texte, Bilder) an einen Server
+Diese Website wird über Cloudflare Workers Static Assets bereitgestellt.
 
-## Lokale Speicherung im Browser
+Beim Aufruf der Website werden technisch notwendige Verbindungsdaten verarbeitet. Hierzu können insbesondere die IP-Adresse, Browserinformationen, Betriebssystem, Datum und Uhrzeit des Zugriffs sowie angeforderte Inhalte gehören.
 
-Damit deine Arbeit bei einem Neuladen der Seite nicht verloren geht, speichert die App
-dein aktuelles Projekt automatisch im lokalen Speicher deines Browsers (IndexedDB).
-Diese Daten verbleiben ausschließlich auf deinem Gerät und können dort jederzeit über
-die Browser-Einstellungen gelöscht werden („Website-Daten löschen").
+Die Verarbeitung erfolgt auf Grundlage von Art. 6 Abs. 1 lit. f DSGVO. Das berechtigte Interesse liegt in der sicheren, stabilen und effizienten Bereitstellung des Webangebots.
 
-Von dir exportierte `.storyboard`-Dateien und PDF-Dateien speicherst du selbst —
-die App hat darauf keinen Zugriff.
+Anbieter des Hostings:
 
-## Hosting
+Cloudflare Inc.  
+101 Townsend St.  
+San Francisco, CA 94107  
+USA
 
-Die App wird über Cloudflare Workers Static Assets ausgeliefert. Beim Aufruf der Seite verarbeitet
-Cloudflare technisch notwendige Verbindungsdaten (insbesondere die IP-Adresse) zur
-Bereitstellung und Absicherung des Dienstes. Details:
-[Cloudflare Privacy Policy](https://www.cloudflare.com/privacypolicy/).
-Auf diese Verarbeitung haben wir keinen inhaltlichen Einfluss; es werden von uns
-keine Server-Logs ausgewertet.
+Weitere Informationen:  
+[Cloudflare Privacy Policy](https://www.cloudflare.com/privacypolicy/)
 
-## Deine Rechte
+## 3. Einsatz von Cloudflare-Diensten
 
-Da wir keine personenbezogenen Daten von dir verarbeiten, laufen Auskunfts-,
-Berichtigungs- und Löschansprüche bei uns ins Leere — es ist schlicht nichts da.
-Für die Verbindungsdaten beim Hosting wende dich an den Verantwortlichen (oben)
-oder an Cloudflare.
+Zur Bereitstellung der Domain, DNS-Dienste, Netzwerksicherheit sowie Performanceoptimierung wird Cloudflare eingesetzt. Dabei können technische Verbindungsdaten über die Infrastruktur von Cloudflare verarbeitet werden.
+
+Diese Anwendung verwendet keine Analyse- oder Tracking-Dienste.
+
+## 4. Lokale Verarbeitung und Speicherung
+
+Der StoryboardCreator verarbeitet eingegebene Texte und ausgewählte Bilder lokal im Browser. Projektinhalte werden nicht an den Betreiber übertragen.
+
+Damit die Arbeit bei einem Neuladen der Seite nicht verloren geht, speichert die App das aktuelle Projekt einschließlich der Bilder automatisch in der lokalen Browserdatenbank IndexedDB. Diese Daten verbleiben auf dem verwendeten Gerät und können über die Browser-Einstellungen durch Löschen der Website-Daten entfernt werden.
+
+Beim lokalen Speichern wird eine `.storyboard`-Datei auf dem Gerät erzeugt. Beim PDF-Export wird die native Druckfunktion des Browsers verwendet. Die App überträgt diese Dateien nicht an einen Server und hat nach dem Speichern keinen Zugriff darauf.
+
+## 5. Cookies
+
+Diese Website verwendet keine Cookies zu Werbe-, Marketing- oder Trackingzwecken.
+
+Soweit durch technische Infrastrukturkomponenten technisch notwendige Cookies gesetzt werden, erfolgt dies auf Grundlage des berechtigten Interesses gemäß Art. 6 Abs. 1 lit. f DSGVO.
+
+## 6. Datenübermittlung in Drittländer
+
+Bei der Nutzung von Cloudflare kann eine Verarbeitung personenbezogener Daten in den USA nicht ausgeschlossen werden.
+
+Der Anbieter verwendet nach eigenen Angaben geeignete Garantien für internationale Datenübermittlungen, insbesondere Standardvertragsklauseln der Europäischen Kommission, soweit dies erforderlich ist.
+
+## 7. Rechte der betroffenen Personen
+
+Sie haben im Rahmen der gesetzlichen Bestimmungen insbesondere folgende Rechte:
+
+- Recht auf Auskunft gemäß Art. 15 DSGVO
+- Recht auf Berichtigung gemäß Art. 16 DSGVO
+- Recht auf Löschung gemäß Art. 17 DSGVO
+- Recht auf Einschränkung der Verarbeitung gemäß Art. 18 DSGVO
+- Recht auf Datenübertragbarkeit gemäß Art. 20 DSGVO
+- Recht auf Widerspruch gemäß Art. 21 DSGVO
+
+Außerdem haben Sie das Recht, Beschwerde bei einer Datenschutzaufsichtsbehörde einzulegen.
+
+## 8. Änderungen dieser Datenschutzerklärung
+
+Diese Datenschutzerklärung kann angepasst werden, wenn technische oder rechtliche Änderungen dies erforderlich machen. Es gilt jeweils die auf dieser Website veröffentlichte aktuelle Fassung.
 
 _Stand: Juni 2026_

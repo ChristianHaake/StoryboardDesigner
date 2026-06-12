@@ -1,6 +1,6 @@
 # Architektur
 
-Technischer Überblick für Entwickler:innen. Ist-Zustand nach Sprint 6 (Release Hardening).
+Technischer Überblick für Entwickler:innen. Ist-Zustand nach Sprint 12 (Version 1.1).
 Detailplanung: [Codingplan.md](Codingplan.md) (Architektur-Soll), [UIX-Codingplan.md](UIX-Codingplan.md) (UI-Konzept), [Sprint-Planung.md](Sprint-Planung.md) (Roadmap).
 
 ## Kontext und Ziele
@@ -49,8 +49,9 @@ App ─ Autosave-Wiring (Effect), beforeunload
 ├── EditorView        A4-Arbeitsfläche; DndContext + SortableContext
 │   ├── A4Page        Weißes "Papier", Print-Reset
 │   ├── (Metadaten + Planung: controlled inputs, AutoResizeTextarea)
+│   ├── FieldConfigDialog Projektweite Zusatzfelder und Formatvorlagen
 │   └── SceneCard[]   useSortable; Bild-Upload,
-│                     3 Textfelder, Hover-/Touch-Aktionen
+│                     3 Kernfelder, Zusatzfelder, Hover-/Touch-Aktionen
 └── Notifications     Importfehler und Rückgängig für Szenen-Löschung
 ```
 
@@ -64,11 +65,12 @@ App ─ Autosave-Wiring (Effect), beforeunload
 | ZIP (`.storyboard`) als Dateiformat                    | Bilder + JSON in einer Datei, portabel, inspizierbar           | Import validiert Schema, Anzahl sowie Einzel- und Gesamtgröße                                   |
 | Object URLs statt Base64 im State                      | RAM-schonend auf Tablets                                       | Store verwaltet `createObjectURL`/`revokeObjectURL`                                             |
 | Undo-Puffer (`lastDeleted`) statt Lösch-Dialog         | Touch-Fehltipps häufig; Dialog nervt bei absichtlichem Löschen | Nur einstufiges Undo, nur für Szenen-Löschung                                                   |
+| Formatvorlagen ergänzen nur fehlende Felder            | Formatwechsel bleibt nicht destruktiv                          | Nicht mehr benötigte Vorlagenfelder müssen bewusst gelöscht werden                              |
+| Zusatzfelder besitzen stabile Schlüssel                | Umbenennen erhält alle Szenenwerte                             | Schlüssel sind technische, dauerhaft reservierte Projektbestandteile                            |
 
 ## Bekannte Grenzen / offene Punkte
 
-- Drucktest auf echten Zielgeräten (iPad Safari, MDM) steht aus — Aufgabe in Sprint 3.
-- Impressum und Datenschutzerklärung enthalten bis zur Eintragung der verantwortlichen Person Platzhalter.
+- Drucktest auf echten Zielgeräten (iPad Safari, MDM) steht aus.
+- Die Rechtstexte benötigen die finale Prüfung durch den Betreiber.
 - ZIP-Import bleibt sicherheitsrelevant: Limits und Codec sind automatisiert getestet und müssen bei Schemaänderungen mitgepflegt werden.
 - Vitest deckt Codec und zentrale Store-Übergänge ab; Browser-/Drucktests bleiben manuell.
-- `customFields`/`formatType`-Differenzierung bewusst auf v1.1 verschoben ([Codingplan.md](Codingplan.md), Abschnitt D).

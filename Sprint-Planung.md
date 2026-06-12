@@ -9,7 +9,7 @@ Die technische Umsetzung wird in Sprints unterteilt. Der Entwickler übernimmt d
 
 ### 2. Sprint-Planung
 
-Die Entwicklung wird in fünf aufeinander aufbauende Sprints gegliedert. Jeder Sprint liefert ein funktionierendes Inkrement.
+Die Entwicklung wird in zwölf aufeinander aufbauende Sprints gegliedert. Jeder Sprint liefert ein funktionierendes Inkrement.
 
 **Sprint 1: Setup und statisches UI (Das A4-Dokument)**
 
@@ -64,7 +64,9 @@ Die Entwicklung wird in fünf aufeinander aufbauende Sprints gegliedert. Jeder S
 
 ---
 
-**Hinweis Scope:** Dynamische Felder (`customFields`/`fieldDefinitions`, Konfigurations-Modal) und format-spezifische Feldsets (`formatType`) sind bewusst nicht Teil dieser Sprints — verschoben auf v1.1 (siehe Codingplan, Abschnitt D). Die Datenstruktur der `data.json` ist durch die TypeScript-Interfaces im Codingplan (Abschnitt 2) definiert.
+**Historischer Scope:** Dynamische Felder und format-spezifische Feldsets waren
+nicht Teil von Version 1.0. Sie werden in den Sprints 10–12 als Version 1.1
+umgesetzt.
 
 ### 3. Sprint 6: Release Hardening
 
@@ -107,3 +109,33 @@ Die Entwicklung wird in fünf aufeinander aufbauende Sprints gegliedert. Jeder S
 - UIX-Dokumentation und Changelog aktualisieren.
 - **Abnahme:** Browser-Prüfungen sind erfolgreich; `npm test`, `npm run lint` und `npm run build` laufen fehlerfrei.
 - **Extern offen:** Finale Druck-/PDF-Abnahme auf echtem iPad und MDM-verwaltetem Zielgerät.
+
+### 7. Sprint 10: Rechtstexte und Schema 1.1
+
+- **Ziel:** Rechtliche Seiten technisch korrekt anpassen und das Projektformat kompatibel erweitern.
+- Impressum und Datenschutz von `fbg.haak3.de` übernehmen und auf die App anpassen.
+- Cloudflare Workers Static Assets und lokale Datenverarbeitung dokumentieren.
+- Analytics-Angaben entfernen.
+- Projektversion auf 1.1 erhöhen und Version 1.0 weiterhin importieren.
+- Felddefinitionen und Szenenwerte im gemeinsamen Codec validieren.
+- **Abnahme:** Keine Platzhalter; v1.0-Import und v1.1-Roundtrip funktionieren.
+
+### 8. Sprint 11: Store, Vorlagen und Konfigurationsdialog
+
+- **Ziel:** Projektweite Zusatzfelder und ergänzende Formatvorlagen vollständig bedienbar machen.
+- Store-Aktionen für Hinzufügen, Umbenennen und Löschen implementieren.
+- Formatwechsel atomar um fehlende Vorlagenfelder ergänzen.
+- Stabile reservierte Vorlagenschlüssel verwenden.
+- Tastaturbedienbaren Dialog mit Fokusfalle und Escape ergänzen.
+- Limits und eindeutige Labels validieren.
+- **Abnahme:** Kein Datenverlust, keine Duplikate, 44-px-Aktionen und vollständige Tastaturbedienung.
+
+### 9. Sprint 12: Szenendarstellung, Kompatibilität und Abnahme
+
+- **Ziel:** Zusatzfelder in allen Datenwegen und Darstellungen konsistent integrieren.
+- Zusatzfelder in jeder Szenenkarte und in der Druckansicht darstellen.
+- Duplizieren, Autosave, Import und Export prüfen.
+- Tests für Feldregeln, Vorlagen und Kompatibilität ergänzen.
+- Browserprüfung bei 1280 × 720, 768 × 1024 und 390 × 844 durchführen.
+- README, Architektur, Codingplan, Hilfe und Changelog aktualisieren.
+- **Abnahme:** Alle Zusatzwerte bleiben erhalten; Tests, Lint und Build laufen fehlerfrei.

@@ -134,11 +134,29 @@ Der PDF-Export wird über die native Druckfunktion des Browsers (`window.print()
 3. **Drucken:** Ein Button "PDF exportieren" ruft `window.print()` auf. Lernende nutzen den "Als PDF sichern"-Dialog des Betriebssystems.
 4. **Frühe Verprobung:** Die Druckausgabe wird bereits ab Phase 3 auf Zielgeräten getestet — insbesondere iPad Safari (PDF-Erzeugung im Druckdialog ist dort umständlich, auf MDM-verwalteten Schulgeräten ggf. eingeschränkt).
 
-#### D. Dynamische Felder (Customization) — verschoben auf v1.1
+#### D. Dynamische Felder und Formatvorlagen — umgesetzt in v1.1
 
-Der State `Scene` enthält ein Objekt `customFields`, das Projekt-Interface ein optionales `fieldDefinitions`. Ein Konfigurations-Modal soll es ermöglichen, projektweit neue Felder (z. B. "Kameraeinstellung") zu definieren; die Editor-Komponente iteriert dann über diese Definitionen und rendert dynamisch weitere Eingabefelder auf jeder Karte.
+Die Kernfelder Bildbeschreibung, Text/Ton und Regieanweisung bleiben immer
+erhalten. Zusatzfelder werden projektweit in `fieldDefinitions` aus stabilem
+`key` und editierbarem `label` definiert. Szenen speichern ihre Werte unter
+`customFields[key]`.
 
-**Scope-Entscheidung:** Dieses Feature ist nicht Teil von v1.0 (kein Sprint enthält es). Die Datenmodell-Felder bleiben optional vorhanden, damit `.storyboard`-Dateien aus v1.0 in v1.1 ohne Migration weiterfunktionieren. Gleiches gilt für `formatType`: In v1.0 ist es ein reines Metadaten-Label ohne funktionale Unterschiede; format-spezifische Feldsets (Film/Fotostory/Rede) kommen frühestens mit v1.1.
+Pro Projekt sind maximal 20 Zusatzfelder zulässig. Labels sind maximal 60
+Zeichen lang, nicht leer und unabhängig von Großschreibung eindeutig. Der
+Dialog „Felder konfigurieren“ unterstützt Hinzufügen, Umbenennen und Löschen.
+Beim Löschen werden Definition und Werte nach Bestätigung aus allen Szenen
+entfernt.
+
+Formatvorlagen ergänzen nur fehlende Felder:
+
+- Film: Kameraeinstellung, Kamerabewegung
+- Fotostory: Bildausschnitt, Sprechblase / Text
+- Rede: Kernaussage, Visualisierung
+- Eigenes Format: keine automatischen Felder
+
+Reservierte Schlüssel verhindern doppelte Vorlagenfelder. Formatwechsel
+verändern weder eigene Felder noch vorhandene Werte. Dateien der Version 1.0
+werden beim Import auf das 1.1-Modell normalisiert.
 
 ---
 
@@ -150,3 +168,4 @@ Der State `Scene` enthält ein Objekt `customFields`, das Projekt-Interface ein 
 - **Phase 4: Import / Export & Autosave:** Programmierung des `zipHandler.ts` (Generierung und fehlerfreies Einlesen der `.storyboard`-Dateien) sowie des IndexedDB-Autosaves (`persistence.ts`).
 - **Phase 5: Feinschliff & Print:** Markdown-Seiten, responsives Design, finale Print-CSS-Abnahme auf iPad Safari.
 - **Phase 6: Deployment:** Konfiguration des Repositories für das automatische Deployment über Cloudflare Workers Static Assets.
+- **Phase 7: Version 1.1:** Rechtstexte, kompatibles Feldschema, Formatvorlagen, Konfigurationsdialog und Abnahme aller Datenwege.

@@ -8,6 +8,13 @@ import type {
 } from '../types';
 import { generateId } from '../utils/idGenerator';
 import { MAX_SCENES, PROJECT_VERSION } from '../utils/projectCodec';
+import {
+  MAX_CUSTOM_FIELDS,
+  createCustomFieldDefinition,
+  getFormatPreset,
+  mergeFormatPreset,
+  validateCustomFieldLabel,
+} from '../utils/customFields';
 
 function createEmptyScene(orderIndex: number): Scene {
   return {
@@ -69,8 +76,14 @@ interface StoryboardState {
   /** Nutzer-Fehlermeldung (z. B. Import fehlgeschlagen) für den Notification-Stack. */
   errorMessage: string | null;
   updateMetaData: (patch: Partial<MetaData>) => void;
+  setFormatType: (formatType: MetaData['formatType']) => number;
   updatePrePlanning: (patch: Partial<PrePlanning>) => void;
   updateScene: (id: string, patch: Partial<Scene>) => void;
+  updateCustomField: (sceneId: string, fieldKey: string, value: string) => void;
+  addCustomField: (label: string) => string | null;
+  renameCustomField: (key: string, label: string) => string | null;
+  deleteCustomField: (key: string) => void;
+  applyCurrentFormatPreset: () => number;
   setSceneImage: (id: string, blob: Blob) => void;
   removeSceneImage: (id: string) => void;
   addScene: () => void;
@@ -91,7 +104,7 @@ interface StoryboardState {
 export const useStoryboardStore = create<StoryboardState>((set) => ({
   metaData: createInitialMetaData(),
   prePlanning: initialPrePlanning,
-  fieldDefinitions: undefined,
+  fieldDefinitions: getFormatPreset('film'),
   scenes: [],
   images: {},
   imageUrls: {},
@@ -107,6 +120,21 @@ export const useStoryboardStore = create<StoryboardState>((set) => ({
       metaData: { ...state.metaData, ...patch },
     })),
 
+  setFormatType: (formatType) => {
+    let added = 0;
+    set((state) => {
+      const merged = mergeFormatPreset(state.fieldDefinitions ?? [], formatType);
+      added = merged.added;
+      return {
+        touched: true,
+        hasContent: true,
+        metaData: { ...state.metaData, formatType },
+        fieldDefinitions: merged.definitions.length > 0 ? merged.definitions : undefined,
+      };
+    });
+    return added;
+  },
+
   updatePrePlanning: (patch) =>
     set((state) => ({
       touched: true,
@@ -120,6 +148,100 @@ export const useStoryboardStore = create<StoryboardState>((set) => ({
       hasContent: true,
       scenes: state.scenes.map((scene) => (scene.id === id ? { ...scene, ...patch } : scene)),
     })),
+
+  updateCustomField: (sceneId, fieldKey, value) =>
+    set((state) => ({
+      touched: true,
+      hasContent: true,
+      scenes: state.scenes.map((scene) =>
+        scene.id === sceneId
+          ? {
+              ...scene,
+              customFields: {
+                ...(scene.customFields ?? {}),
+                [fieldKey]: value,
+              },
+            }
+          : scene,
+      ),
+    })),
+
+  addCustomField: (label) => {
+    let error: string | null = null;
+    set((state) => {
+      const definitions = state.fieldDefinitions ?? [];
+      error = validateCustomFieldLabel(label, definitions);
+      if (error) return state;
+      if (definitions.length >= MAX_CUSTOM_FIELDS) {
+        error = `Es sind maximal ${MAX_CUSTOM_FIELDS} Zusatzfelder möglich.`;
+        return state;
+      }
+      return {
+        touched: true,
+        hasContent: true,
+        fieldDefinitions: [...definitions, createCustomFieldDefinition(label)],
+      };
+    });
+    return error;
+  },
+
+  renameCustomField: (key, label) => {
+    let error: string | null = null;
+    set((state) => {
+      const definitions = state.fieldDefinitions ?? [];
+      if (!definitions.some((definition) => definition.key === key)) {
+        error = 'Das Feld wurde nicht gefunden.';
+        return state;
+      }
+      error = validateCustomFieldLabel(label, definitions, key);
+      if (error) return state;
+      return {
+        touched: true,
+        hasContent: true,
+        fieldDefinitions: definitions.map((definition) =>
+          definition.key === key ? { ...definition, label: label.trim() } : definition,
+        ),
+      };
+    });
+    return error;
+  },
+
+  deleteCustomField: (key) =>
+    set((state) => {
+      const definitions = state.fieldDefinitions ?? [];
+      if (!definitions.some((definition) => definition.key === key)) return state;
+      return {
+        touched: true,
+        hasContent: true,
+        fieldDefinitions: definitions.filter((definition) => definition.key !== key),
+        scenes: state.scenes.map((scene) => {
+          if (!scene.customFields || !(key in scene.customFields)) return scene;
+          const customFields = { ...scene.customFields };
+          delete customFields[key];
+          return {
+            ...scene,
+            ...(Object.keys(customFields).length > 0
+              ? { customFields }
+              : { customFields: undefined }),
+          };
+        }),
+      };
+    }),
+
+  applyCurrentFormatPreset: () => {
+    let added = 0;
+    set((state) => {
+      const merged = mergeFormatPreset(state.fieldDefinitions ?? [], state.metaData.formatType);
+      added = merged.added;
+      if (added === 0) return state;
+      return {
+        touched: true,
+        hasContent: true,
+        fieldDefinitions: merged.definitions,
+      };
+    });
+    return added;
+  },
 
   setSceneImage: (id, blob) =>
     set((state) => {

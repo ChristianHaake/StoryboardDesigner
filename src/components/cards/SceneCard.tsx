@@ -9,13 +9,19 @@ import AutoResizeTextarea from '../forms/AutoResizeTextarea';
 import { labelClass } from '../forms/fieldStyles';
 import { MAX_SCENES } from '../../utils/projectCodec';
 
+const EMPTY_FIELD_DEFINITIONS: NonNullable<
+  ReturnType<typeof useStoryboardStore.getState>['fieldDefinitions']
+> = [];
+
 interface SceneCardProps {
   scene: Scene;
 }
 
 function SceneCard({ scene }: SceneCardProps) {
   const imageUrl = useStoryboardStore((s) => s.imageUrls[scene.id] ?? null);
+  const fieldDefinitions = useStoryboardStore((s) => s.fieldDefinitions ?? EMPTY_FIELD_DEFINITIONS);
   const updateScene = useStoryboardStore((s) => s.updateScene);
+  const updateCustomField = useStoryboardStore((s) => s.updateCustomField);
   const duplicateScene = useStoryboardStore((s) => s.duplicateScene);
   const deleteScene = useStoryboardStore((s) => s.deleteScene);
   const setSceneImage = useStoryboardStore((s) => s.setSceneImage);
@@ -205,6 +211,24 @@ function SceneCard({ scene }: SceneCardProps) {
               onChange={(e) => updateScene(scene.id, { directorNotes: e.target.value })}
             />
           </div>
+          {fieldDefinitions.map((definition) => {
+            const value = scene.customFields?.[definition.key] ?? '';
+            return (
+              <div key={definition.key} className={value ? '' : 'print:hidden'}>
+                <label className={labelClass} htmlFor={`custom-${definition.key}-${scene.id}`}>
+                  {definition.label}
+                </label>
+                <AutoResizeTextarea
+                  id={`custom-${definition.key}-${scene.id}`}
+                  placeholder={`${definition.label} eingeben`}
+                  value={value}
+                  onChange={(event) =>
+                    updateCustomField(scene.id, definition.key, event.target.value)
+                  }
+                />
+              </div>
+            );
+          })}
         </div>
       </div>
     </article>

@@ -121,4 +121,76 @@ describe('useStoryboardStore', () => {
     useStoryboardStore.getState().loadProject(project, {}, true);
     expect(useStoryboardStore.getState().touched).toBe(true);
   });
+
+  it('adds format presets without removing custom fields or values', () => {
+    useStoryboardStore.setState({
+      fieldDefinitions: [{ key: 'custom:light', label: 'Licht' }],
+      scenes: [
+        {
+          id: 'scene-1',
+          orderIndex: 0,
+          imageFileName: null,
+          visualDescription: '',
+          audioText: '',
+          directorNotes: '',
+          customFields: { 'custom:light': 'Warm' },
+        },
+      ],
+    });
+
+    expect(useStoryboardStore.getState().setFormatType('rede')).toBe(2);
+    const state = useStoryboardStore.getState();
+    expect(state.metaData.formatType).toBe('rede');
+    expect(state.fieldDefinitions?.map((field) => field.label)).toEqual([
+      'Licht',
+      'Kernaussage',
+      'Visualisierung',
+    ]);
+    expect(state.scenes[0]?.customFields?.['custom:light']).toBe('Warm');
+    expect(useStoryboardStore.getState().setFormatType('rede')).toBe(0);
+  });
+
+  it('validates adding and renaming custom fields', () => {
+    expect(useStoryboardStore.getState().addCustomField('')).toContain('eingeben');
+    expect(useStoryboardStore.getState().addCustomField('Licht')).toBeNull();
+    expect(useStoryboardStore.getState().addCustomField('licht')).toContain('bereits');
+
+    const key = useStoryboardStore.getState().fieldDefinitions?.[0]?.key;
+    expect(key).toBeTruthy();
+    expect(useStoryboardStore.getState().renameCustomField(key!, 'Kamera')).toBeNull();
+    expect(useStoryboardStore.getState().fieldDefinitions?.[0]?.label).toBe('Kamera');
+  });
+
+  it('deletes a field definition and all scene values', () => {
+    useStoryboardStore.setState({
+      fieldDefinitions: [{ key: 'custom:light', label: 'Licht' }],
+      scenes: [
+        {
+          id: 'scene-1',
+          orderIndex: 0,
+          imageFileName: null,
+          visualDescription: '',
+          audioText: '',
+          directorNotes: '',
+          customFields: { 'custom:light': 'Warm', keep: 'Ja' },
+        },
+      ],
+    });
+
+    useStoryboardStore.getState().deleteCustomField('custom:light');
+    expect(useStoryboardStore.getState().fieldDefinitions).toEqual([]);
+    expect(useStoryboardStore.getState().scenes[0]?.customFields).toEqual({ keep: 'Ja' });
+  });
+
+  it('updates and independently duplicates dynamic scene values', () => {
+    useStoryboardStore.getState().addScene();
+    const sceneId = useStoryboardStore.getState().scenes[0]!.id;
+    useStoryboardStore.getState().updateCustomField(sceneId, 'custom:light', 'Warm');
+    useStoryboardStore.getState().duplicateScene(sceneId);
+    const [original, duplicate] = useStoryboardStore.getState().scenes;
+
+    useStoryboardStore.getState().updateCustomField(duplicate!.id, 'custom:light', 'Kalt');
+    expect(original!.customFields?.['custom:light']).toBe('Warm');
+    expect(useStoryboardStore.getState().scenes[1]?.customFields?.['custom:light']).toBe('Kalt');
+  });
 });

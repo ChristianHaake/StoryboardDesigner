@@ -7,7 +7,7 @@ vi.mock('file-saver', () => ({ saveAs: vi.fn() }));
 
 function project(): StoryboardProject {
   return {
-    version: '1.0',
+    version: '1.1',
     metaData: {
       id: 'project-1',
       projectName: 'Test',
@@ -64,6 +64,30 @@ describe('zipHandler', () => {
     const imported = await importProject(archive as unknown as Blob);
     expect(imported.images['scene-1']).toBe(imported.images['scene-2']);
     expect(imported.images['scene-1']?.size).toBe(3);
+  });
+
+  it('round-trips v1.1 field definitions and dynamic values', async () => {
+    const data = project();
+    data.fieldDefinitions = [{ key: 'custom:light', label: 'Licht' }];
+    data.scenes = [
+      {
+        id: 'scene-1',
+        orderIndex: 0,
+        imageFileName: null,
+        visualDescription: '',
+        audioText: '',
+        directorNotes: '',
+        customFields: { 'custom:light': 'Warm' },
+      },
+    ];
+    const zip = new JSZip();
+    zip.file('data.json', JSON.stringify(data));
+    const archive = await zip.generateAsync({ type: 'uint8array' });
+
+    const imported = await importProject(archive as unknown as Blob);
+    expect(imported.project.version).toBe('1.1');
+    expect(imported.project.fieldDefinitions).toEqual(data.fieldDefinitions);
+    expect(imported.project.scenes[0]?.customFields).toEqual({ 'custom:light': 'Warm' });
   });
 
   it('rejects oversized images during import', async () => {
