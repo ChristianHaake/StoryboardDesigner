@@ -1,6 +1,7 @@
 import type { CustomFieldDefinition, MetaData, Scene, StoryboardProject } from '../types';
 import { MAX_CUSTOM_FIELDS, MAX_CUSTOM_FIELD_LABEL_LENGTH } from './customFields';
 import { generateId } from './idGenerator';
+import i18n from '../i18n';
 
 export const PROJECT_VERSION = '1.1';
 export const MAX_SCENES = 200;
@@ -18,15 +19,13 @@ function str(value: unknown, fallback = ''): string {
 const FORMAT_TYPES: MetaData['formatType'][] = ['film', 'fotostory', 'rede', 'custom'];
 
 function validateVersion(value: unknown): string {
-  if (typeof value !== 'string') throw new ProjectValidationError('Versionsangabe fehlt.');
+  if (typeof value !== 'string') throw new ProjectValidationError(i18n.t('errors.versionMissing'));
   const major = Number.parseInt(value.split('.')[0] ?? '', 10);
   if (!Number.isInteger(major) || major < 1) {
-    throw new ProjectValidationError('Ungültige Projektversion.');
+    throw new ProjectValidationError(i18n.t('errors.versionInvalid'));
   }
   if (major > 1) {
-    throw new ProjectValidationError(
-      'Diese Datei wurde mit einer neueren Version des StoryboardCreators erstellt.',
-    );
+    throw new ProjectValidationError(i18n.t('errors.versionTooNew'));
   }
   return PROJECT_VERSION;
 }
@@ -55,13 +54,13 @@ function validateFieldDefinitions(value: unknown): CustomFieldDefinition[] | und
  * Normalisiert v1-Daten und verwirft unbekannte Felder kontrolliert.
  */
 export function decodeProject(raw: unknown): StoryboardProject {
-  if (!isRecord(raw)) throw new ProjectValidationError('Ungültiges Projektformat.');
+  if (!isRecord(raw)) throw new ProjectValidationError(i18n.t('errors.invalidFormat'));
   const version = validateVersion(raw.version);
   if (!isRecord(raw.metaData) || !Array.isArray(raw.scenes)) {
-    throw new ProjectValidationError('Projektstruktur unvollständig.');
+    throw new ProjectValidationError(i18n.t('errors.incompleteStructure'));
   }
   if (raw.scenes.length > MAX_SCENES) {
-    throw new ProjectValidationError(`Zu viele Szenen (max. ${MAX_SCENES}).`);
+    throw new ProjectValidationError(i18n.t('errors.codecTooManyScenes', { max: MAX_SCENES }));
   }
 
   const md = raw.metaData;
@@ -72,7 +71,7 @@ export function decodeProject(raw: unknown): StoryboardProject {
   const seenIds = new Set<string>();
   const scenes: Scene[] = raw.scenes.map((scene, index) => {
     if (!isRecord(scene)) {
-      throw new ProjectValidationError(`Szene ${index + 1} ist beschädigt.`);
+      throw new ProjectValidationError(i18n.t('errors.sceneCorrupt', { n: index + 1 }));
     }
     const customFields = isRecord(scene.customFields)
       ? (Object.fromEntries(

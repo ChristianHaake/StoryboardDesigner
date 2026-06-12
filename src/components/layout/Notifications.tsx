@@ -1,4 +1,5 @@
 import { useEffect } from 'react';
+import { useTranslation } from 'react-i18next';
 import { useStoryboardStore } from '../../store/useStoryboardStore';
 
 const UNDO_DISMISS_MS = 6000;
@@ -7,6 +8,7 @@ const ERROR_DISMISS_MS = 8000;
 /** Gestapelter Benachrichtigungsbereich: Fehler-Toast + Undo-Snackbar
  *  teilen sich eine Position und überlappen nie. */
 export default function Notifications() {
+  const { t } = useTranslation();
   const lastDeleted = useStoryboardStore((s) => s.lastDeleted);
   const undoDelete = useStoryboardStore((s) => s.undoDelete);
   const clearLastDeleted = useStoryboardStore((s) => s.clearLastDeleted);
@@ -38,7 +40,7 @@ export default function Notifications() {
           <button
             type="button"
             onClick={clearErrorMessage}
-            aria-label="Meldung schließen"
+            aria-label={t('notifications.dismiss')}
             className="min-h-11 shrink-0 rounded-lg px-3 font-semibold hover:bg-white/10"
           >
             OK
@@ -50,13 +52,13 @@ export default function Notifications() {
           role="status"
           className="flex w-full max-w-lg items-center justify-between gap-4 rounded-xl bg-gray-950 px-4 py-3 text-sm text-white shadow-xl shadow-gray-950/20"
         >
-          <span>Szene {lastDeleted.index + 1} gelöscht</span>
+          <span>{t('notifications.sceneDeleted', { n: lastDeleted.index + 1 })}</span>
           <button
             type="button"
             onClick={undoDelete}
             className="min-h-11 shrink-0 rounded-lg px-3 font-semibold text-blue-300 hover:bg-white/10"
           >
-            Rückgängig
+            {t('notifications.undo')}
           </button>
         </div>
       )}

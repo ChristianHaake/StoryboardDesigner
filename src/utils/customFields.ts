@@ -1,21 +1,24 @@
 import type { CustomFieldDefinition, MetaData } from '../types';
 import { generateId } from './idGenerator';
+import i18n from '../i18n';
 
 export const MAX_CUSTOM_FIELDS = 20;
 export const MAX_CUSTOM_FIELD_LABEL_LENGTH = 60;
 
-const FORMAT_FIELD_PRESETS: Record<MetaData['formatType'], CustomFieldDefinition[]> = {
+// Stabile Keys; Labels werden zur Aufruf-Zeit übersetzt. Bereits in eine
+// .storyboard gespeicherte Labels bleiben unverändert (Projektinhalt).
+const FORMAT_FIELD_PRESETS: Record<MetaData['formatType'], { key: string; labelKey: string }[]> = {
   film: [
-    { key: 'preset:film:shot-size', label: 'Kameraeinstellung' },
-    { key: 'preset:film:camera-movement', label: 'Kamerabewegung' },
+    { key: 'preset:film:shot-size', labelKey: 'presets.filmShotSize' },
+    { key: 'preset:film:camera-movement', labelKey: 'presets.filmCameraMovement' },
   ],
   fotostory: [
-    { key: 'preset:fotostory:framing', label: 'Bildausschnitt' },
-    { key: 'preset:fotostory:caption', label: 'Sprechblase / Text' },
+    { key: 'preset:fotostory:framing', labelKey: 'presets.fotostoryFraming' },
+    { key: 'preset:fotostory:caption', labelKey: 'presets.fotostoryCaption' },
   ],
   rede: [
-    { key: 'preset:rede:key-message', label: 'Kernaussage' },
-    { key: 'preset:rede:visualization', label: 'Visualisierung' },
+    { key: 'preset:rede:key-message', labelKey: 'presets.redeKeyMessage' },
+    { key: 'preset:rede:visualization', labelKey: 'presets.redeVisualization' },
   ],
   custom: [],
 };
@@ -25,7 +28,10 @@ function normalizedLabel(label: string): string {
 }
 
 export function getFormatPreset(formatType: MetaData['formatType']): CustomFieldDefinition[] {
-  return FORMAT_FIELD_PRESETS[formatType].map((definition) => ({ ...definition }));
+  return FORMAT_FIELD_PRESETS[formatType].map((definition) => ({
+    key: definition.key,
+    label: i18n.t(definition.labelKey),
+  }));
 }
 
 export function validateCustomFieldLabel(
@@ -34,16 +40,16 @@ export function validateCustomFieldLabel(
   ignoredKey?: string,
 ): string | null {
   const trimmed = label.trim();
-  if (!trimmed) return 'Bitte eine Feldbezeichnung eingeben.';
+  if (!trimmed) return i18n.t('fields.labelEmpty');
   if (trimmed.length > MAX_CUSTOM_FIELD_LABEL_LENGTH) {
-    return `Die Feldbezeichnung darf maximal ${MAX_CUSTOM_FIELD_LABEL_LENGTH} Zeichen lang sein.`;
+    return i18n.t('fields.labelTooLong', { max: MAX_CUSTOM_FIELD_LABEL_LENGTH });
   }
   const duplicate = definitions.some(
     (definition) =>
       definition.key !== ignoredKey &&
       normalizedLabel(definition.label) === normalizedLabel(trimmed),
   );
-  return duplicate ? 'Diese Feldbezeichnung ist bereits vorhanden.' : null;
+  return duplicate ? i18n.t('fields.labelDuplicate') : null;
 }
 
 export function createCustomFieldDefinition(label: string): CustomFieldDefinition {
