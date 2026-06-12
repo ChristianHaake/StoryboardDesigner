@@ -5,7 +5,7 @@ Die technische Umsetzung wird in Sprints unterteilt. Der Entwickler übernimmt d
 * **Commits:** Werden ausschließlich manuell vom Entwickler durchgeführt. Die Struktur folgt zur besseren Lesbarkeit weiterhin den Conventional Commits (z.B. `feat: ...`, `fix: ...`).
 * **Code-Qualität:** ESLint und Prettier laufen über npm-Skripte (`npm run lint`, `npm run format`). Auf Husky-Pre-Commit-Hooks wird verzichtet, da Commits manuell erfolgen; vor einem Push muss der Linter fehlerfrei durchlaufen.
 * **Changelog:** Der Entwickler pflegt die `CHANGELOG.md` manuell am Ende eines Sprints oder nach relevanten Änderungen.
-* **Deployment:** Der Entwickler pusht den Code manuell. Cloudflare Pages baut das Projekt auf Basis des konfigurierten Produktions-Branches. Für `react-router-dom` wird ein SPA-Fallback eingerichtet (`public/_redirects`: `/* /index.html 200`).
+* **Deployment:** Der Entwickler pusht den Code manuell. Cloudflare (Workers-Flow) baut das Projekt auf Basis des konfigurierten Produktions-Branches. SPA-Fallback für `react-router-dom` über `wrangler.jsonc` (`assets.not_found_handling: single-page-application`) — kein `_redirects` (Pages-Feature, wird im Workers-Modus als Endlosschleife abgelehnt).
 
 ### 2. Sprint-Planung
 
