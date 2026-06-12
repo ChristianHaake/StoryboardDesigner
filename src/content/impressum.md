@@ -1,20 +1,22 @@
 # Impressum
 
-> **PLATZHALTER** — vor Veröffentlichung mit echten Angaben füllen (§ 5 DDG).
-
 ## Angaben gemäß § 5 DDG
 
-*[Name]*
-*[Straße und Hausnummer]*
-*[PLZ und Ort]*
+Christian Haake  
+Alte Ziegelei 7  
+26197 Großenkneten  
+Deutschland
 
 ## Kontakt
 
-E-Mail: *[E-Mail-Adresse]*
+E-Mail: {mein Vorname}{mein Nachname}@gmail.com
 
-## Verantwortlich für den Inhalt
+## Verantwortlich für den Inhalt nach § 18 Abs. 2 MStV
 
-*[Name und Anschrift]*
+Christian Haake  
+Alte Ziegelei 7  
+26197 Großenkneten  
+Deutschland
 
 ---
 

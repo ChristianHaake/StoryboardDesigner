@@ -24,10 +24,10 @@ function project(overrides: Record<string, unknown> = {}) {
 }
 
 describe('decodeProject', () => {
-  it('preserves v1.1-compatible custom fields and field definitions', () => {
+  it('migrates v1 data and preserves custom fields and field definitions', () => {
     const decoded = decodeProject(
       project({
-        version: '1.7',
+        version: '1.0',
         fieldDefinitions: [{ key: 'camera', label: 'Kamera' }],
         scenes: [
           {
@@ -43,9 +43,22 @@ describe('decodeProject', () => {
       }),
     );
 
-    expect(decoded.version).toBe('1.0');
+    expect(decoded.version).toBe('1.1');
     expect(decoded.fieldDefinitions).toEqual([{ key: 'camera', label: 'Kamera' }]);
     expect(decoded.scenes[0]?.customFields).toEqual({ camera: 'Totale' });
+  });
+
+  it('normalizes duplicate labels and excessive field definitions', () => {
+    const fieldDefinitions = Array.from({ length: 25 }, (_, index) => ({
+      key: `field-${index}`,
+      label: index === 1 ? 'FELD 0' : `Feld ${index}`,
+    }));
+    const decoded = decodeProject(project({ version: '1.1', fieldDefinitions }));
+
+    expect(decoded.fieldDefinitions).toHaveLength(20);
+    expect(
+      decoded.fieldDefinitions?.filter((field) => field.label.toLowerCase() === 'feld 0'),
+    ).toHaveLength(1);
   });
 
   it('rejects unsupported future major versions', () => {

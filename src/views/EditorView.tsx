@@ -19,6 +19,8 @@ import { useStoryboardStore } from '../store/useStoryboardStore';
 import type { MetaData } from '../types';
 import { inputClass, labelClass } from '../components/forms/fieldStyles';
 import { MAX_SCENES } from '../utils/projectCodec';
+import FieldConfigDialog from '../components/forms/FieldConfigDialog';
+import { useState } from 'react';
 
 const screenReaderInstructions = {
   draggable:
@@ -26,10 +28,12 @@ const screenReaderInstructions = {
 };
 
 export default function EditorView() {
+  const [fieldDialogOpen, setFieldDialogOpen] = useState(false);
   const metaData = useStoryboardStore((s) => s.metaData);
   const prePlanning = useStoryboardStore((s) => s.prePlanning);
   const scenes = useStoryboardStore((s) => s.scenes);
   const updateMetaData = useStoryboardStore((s) => s.updateMetaData);
+  const setFormatType = useStoryboardStore((s) => s.setFormatType);
   const updatePrePlanning = useStoryboardStore((s) => s.updatePrePlanning);
   const addScene = useStoryboardStore((s) => s.addScene);
   const moveScene = useStoryboardStore((s) => s.moveScene);
@@ -113,9 +117,7 @@ export default function EditorView() {
                 id="formatType"
                 className={`${inputClass} appearance-none`}
                 value={metaData.formatType}
-                onChange={(e) =>
-                  updateMetaData({ formatType: e.target.value as MetaData['formatType'] })
-                }
+                onChange={(e) => setFormatType(e.target.value as MetaData['formatType'])}
               >
                 <option value="film">Film</option>
                 <option value="fotostory">Fotostory</option>
@@ -199,6 +201,13 @@ export default function EditorView() {
               Storyboard
             </h2>
             <span className="h-px flex-1 bg-gray-200" aria-hidden="true" />
+            <button
+              type="button"
+              onClick={() => setFieldDialogOpen(true)}
+              className="min-h-11 rounded-lg px-3 text-sm font-semibold text-blue-700 transition-colors hover:bg-blue-50 print:hidden"
+            >
+              Felder konfigurieren
+            </button>
           </div>
           <DndContext
             sensors={sensors}
@@ -228,6 +237,7 @@ export default function EditorView() {
           </button>
         </section>
       </A4Page>
+      <FieldConfigDialog open={fieldDialogOpen} onClose={() => setFieldDialogOpen(false)} />
     </main>
   );
 }

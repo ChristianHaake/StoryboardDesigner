@@ -1,7 +1,8 @@
 import type { CustomFieldDefinition, MetaData, Scene, StoryboardProject } from '../types';
+import { MAX_CUSTOM_FIELDS, MAX_CUSTOM_FIELD_LABEL_LENGTH } from './customFields';
 import { generateId } from './idGenerator';
 
-export const PROJECT_VERSION = '1.0';
+export const PROJECT_VERSION = '1.1';
 export const MAX_SCENES = 200;
 
 export class ProjectValidationError extends Error {}
@@ -33,13 +34,17 @@ function validateVersion(value: unknown): string {
 function validateFieldDefinitions(value: unknown): CustomFieldDefinition[] | undefined {
   if (!Array.isArray(value)) return undefined;
   const seenKeys = new Set<string>();
+  const seenLabels = new Set<string>();
   const definitions: CustomFieldDefinition[] = [];
   for (const item of value) {
+    if (definitions.length >= MAX_CUSTOM_FIELDS) break;
     if (!isRecord(item)) continue;
     const key = str(item.key).trim();
-    const label = str(item.label).trim();
-    if (!key || !label || seenKeys.has(key)) continue;
+    const label = str(item.label).trim().slice(0, MAX_CUSTOM_FIELD_LABEL_LENGTH);
+    const normalizedLabel = label.toLocaleLowerCase('de');
+    if (!key || !label || seenKeys.has(key) || seenLabels.has(normalizedLabel)) continue;
     seenKeys.add(key);
+    seenLabels.add(normalizedLabel);
     definitions.push({ key, label });
   }
   return definitions.length > 0 ? definitions : undefined;

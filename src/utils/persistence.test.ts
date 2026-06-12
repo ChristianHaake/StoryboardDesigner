@@ -1,4 +1,5 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest';
+import type { StoryboardProject } from '../types';
 
 const getMock = vi.hoisted(() => vi.fn());
 vi.mock('idb-keyval', () => ({
@@ -8,7 +9,7 @@ vi.mock('idb-keyval', () => ({
 
 import { loadAutosave } from './persistence';
 
-function project() {
+function project(): StoryboardProject {
   return {
     version: '1.0',
     metaData: {
@@ -39,7 +40,7 @@ describe('loadAutosave', () => {
   it('validates legacy project payloads', async () => {
     getMock.mockResolvedValue(project());
     await expect(loadAutosave()).resolves.toMatchObject({
-      project: { version: '1.0' },
+      project: { version: '1.1' },
       images: {},
     });
   });
@@ -57,6 +58,20 @@ describe('loadAutosave', () => {
 
     const restored = await loadAutosave();
     expect(restored?.images).toEqual({ 'scene-1': valid });
+  });
+
+  it('restores v1.1 definitions and dynamic values', async () => {
+    const data = project();
+    data.version = '1.1';
+    Object.assign(data, {
+      fieldDefinitions: [{ key: 'custom:light', label: 'Licht' }],
+    });
+    data.scenes[0]!.customFields = { 'custom:light': 'Warm' };
+    getMock.mockResolvedValue({ project: data, images: {} });
+
+    const restored = await loadAutosave();
+    expect(restored?.project.fieldDefinitions).toEqual([{ key: 'custom:light', label: 'Licht' }]);
+    expect(restored?.project.scenes[0]?.customFields).toEqual({ 'custom:light': 'Warm' });
   });
 
   it('ignores malformed autosaves', async () => {
