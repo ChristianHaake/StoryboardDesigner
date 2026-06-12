@@ -1,5 +1,6 @@
 import { Suspense, lazy, useEffect } from 'react';
 import { BrowserRouter, Navigate, Route, Routes } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 import TopBar from './components/layout/TopBar';
 import Footer from './components/layout/Footer';
 import Notifications from './components/layout/Notifications';
@@ -9,11 +10,22 @@ import EditorView from './views/EditorView';
 const MarkdownView = lazy(() => import('./views/MarkdownView'));
 import { useStoryboardStore, selectProject } from './store/useStoryboardStore';
 import { hasPendingAutosave, loadAutosave, scheduleAutosave } from './utils/persistence';
-import hilfeText from './content/hilfe.md?raw';
+import hilfeDe from './content/hilfe.md?raw';
+import hilfeEn from './content/hilfe.en.md?raw';
 import datenschutzText from './content/datenschutz.md?raw';
 import impressumText from './content/impressum.md?raw';
 
 export default function App() {
+  const { t, i18n } = useTranslation();
+  const language = i18n.resolvedLanguage ?? i18n.language;
+  const hilfeText = language === 'en' ? hilfeEn : hilfeDe;
+
+  // Dokument-Sprache und Titel an die UI-Sprache koppeln.
+  useEffect(() => {
+    document.documentElement.lang = language;
+    document.title = t('common.appTitle');
+  }, [language, t]);
+
   useEffect(() => {
     let cancelled = false;
 
@@ -61,8 +73,14 @@ export default function App() {
               }
             />
             <Route path="/hilfe" element={<MarkdownView source={hilfeText} />} />
-            <Route path="/datenschutz" element={<MarkdownView source={datenschutzText} />} />
-            <Route path="/impressum" element={<MarkdownView source={impressumText} />} />
+            <Route
+              path="/datenschutz"
+              element={<MarkdownView source={datenschutzText} germanOnly />}
+            />
+            <Route
+              path="/impressum"
+              element={<MarkdownView source={impressumText} germanOnly />}
+            />
             <Route path="*" element={<Navigate to="/" replace />} />
           </Routes>
         </Suspense>

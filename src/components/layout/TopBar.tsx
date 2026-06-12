@@ -1,9 +1,12 @@
 import { useRef } from 'react';
 import type { ChangeEvent } from 'react';
+import { useTranslation } from 'react-i18next';
 import { selectProject, useStoryboardStore } from '../../store/useStoryboardStore';
 import { exportProject, importProject, ImportError } from '../../utils/zipHandler';
+import LanguageToggle from './LanguageToggle';
 
 export default function TopBar() {
+  const { t } = useTranslation();
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   async function handleExport() {
@@ -12,7 +15,7 @@ export default function TopBar() {
       await exportProject(selectProject(state), state.images);
     } catch (err: unknown) {
       console.warn('Export fehlgeschlagen:', err);
-      state.setErrorMessage('Projekt konnte nicht gespeichert werden.');
+      state.setErrorMessage(t('topbar.exportFailed'));
     }
   }
 
@@ -21,10 +24,7 @@ export default function TopBar() {
     event.target.value = '';
     if (!file) return;
     const state = useStoryboardStore.getState();
-    if (
-      state.hasContent &&
-      !window.confirm('Aktuelles Projekt ersetzen? Es wird durch die geladene Datei überschrieben.')
-    ) {
+    if (state.hasContent && !window.confirm(t('topbar.confirmReplace'))) {
       return;
     }
     try {
@@ -32,9 +32,7 @@ export default function TopBar() {
       useStoryboardStore.getState().loadProject(project, images, true);
       state.clearErrorMessage();
     } catch (err: unknown) {
-      state.setErrorMessage(
-        err instanceof ImportError ? err.message : 'Die Datei konnte nicht geladen werden.',
-      );
+      state.setErrorMessage(err instanceof ImportError ? err.message : t('topbar.importFailed'));
     }
   }
 
@@ -44,7 +42,7 @@ export default function TopBar() {
         <h1 className="text-lg font-bold tracking-tight text-gray-950 max-sm:mb-2">
           StoryboardCreator
         </h1>
-        <nav aria-label="Projektaktionen" className="grid grid-cols-3 gap-2 sm:flex">
+        <nav aria-label={t('topbar.actions')} className="flex items-center gap-2 max-sm:grid max-sm:grid-cols-3">
           <button
             type="button"
             onClick={() => fileInputRef.current?.click()}
@@ -62,7 +60,7 @@ export default function TopBar() {
               <path d="M12 3v12m0 0 4-4m-4 4-4-4" />
               <path d="M4 17v2a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-2" />
             </svg>
-            <span className="max-[430px]:text-xs">Laden</span>
+            <span className="max-[430px]:text-xs">{t('topbar.load')}</span>
           </button>
           <button
             type="button"
@@ -81,7 +79,7 @@ export default function TopBar() {
               <path d="M12 21V9m0 0 4 4m-4-4-4 4" />
               <path d="M4 7V5a2 2 0 0 1 2-2h12a2 2 0 0 1 2 2v2" />
             </svg>
-            <span className="max-[430px]:text-xs">Speichern</span>
+            <span className="max-[430px]:text-xs">{t('topbar.save')}</span>
           </button>
           <button
             type="button"
@@ -101,8 +99,9 @@ export default function TopBar() {
               <path d="M7 17H5a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2" />
               <path d="M7 14h10v7H7z" />
             </svg>
-            <span className="max-[430px]:text-xs">PDF</span>
+            <span className="max-[430px]:text-xs">{t('topbar.print')}</span>
           </button>
+          <LanguageToggle className="max-sm:col-span-3 max-sm:justify-self-center" />
         </nav>
         <input
           ref={fileInputRef}

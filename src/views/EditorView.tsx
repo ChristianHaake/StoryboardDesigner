@@ -21,13 +21,10 @@ import { inputClass, labelClass } from '../components/forms/fieldStyles';
 import { MAX_SCENES } from '../utils/projectCodec';
 import FieldConfigDialog from '../components/forms/FieldConfigDialog';
 import { useState } from 'react';
-
-const screenReaderInstructions = {
-  draggable:
-    'Zum Aufnehmen einer Szene Leertaste oder Eingabetaste drücken. Mit den Pfeiltasten verschieben, zum Ablegen erneut Leertaste oder Eingabetaste drücken. Escape bricht ab.',
-};
+import { useTranslation } from 'react-i18next';
 
 export default function EditorView() {
+  const { t } = useTranslation();
   const [fieldDialogOpen, setFieldDialogOpen] = useState(false);
   const metaData = useStoryboardStore((s) => s.metaData);
   const prePlanning = useStoryboardStore((s) => s.prePlanning);
@@ -50,18 +47,17 @@ export default function EditorView() {
     }
   }
 
-  // Deutsche Screenreader-Ansagen (dnd-kit-Defaults sind Englisch).
+  // Übersetzte Screenreader-Ansagen (dnd-kit-Defaults sind Englisch).
   const position = (id: UniqueIdentifier) => scenes.findIndex((s) => s.id === id) + 1;
   const announcements: Announcements = {
-    onDragStart: ({ active }) => `Szene an Position ${position(active.id)} aufgenommen.`,
+    onDragStart: ({ active }) => t('dnd.pickedUp', { pos: position(active.id) }),
     onDragOver: ({ over }) =>
-      over
-        ? `Szene über Position ${position(over.id)} bewegt.`
-        : 'Szene über keiner Ablageposition.',
+      over ? t('dnd.movedOver', { pos: position(over.id) }) : t('dnd.noTarget'),
     onDragEnd: ({ over }) =>
-      over ? `Szene an Position ${position(over.id)} abgelegt.` : 'Verschieben abgebrochen.',
-    onDragCancel: () => 'Verschieben abgebrochen.',
+      over ? t('dnd.dropped', { pos: position(over.id) }) : t('dnd.cancelled'),
+    onDragCancel: () => t('dnd.cancelled'),
   };
+  const screenReaderInstructions = { draggable: t('dnd.instructions') };
 
   return (
     <main>
@@ -69,15 +65,15 @@ export default function EditorView() {
         {/* Metadaten */}
         <header className="border-b border-gray-200 pb-7">
           <p className="mb-3 text-xs font-bold tracking-[0.16em] text-blue-700 uppercase print:text-gray-700">
-            Storyboard-Projekt
+            {t('editor.kicker')}
           </p>
           <label className={labelClass} htmlFor="projectName">
-            Projektname
+            {t('editor.projectName')}
           </label>
           <input
             id="projectName"
             type="text"
-            placeholder="Titel des Projekts"
+            placeholder={t('editor.projectNamePlaceholder')}
             className={`${inputClass} text-xl font-bold tracking-tight sm:text-2xl print:text-2xl`}
             value={metaData.projectName}
             onChange={(e) => updateMetaData({ projectName: e.target.value })}
@@ -85,12 +81,12 @@ export default function EditorView() {
           <div className="mt-5 grid grid-cols-2 gap-x-5 gap-y-4 max-sm:grid-cols-1">
             <div>
               <label className={labelClass} htmlFor="participants">
-                Beteiligte
+                {t('editor.participants')}
               </label>
               <input
                 id="participants"
                 type="text"
-                placeholder="Namen der Gruppenmitglieder"
+                placeholder={t('editor.participantsPlaceholder')}
                 className={inputClass}
                 value={metaData.participants}
                 onChange={(e) => updateMetaData({ participants: e.target.value })}
@@ -98,12 +94,12 @@ export default function EditorView() {
             </div>
             <div>
               <label className={labelClass} htmlFor="subject">
-                Thema / Fach
+                {t('editor.subject')}
               </label>
               <input
                 id="subject"
                 type="text"
-                placeholder="z. B. Wasserkreislauf"
+                placeholder={t('editor.subjectPlaceholder')}
                 className={inputClass}
                 value={metaData.subject}
                 onChange={(e) => updateMetaData({ subject: e.target.value })}
@@ -111,7 +107,7 @@ export default function EditorView() {
             </div>
             <div>
               <label className={labelClass} htmlFor="formatType">
-                Format
+                {t('editor.format')}
               </label>
               <select
                 id="formatType"
@@ -119,15 +115,15 @@ export default function EditorView() {
                 value={metaData.formatType}
                 onChange={(e) => setFormatType(e.target.value as MetaData['formatType'])}
               >
-                <option value="film">Film</option>
-                <option value="fotostory">Fotostory</option>
-                <option value="rede">Rede</option>
-                <option value="custom">Eigenes Format</option>
+                <option value="film">{t('format.film')}</option>
+                <option value="fotostory">{t('format.fotostory')}</option>
+                <option value="rede">{t('format.rede')}</option>
+                <option value="custom">{t('format.custom')}</option>
               </select>
             </div>
             <div>
               <label className={labelClass} htmlFor="date">
-                Datum
+                {t('editor.date')}
               </label>
               <input
                 id="date"
@@ -143,50 +139,52 @@ export default function EditorView() {
         {/* Pre-Planning */}
         <section className="mt-7">
           <div className="flex items-center gap-3">
-            <h2 className="text-xs font-bold tracking-[0.16em] text-gray-700 uppercase">Planung</h2>
+            <h2 className="text-xs font-bold tracking-[0.16em] text-gray-700 uppercase">
+              {t('editor.planning')}
+            </h2>
             <span className="h-px flex-1 bg-gray-200" aria-hidden="true" />
           </div>
           <div className="mt-4 grid grid-cols-2 gap-x-5 gap-y-4 max-sm:grid-cols-1">
             <div>
               <label className={labelClass} htmlFor="logline">
-                Logline
+                {t('editor.logline')}
               </label>
               <AutoResizeTextarea
                 id="logline"
-                placeholder="Worum geht es? Ein Satz."
+                placeholder={t('editor.loglinePlaceholder')}
                 value={prePlanning.logline}
                 onChange={(e) => updatePrePlanning({ logline: e.target.value })}
               />
             </div>
             <div>
               <label className={labelClass} htmlFor="objective">
-                Ziel
+                {t('editor.objective')}
               </label>
               <AutoResizeTextarea
                 id="objective"
-                placeholder="Was soll das Publikum mitnehmen?"
+                placeholder={t('editor.objectivePlaceholder')}
                 value={prePlanning.objective}
                 onChange={(e) => updatePrePlanning({ objective: e.target.value })}
               />
             </div>
             <div>
               <label className={labelClass} htmlFor="roles">
-                Rollen
+                {t('editor.roles')}
               </label>
               <AutoResizeTextarea
                 id="roles"
-                placeholder="Aufgaben in der Gruppe"
+                placeholder={t('editor.rolesPlaceholder')}
                 value={prePlanning.roles}
                 onChange={(e) => updatePrePlanning({ roles: e.target.value })}
               />
             </div>
             <div>
               <label className={labelClass} htmlFor="resources">
-                Ressourcen
+                {t('editor.resources')}
               </label>
               <AutoResizeTextarea
                 id="resources"
-                placeholder="Orte, Geräte, Requisiten …"
+                placeholder={t('editor.resourcesPlaceholder')}
                 value={prePlanning.resources}
                 onChange={(e) => updatePrePlanning({ resources: e.target.value })}
               />
@@ -198,7 +196,7 @@ export default function EditorView() {
         <section className="mt-9">
           <div className="flex items-center gap-3">
             <h2 className="text-xs font-bold tracking-[0.16em] text-gray-700 uppercase">
-              Storyboard
+              {t('editor.storyboard')}
             </h2>
             <span className="h-px flex-1 bg-gray-200" aria-hidden="true" />
             <button
@@ -206,7 +204,7 @@ export default function EditorView() {
               onClick={() => setFieldDialogOpen(true)}
               className="min-h-11 rounded-lg px-3 text-sm font-semibold text-blue-700 transition-colors hover:bg-blue-50 print:hidden"
             >
-              Felder konfigurieren
+              {t('editor.configureFields')}
             </button>
           </div>
           <DndContext
@@ -233,7 +231,9 @@ export default function EditorView() {
             disabled={scenes.length >= MAX_SCENES}
             className="mt-4 min-h-12 w-full rounded-xl border border-dashed border-gray-300 bg-gray-50 px-4 text-sm font-semibold text-gray-600 transition-colors hover:border-blue-400 hover:bg-blue-50 hover:text-blue-700 focus-visible:border-blue-500 disabled:cursor-not-allowed disabled:opacity-50 disabled:hover:border-gray-300 disabled:hover:bg-gray-50 disabled:hover:text-gray-600 print:hidden"
           >
-            {scenes.length >= MAX_SCENES ? `Maximal ${MAX_SCENES} Szenen` : '+ Szene hinzufügen'}
+            {scenes.length >= MAX_SCENES
+              ? t('editor.maxScenes', { max: MAX_SCENES })
+              : t('editor.addScene')}
           </button>
         </section>
       </A4Page>

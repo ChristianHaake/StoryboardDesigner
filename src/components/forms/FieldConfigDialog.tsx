@@ -1,7 +1,8 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { useStoryboardStore } from '../../store/useStoryboardStore';
 import { MAX_CUSTOM_FIELDS, MAX_CUSTOM_FIELD_LABEL_LENGTH } from '../../utils/customFields';
-import type { CustomFieldDefinition } from '../../types';
+import type { CustomFieldDefinition, MetaData } from '../../types';
 
 interface FieldConfigDialogProps {
   open: boolean;
@@ -19,6 +20,7 @@ function FieldDefinitionRow({
   onRename: (key: string, label: string) => void;
   onDelete: (key: string, label: string) => void;
 }) {
+  const { t } = useTranslation();
   const [label, setLabel] = useState(definition.label);
 
   return (
@@ -27,7 +29,7 @@ function FieldDefinitionRow({
         type="text"
         value={label}
         maxLength={MAX_CUSTOM_FIELD_LABEL_LENGTH}
-        aria-label={`Feldbezeichnung ${definition.label}`}
+        aria-label={t('fieldConfig.rowLabel', { label: definition.label })}
         onChange={(event) => setLabel(event.target.value)}
         onKeyDown={(event) => {
           if (event.key === 'Enter') {
@@ -42,12 +44,12 @@ function FieldDefinitionRow({
         onClick={() => onRename(definition.key, label)}
         className="min-h-11 rounded-lg px-3 text-sm font-semibold text-blue-700 hover:bg-blue-50"
       >
-        Speichern
+        {t('fieldConfig.saveRow')}
       </button>
       <button
         type="button"
         onClick={() => onDelete(definition.key, definition.label)}
-        aria-label={`Feld ${definition.label} löschen`}
+        aria-label={t('fieldConfig.deleteField', { label: definition.label })}
         className="inline-flex size-11 items-center justify-center rounded-lg text-gray-500 hover:bg-red-50 hover:text-red-700"
       >
         <svg
@@ -66,7 +68,15 @@ function FieldDefinitionRow({
   );
 }
 
+const FORMAT_KEYS: Record<MetaData['formatType'], string> = {
+  film: 'format.film',
+  fotostory: 'format.fotostory',
+  rede: 'format.rede',
+  custom: 'format.custom',
+};
+
 export default function FieldConfigDialog({ open, onClose }: FieldConfigDialogProps) {
+  const { t } = useTranslation();
   const dialogRef = useRef<HTMLDialogElement>(null);
   const addInputRef = useRef<HTMLInputElement>(null);
   const definitions = useStoryboardStore((state) => state.fieldDefinitions ?? EMPTY_DEFINITIONS);
@@ -109,33 +119,29 @@ export default function FieldConfigDialog({ open, onClose }: FieldConfigDialogPr
       return;
     }
     setNewLabel('');
-    setMessage('Feld hinzugefügt.');
+    setMessage(t('fieldConfig.added'));
     addInputRef.current?.focus();
   }
 
   function handleRename(key: string, label: string) {
     const error = renameCustomField(key, label);
-    setMessage(error ?? 'Feldbezeichnung gespeichert.');
+    setMessage(error ?? t('fieldConfig.renamed'));
   }
 
   function handleDelete(key: string, label: string) {
-    if (
-      !window.confirm(
-        `Feld „${label}“ löschen? Die Inhalte dieses Feldes werden aus allen Szenen entfernt.`,
-      )
-    ) {
+    if (!window.confirm(t('fieldConfig.confirmDelete', { label }))) {
       return;
     }
     deleteCustomField(key);
-    setMessage('Feld und zugehörige Inhalte gelöscht.');
+    setMessage(t('fieldConfig.deleted'));
   }
 
   function handleApplyPreset() {
     const added = applyCurrentFormatPreset();
     setMessage(
       added > 0
-        ? `${added} Vorlagenfeld${added === 1 ? '' : 'er'} ergänzt.`
-        : 'Alle Felder der aktuellen Formatvorlage sind bereits vorhanden.',
+        ? t('fieldConfig.presetAdded', { count: added })
+        : t('fieldConfig.presetComplete'),
     );
   }
 
@@ -158,16 +164,14 @@ export default function FieldConfigDialog({ open, onClose }: FieldConfigDialogPr
         <header className="flex items-start justify-between gap-4 border-b border-gray-200 px-5 py-4 sm:px-6">
           <div>
             <h2 id="field-config-title" className="text-lg font-bold tracking-tight">
-              Felder konfigurieren
+              {t('fieldConfig.title')}
             </h2>
-            <p className="mt-1 text-sm text-gray-600">
-              Zusatzfelder erscheinen in jeder Szene und werden mit dem Projekt gespeichert.
-            </p>
+            <p className="mt-1 text-sm text-gray-600">{t('fieldConfig.description')}</p>
           </div>
           <button
             type="button"
             onClick={closeDialog}
-            aria-label="Dialog schließen"
+            aria-label={t('fieldConfig.close')}
             className="inline-flex size-11 shrink-0 items-center justify-center rounded-lg text-gray-500 hover:bg-gray-100 hover:text-gray-900"
           >
             <svg
@@ -189,10 +193,10 @@ export default function FieldConfigDialog({ open, onClose }: FieldConfigDialogPr
             <div className="flex items-end justify-between gap-4">
               <div>
                 <h3 id="add-field-title" className="text-sm font-semibold text-gray-900">
-                  Eigenes Feld hinzufügen
+                  {t('fieldConfig.addHeading')}
                 </h3>
                 <p className="mt-1 text-xs text-gray-500">
-                  {definitions.length} von {MAX_CUSTOM_FIELDS} Feldern verwendet
+                  {t('fieldConfig.usage', { count: definitions.length, max: MAX_CUSTOM_FIELDS })}
                 </p>
               </div>
             </div>
@@ -202,8 +206,8 @@ export default function FieldConfigDialog({ open, onClose }: FieldConfigDialogPr
                 type="text"
                 value={newLabel}
                 maxLength={MAX_CUSTOM_FIELD_LABEL_LENGTH}
-                placeholder="z. B. Lichtstimmung"
-                aria-label="Bezeichnung des neuen Feldes"
+                placeholder={t('fieldConfig.newPlaceholder')}
+                aria-label={t('fieldConfig.newLabel')}
                 onChange={(event) => {
                   setNewLabel(event.target.value);
                   setMessage(null);
@@ -222,7 +226,7 @@ export default function FieldConfigDialog({ open, onClose }: FieldConfigDialogPr
                 disabled={definitions.length >= MAX_CUSTOM_FIELDS}
                 className="min-h-11 rounded-lg bg-blue-600 px-4 text-sm font-semibold text-white hover:bg-blue-700 disabled:cursor-not-allowed disabled:opacity-50"
               >
-                Hinzufügen
+                {t('fieldConfig.add')}
               </button>
             </div>
           </section>
@@ -231,18 +235,10 @@ export default function FieldConfigDialog({ open, onClose }: FieldConfigDialogPr
             <div className="flex items-center justify-between gap-4 max-sm:items-start">
               <div>
                 <h3 id="preset-title" className="text-sm font-semibold text-gray-900">
-                  Formatvorlage
+                  {t('fieldConfig.presetHeading')}
                 </h3>
                 <p className="mt-1 text-xs text-gray-500">
-                  Fehlende Felder für „
-                  {formatType === 'fotostory'
-                    ? 'Fotostory'
-                    : formatType === 'rede'
-                      ? 'Rede'
-                      : formatType === 'film'
-                        ? 'Film'
-                        : 'Eigenes Format'}
-                  “ ergänzen
+                  {t('fieldConfig.presetDescription', { format: t(FORMAT_KEYS[formatType]) })}
                 </p>
               </div>
               <button
@@ -251,18 +247,18 @@ export default function FieldConfigDialog({ open, onClose }: FieldConfigDialogPr
                 disabled={formatType === 'custom' || definitions.length >= MAX_CUSTOM_FIELDS}
                 className="min-h-11 shrink-0 rounded-lg border border-gray-300 px-3 text-sm font-semibold text-gray-700 hover:bg-gray-50 disabled:cursor-not-allowed disabled:opacity-50"
               >
-                Ergänzen
+                {t('fieldConfig.apply')}
               </button>
             </div>
           </section>
 
           <section className="mt-6 border-t border-gray-200 pt-5" aria-labelledby="fields-title">
             <h3 id="fields-title" className="text-sm font-semibold text-gray-900">
-              Aktive Zusatzfelder
+              {t('fieldConfig.activeHeading')}
             </h3>
             {definitions.length === 0 ? (
               <p className="mt-3 rounded-lg bg-gray-50 px-4 py-4 text-sm text-gray-600">
-                Noch keine Zusatzfelder angelegt.
+                {t('fieldConfig.empty')}
               </p>
             ) : (
               <div className="mt-3 space-y-2">
@@ -291,7 +287,7 @@ export default function FieldConfigDialog({ open, onClose }: FieldConfigDialogPr
             onClick={closeDialog}
             className="min-h-11 rounded-lg bg-gray-900 px-5 text-sm font-semibold text-white hover:bg-gray-800"
           >
-            Fertig
+            {t('fieldConfig.done')}
           </button>
         </footer>
       </div>

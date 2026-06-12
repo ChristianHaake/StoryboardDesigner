@@ -2,13 +2,14 @@ import JSZip from 'jszip';
 import { saveAs } from 'file-saver';
 import type { StoryboardProject } from '../types';
 import { decodeProject, MAX_SCENES, ProjectValidationError } from './projectCodec';
+import i18n from '../i18n';
 
 const MAX_IMAGE_BYTES = 10 * 1024 * 1024; // 10 MB pro Bild
 const MAX_TOTAL_IMAGE_BYTES = 100 * 1024 * 1024; // 100 MB dekomprimierte Bilder
 const MAX_DATA_JSON_BYTES = 5 * 1024 * 1024; // 5 MB Projektdaten
 const MAX_FILE_BYTES = 100 * 1024 * 1024; // 100 MB Gesamtdatei
 
-/** Import-Fehler mit nutzerfreundlicher deutscher Meldung. */
+/** Import-Fehler mit nutzerfreundlicher, übersetzter Meldung. */
 export class ImportError extends Error {}
 
 // internalStream ist dokumentierte JSZip-API (StreamHelper), fehlt aber in den
@@ -52,7 +53,7 @@ function entryToBytesLimited(
       chunks.push(chunk);
     });
     stream.on('error', () => {
-      if (!failed) reject(new ImportError('Die Datei ist beschädigt.'));
+      if (!failed) reject(new ImportError(i18n.t('errors.fileCorrupt')));
     });
     stream.on('end', () => {
       if (!failed) resolve(chunks);
@@ -74,16 +75,16 @@ export async function exportProject(
   images: Record<string, Blob>,
 ): Promise<void> {
   if (project.scenes.length > MAX_SCENES) {
-    throw new Error(`Zu viele Szenen (max. ${MAX_SCENES}).`);
+    throw new Error(i18n.t('errors.exportTooManyScenes', { max: MAX_SCENES }));
   }
   let totalImageBytes = 0;
   for (const image of Object.values(images)) {
     if (image.size > MAX_IMAGE_BYTES) {
-      throw new Error('Ein Bild ist zu groß (max. 10 MB).');
+      throw new Error(i18n.t('errors.exportImageTooLarge'));
     }
     totalImageBytes += image.size;
     if (totalImageBytes > MAX_TOTAL_IMAGE_BYTES) {
-      throw new Error('Bilder sind insgesamt zu groß (max. 100 MB).');
+      throw new Error(i18n.t('errors.exportImagesTooLarge'));
     }
   }
 
@@ -95,7 +96,7 @@ export async function exportProject(
   }));
   const dataJson = JSON.stringify({ ...project, scenes }, null, 2);
   if (new TextEncoder().encode(dataJson).byteLength > MAX_DATA_JSON_BYTES) {
-    throw new Error('Projektdaten sind zu groß (max. 5 MB).');
+    throw new Error(i18n.t('errors.exportDataTooLarge'));
   }
   zip.file('data.json', dataJson);
   for (const scene of scenes) {
@@ -103,7 +104,7 @@ export async function exportProject(
   }
   const blob = await zip.generateAsync({ type: 'blob' });
   if (blob.size > MAX_FILE_BYTES) {
-    throw new Error('Projektdatei ist zu groß (max. 100 MB).');
+    throw new Error(i18n.t('errors.exportFileTooLarge'));
   }
   saveAs(blob, `${sanitizeFileName(project.metaData.projectName)}.storyboard`);
 }
@@ -112,29 +113,29 @@ export async function importProject(
   file: Blob,
 ): Promise<{ project: StoryboardProject; images: Record<string, Blob> }> {
   if (file.size > MAX_FILE_BYTES) {
-    throw new ImportError('Datei ist zu groß (max. 100 MB).');
+    throw new ImportError(i18n.t('errors.fileTooLargeImport'));
   }
 
   let zip: JSZip;
   try {
     zip = await JSZip.loadAsync(file);
   } catch {
-    throw new ImportError('Das ist keine gültige .storyboard-Datei.');
+    throw new ImportError(i18n.t('errors.notStoryboard'));
   }
 
   const dataEntry = zip.file('data.json');
-  if (!dataEntry) throw new ImportError('Die Datei enthält keine data.json.');
+  if (!dataEntry) throw new ImportError(i18n.t('errors.noDataJson'));
 
   const dataChunks = await entryToBytesLimited(
     dataEntry,
     MAX_DATA_JSON_BYTES,
-    'Die Projektdaten sind zu groß (max. 5 MB).',
+    i18n.t('errors.importDataTooLarge'),
   );
   let raw: unknown;
   try {
     raw = JSON.parse(new TextDecoder().decode(await new Blob(dataChunks).arrayBuffer()));
   } catch {
-    throw new ImportError('Die Projektdaten (data.json) sind beschädigt.');
+    throw new ImportError(i18n.t('errors.dataCorrupt'));
   }
 
   let project: StoryboardProject;
@@ -142,7 +143,7 @@ export async function importProject(
     project = decodeProject(raw);
   } catch (error: unknown) {
     throw new ImportError(
-      error instanceof ProjectValidationError ? error.message : 'Ungültiges Projektformat.',
+      error instanceof ProjectValidationError ? error.message : i18n.t('errors.invalidFormat'),
     );
   }
 
@@ -162,7 +163,7 @@ export async function importProject(
     const chunks = await entryToBytesLimited(
       entry,
       MAX_IMAGE_BYTES,
-      `Bilder überschreiten das erlaubte Limit (10 MB pro Bild, 100 MB gesamt): ${scene.imageFileName}`,
+      i18n.t('errors.imagesTooLargeImport', { file: scene.imageFileName }),
       imageBudget,
     );
     const blob = new Blob(chunks);

@@ -1,5 +1,6 @@
 import { memo, useRef, useState } from 'react';
 import type { ChangeEvent } from 'react';
+import { useTranslation } from 'react-i18next';
 import { useSortable } from '@dnd-kit/sortable';
 import { CSS } from '@dnd-kit/utilities';
 import type { Scene } from '../../types';
@@ -18,6 +19,8 @@ interface SceneCardProps {
 }
 
 function SceneCard({ scene }: SceneCardProps) {
+  const { t } = useTranslation();
+  const n = scene.orderIndex + 1;
   const imageUrl = useStoryboardStore((s) => s.imageUrls[scene.id] ?? null);
   const fieldDefinitions = useStoryboardStore((s) => s.fieldDefinitions ?? EMPTY_FIELD_DEFINITIONS);
   const updateScene = useStoryboardStore((s) => s.updateScene);
@@ -59,14 +62,14 @@ function SceneCard({ scene }: SceneCardProps) {
     >
       <div className="mb-3 flex min-h-11 items-center justify-between gap-3 print:min-h-0">
         <h3 className="text-xs font-bold tracking-[0.14em] text-gray-700 uppercase">
-          Szene {scene.orderIndex + 1}
+          {t('scene.title', { n })}
         </h3>
         <div className="flex items-center gap-1 print:hidden">
           <button
             type="button"
             {...attributes}
             {...listeners}
-            aria-label={`Szene ${scene.orderIndex + 1} verschieben`}
+            aria-label={t('scene.move', { n })}
             className="inline-flex size-11 cursor-grab touch-none items-center justify-center rounded-lg text-gray-500 transition-colors hover:bg-gray-100 hover:text-gray-800 active:cursor-grabbing"
           >
             <svg width="18" height="18" viewBox="0 0 16 16" fill="currentColor" aria-hidden="true">
@@ -83,7 +86,7 @@ function SceneCard({ scene }: SceneCardProps) {
               type="button"
               onClick={() => duplicateScene(scene.id)}
               disabled={sceneLimitReached}
-              aria-label={`Szene ${scene.orderIndex + 1} duplizieren`}
+              aria-label={t('scene.duplicate', { n })}
               className="inline-flex size-11 items-center justify-center rounded-lg text-gray-500 transition-colors hover:bg-gray-100 hover:text-gray-800 disabled:cursor-not-allowed disabled:opacity-40"
             >
               <svg
@@ -102,7 +105,7 @@ function SceneCard({ scene }: SceneCardProps) {
             <button
               type="button"
               onClick={() => deleteScene(scene.id)}
-              aria-label={`Szene ${scene.orderIndex + 1} löschen`}
+              aria-label={t('scene.delete', { n })}
               className="inline-flex size-11 items-center justify-center rounded-lg text-gray-500 transition-colors hover:bg-red-50 hover:text-red-700"
             >
               <svg
@@ -129,19 +132,19 @@ function SceneCard({ scene }: SceneCardProps) {
               <button
                 type="button"
                 onClick={() => fileInputRef.current?.click()}
-                aria-label={`Bild der Szene ${scene.orderIndex + 1} ersetzen`}
+                aria-label={t('scene.imageReplace', { n })}
                 className="block w-full overflow-hidden rounded-lg"
               >
                 <img
                   src={imageUrl}
-                  alt={`Bild für Szene ${scene.orderIndex + 1}`}
+                  alt={t('scene.imageAlt', { n })}
                   className="aspect-square w-full object-cover max-sm:aspect-[4/3] print:aspect-square print:rounded-none"
                 />
               </button>
               <button
                 type="button"
                 onClick={() => removeSceneImage(scene.id)}
-                aria-label={`Bild der Szene ${scene.orderIndex + 1} entfernen`}
+                aria-label={t('scene.imageRemove', { n })}
                 className="absolute top-2 right-2 inline-flex size-11 items-center justify-center rounded-lg bg-white/95 text-gray-700 shadow-md transition-colors hover:bg-red-50 hover:text-red-700 print:hidden"
               >
                 <svg
@@ -164,7 +167,7 @@ function SceneCard({ scene }: SceneCardProps) {
               className="flex aspect-square w-full items-center justify-center rounded-lg border border-dashed border-gray-300 bg-gray-50 text-center text-sm font-medium text-gray-500 transition-colors hover:border-blue-400 hover:bg-blue-50 hover:text-blue-700 max-sm:aspect-[4/3] print:aspect-square print:border-gray-300"
             >
               <span className="print:hidden">
-                {imageError ? 'Bild nicht lesbar — JPG oder PNG verwenden' : '+ Bild hinzufügen'}
+                {imageError ? t('scene.imageError') : t('scene.imageAdd')}
               </span>
             </button>
           )}
@@ -180,33 +183,33 @@ function SceneCard({ scene }: SceneCardProps) {
         <div className="min-w-0 flex-1 space-y-3.5">
           <div>
             <label className={labelClass} htmlFor={`visual-${scene.id}`}>
-              Bildbeschreibung
+              {t('scene.visual')}
             </label>
             <AutoResizeTextarea
               id={`visual-${scene.id}`}
-              placeholder="Was ist zu sehen?"
+              placeholder={t('scene.visualPlaceholder')}
               value={scene.visualDescription}
               onChange={(e) => updateScene(scene.id, { visualDescription: e.target.value })}
             />
           </div>
           <div>
             <label className={labelClass} htmlFor={`audio-${scene.id}`}>
-              Text / Ton
+              {t('scene.audio')}
             </label>
             <AutoResizeTextarea
               id={`audio-${scene.id}`}
-              placeholder="Was wird gesagt oder gehört?"
+              placeholder={t('scene.audioPlaceholder')}
               value={scene.audioText}
               onChange={(e) => updateScene(scene.id, { audioText: e.target.value })}
             />
           </div>
           <div>
             <label className={labelClass} htmlFor={`notes-${scene.id}`}>
-              Regieanweisung
+              {t('scene.notes')}
             </label>
             <AutoResizeTextarea
               id={`notes-${scene.id}`}
-              placeholder="Kamera, Bewegung, Hinweise …"
+              placeholder={t('scene.notesPlaceholder')}
               value={scene.directorNotes}
               onChange={(e) => updateScene(scene.id, { directorNotes: e.target.value })}
             />
@@ -220,7 +223,7 @@ function SceneCard({ scene }: SceneCardProps) {
                 </label>
                 <AutoResizeTextarea
                   id={`custom-${definition.key}-${scene.id}`}
-                  placeholder={`${definition.label} eingeben`}
+                  placeholder={t('scene.customPlaceholder', { label: definition.label })}
                   value={value}
                   onChange={(event) =>
                     updateCustomField(scene.id, definition.key, event.target.value)

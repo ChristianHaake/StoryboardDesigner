@@ -15,6 +15,7 @@ import {
   mergeFormatPreset,
   validateCustomFieldLabel,
 } from '../utils/customFields';
+import i18n from '../i18n';
 
 function createEmptyScene(orderIndex: number): Scene {
   return {
@@ -173,7 +174,7 @@ export const useStoryboardStore = create<StoryboardState>((set) => ({
       error = validateCustomFieldLabel(label, definitions);
       if (error) return state;
       if (definitions.length >= MAX_CUSTOM_FIELDS) {
-        error = `Es sind maximal ${MAX_CUSTOM_FIELDS} Zusatzfelder möglich.`;
+        error = i18n.t('fields.maxFields', { max: MAX_CUSTOM_FIELDS });
         return state;
       }
       return {
@@ -190,7 +191,7 @@ export const useStoryboardStore = create<StoryboardState>((set) => ({
     set((state) => {
       const definitions = state.fieldDefinitions ?? [];
       if (!definitions.some((definition) => definition.key === key)) {
-        error = 'Das Feld wurde nicht gefunden.';
+        error = i18n.t('fields.notFound');
         return state;
       }
       error = validateCustomFieldLabel(label, definitions, key);
@@ -330,7 +331,7 @@ export const useStoryboardStore = create<StoryboardState>((set) => ({
       if (state.scenes.length >= MAX_SCENES) {
         return {
           lastDeleted: null,
-          errorMessage: `Rückgängig nicht möglich: maximal ${MAX_SCENES} Szenen.`,
+          errorMessage: i18n.t('fields.undoLimit', { max: MAX_SCENES }),
         };
       }
       const { scene, index, image } = state.lastDeleted;
