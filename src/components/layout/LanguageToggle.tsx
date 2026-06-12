@@ -14,7 +14,7 @@ export default function LanguageToggle({ className = '' }: LanguageToggleProps) 
     <div
       role="group"
       aria-label={t('language.label')}
-      className={`inline-flex shrink-0 rounded-lg border border-gray-300 bg-white p-0.5 ${className}`}
+      className={`inline-flex shrink-0 rounded-lg border border-slate-300 bg-slate-100 p-0.5 ${className}`}
     >
       {SUPPORTED_LANGUAGES.map((lng) => {
         const active = current === lng;
@@ -25,8 +25,8 @@ export default function LanguageToggle({ className = '' }: LanguageToggleProps) 
             onClick={() => void i18n.changeLanguage(lng)}
             aria-pressed={active}
             aria-label={t(lng === 'de' ? 'language.switchToDe' : 'language.switchToEn')}
-            className={`min-h-10 min-w-10 rounded-md px-2.5 text-sm font-semibold transition-colors ${
-              active ? 'bg-blue-600 text-white' : 'text-gray-600 hover:bg-gray-100'
+            className={`min-h-9 min-w-9 rounded-md px-2.5 text-sm font-semibold transition-colors ${
+              active ? 'bg-blue-600 text-white shadow-sm' : 'text-slate-600 hover:bg-white'
             }`}
           >
             {t(`language.${lng}`)}

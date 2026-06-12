@@ -4,6 +4,8 @@ import { useTranslation } from 'react-i18next';
 import TopBar from './components/layout/TopBar';
 import Footer from './components/layout/Footer';
 import Notifications from './components/layout/Notifications';
+import InfoBanner from './components/layout/InfoBanner';
+import HeroIntro from './components/layout/HeroIntro';
 import EditorView from './views/EditorView';
 
 // Lazy: react-markdown bleibt aus dem Editor-Bundle (Hilfe-Seiten selten besucht).
@@ -67,6 +69,8 @@ export default function App() {
               element={
                 <>
                   <TopBar />
+                  <InfoBanner />
+                  <HeroIntro />
                   <EditorView />
                   <Notifications />
                 </>

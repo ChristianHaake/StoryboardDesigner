@@ -12,6 +12,19 @@ const en: Translations = {
   common: {
     appTitle: 'StoryboardCreator',
   },
+  brand: {
+    tagline: 'Workshop for digital formats',
+    localPill: 'Content stays local',
+    eduNotice:
+      'This app runs entirely in your browser — your text and images stay on your device.',
+    eduNoticeLink: 'Privacy',
+    forEducators: 'For educators',
+  },
+  hero: {
+    kicker: 'PLAN · DESIGN · PRINT',
+    title: 'Create your storyboard.',
+    subtitle: 'Plan a film, photo story or speech scene by scene — no account, right in the browser.',
+  },
   language: {
     label: 'Language',
     de: 'DE',
