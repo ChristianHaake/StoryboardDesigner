@@ -5,7 +5,8 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
-    "build": "tsc -b && vite build",
+    "prebuild": "node scripts/clean-build-output.mjs",
+    "build": "tsc -b && vite build && node scripts/clean-cloudflare-assets.mjs",
     "preview": "vite preview",
     "lint": "eslint .",
     "format": "prettier --write \"src/**/*.{ts,tsx,css,md}\" \"*.{js,ts,json,md}\""
