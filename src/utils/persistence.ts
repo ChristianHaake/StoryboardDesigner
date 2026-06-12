@@ -1,5 +1,6 @@
 import { get, set } from 'idb-keyval';
 import type { StoryboardProject } from '../types';
+import { decodeProject } from './projectCodec';
 
 // IndexedDB statt localStorage: Bild-Blobs hängen am Projekt und werden
 // per Structured Clone nativ mitgespeichert.
@@ -14,6 +15,10 @@ export interface AutosavePayload {
 let timer: number | undefined;
 let pending = false;
 let saveSeq = 0;
+
+function isRecord(value: unknown): value is Record<string, unknown> {
+  return typeof value === 'object' && value !== null && !Array.isArray(value);
+}
 
 export function hasPendingAutosave(): boolean {
   return pending;
@@ -40,13 +45,21 @@ export function scheduleAutosave(payload: AutosavePayload): void {
 
 export async function loadAutosave(): Promise<AutosavePayload | undefined> {
   try {
-    const stored = await get<AutosavePayload | StoryboardProject>(AUTOSAVE_KEY);
+    const stored = await get<unknown>(AUTOSAVE_KEY);
     if (!stored) return undefined;
     // Legacy-Format (vor Sprint 3): nacktes StoryboardProject ohne Bilder.
-    if (!('project' in stored)) {
-      return { project: stored, images: {} };
+    if (!isRecord(stored) || !('project' in stored)) {
+      return { project: decodeProject(stored), images: {} };
     }
-    return stored;
+    const project = decodeProject(stored.project);
+    const sceneIds = new Set(project.scenes.map((scene) => scene.id));
+    const images: Record<string, Blob> = {};
+    if (typeof stored.images === 'object' && stored.images !== null) {
+      for (const [id, image] of Object.entries(stored.images)) {
+        if (sceneIds.has(id) && image instanceof Blob) images[id] = image;
+      }
+    }
+    return { project, images };
   } catch (error: unknown) {
     console.warn('Autosave konnte nicht geladen werden:', error);
     return undefined;

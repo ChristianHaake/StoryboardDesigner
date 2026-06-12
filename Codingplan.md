@@ -1,15 +1,15 @@
-Hier ist der technische Umsetzungsplan für die Architektur und Entwicklung der Storyboard-App. Die Konzeption ist auf Skalierbarkeit, Wartbarkeit und den reinen Client-Betrieb (Cloudflare Pages) ausgelegt.
+Hier ist der technische Umsetzungsplan für die Architektur und Entwicklung der Storyboard-App. Die Konzeption ist auf Skalierbarkeit, Wartbarkeit und den reinen Client-Betrieb mit Cloudflare Workers Static Assets ausgelegt.
 
 ### 1. Tech-Stack
 
-* **Build-Tool & Framework:** Vite mit React und TypeScript. TypeScript sorgt für Typsicherheit beim Datenmodell, was bei zukünftigen Erweiterungen der JSON-Struktur Fehler verhindert.
-* **State Management:** Zustand. Ein leichtgewichtiger Store, ideal für die Verwaltung lokaler App-Zustände ohne den Boilerplate-Code von Redux.
-* **Styling:** Tailwind CSS für schnelles, komponentenbezogenes Styling.
-* **Drag & Drop:** `@dnd-kit/core` und `@dnd-kit/sortable`. Barrierefrei, touch-kompatibel und performant.
-* **ZIP-Verarbeitung:** `jszip` und `file-saver`. Zum Packen und Entpacken der `.storyboard`-Dateien direkt im Browser-Speicher.
-* **Autosave:** `idb-keyval`. Debounced-Speicherung des Projektzustands inklusive Bild-Blobs in IndexedDB (localStorage ist für Bilder zu klein), damit bei Reload, Tab-Schließung oder Tablet-Sperre keine Arbeit verloren geht.
-* **Markdown-Rendering:** `react-markdown`. Zum Parsen der `.md`-Dateien (Impressum, Datenschutz, Hilfetexte).
-* **Routing:** `react-router-dom`. Für die Navigation zwischen Editor, Impressum und anderen statischen Seiten.
+- **Build-Tool & Framework:** Vite mit React und TypeScript. TypeScript sorgt für Typsicherheit beim Datenmodell, was bei zukünftigen Erweiterungen der JSON-Struktur Fehler verhindert.
+- **State Management:** Zustand. Ein leichtgewichtiger Store, ideal für die Verwaltung lokaler App-Zustände ohne den Boilerplate-Code von Redux.
+- **Styling:** Tailwind CSS für schnelles, komponentenbezogenes Styling.
+- **Drag & Drop:** `@dnd-kit/core` und `@dnd-kit/sortable`. Barrierefrei, touch-kompatibel und performant.
+- **ZIP-Verarbeitung:** `jszip` und `file-saver`. Zum Packen und Entpacken der `.storyboard`-Dateien direkt im Browser-Speicher.
+- **Autosave:** `idb-keyval`. Debounced-Speicherung des Projektzustands inklusive Bild-Blobs in IndexedDB (localStorage ist für Bilder zu klein), damit bei Reload, Tab-Schließung oder Tablet-Sperre keine Arbeit verloren geht.
+- **Markdown-Rendering:** `react-markdown`. Zum Parsen der `.md`-Dateien (Impressum, Datenschutz, Hilfetexte).
+- **Routing:** `react-router-dom`. Für die Navigation zwischen Editor, Impressum und anderen statischen Seiten.
 
 ---
 
@@ -58,7 +58,6 @@ export interface StoryboardProject {
   fieldDefinitions?: CustomFieldDefinition[]; // optional, wird erst ab v1.1 genutzt
   scenes: Scene[];
 }
-
 ```
 
 ---
@@ -145,9 +144,9 @@ Der State `Scene` enthält ein Objekt `customFields`, das Projekt-Interface ein 
 
 ### 5. Entwicklungsphasen (Meilensteine)
 
-* **Phase 1: Setup & State:** Initialisierung von Vite, Tailwind und Zustand. Definition des Store-Modells inklusive CRUD-Operationen für Szenen.
-* **Phase 2: Layout & Markdown:** Aufbau des zweigeteilten Layouts (Sidebar + Main). Implementierung des Routers und der Markdown-View für das Impressum.
-* **Phase 3: Editor & Drag-and-Drop:** Entwicklung der Szenen-Karten mit Eingabefeldern und Bild-Upload (Downscaling, Object-URL-Handling inkl. Revocation). Integration von `dnd-kit` für die Sortierung. Print-CSS und erster Drucktest auf Zielgeräten.
-* **Phase 4: Import / Export & Autosave:** Programmierung des `zipHandler.ts` (Generierung und fehlerfreies Einlesen der `.storyboard`-Dateien) sowie des IndexedDB-Autosaves (`persistence.ts`).
-* **Phase 5: Feinschliff & Print:** Markdown-Seiten, responsives Design, finale Print-CSS-Abnahme auf iPad Safari.
-* **Phase 6: Deployment:** Konfiguration des Repositories für das automatische Deployment auf Cloudflare Pages.
+- **Phase 1: Setup & State:** Initialisierung von Vite, Tailwind und Zustand. Definition des Store-Modells inklusive CRUD-Operationen für Szenen.
+- **Phase 2: Layout & Markdown:** Aufbau der dokumentenzentrierten Ansicht ohne Sidebar. Implementierung des Routers und der Markdown-View für statische Inhalte.
+- **Phase 3: Editor & Drag-and-Drop:** Entwicklung der Szenen-Karten mit Eingabefeldern und Bild-Upload (Downscaling, Object-URL-Handling inkl. Revocation). Integration von `dnd-kit` für die Sortierung. Print-CSS und erster Drucktest auf Zielgeräten.
+- **Phase 4: Import / Export & Autosave:** Programmierung des `zipHandler.ts` (Generierung und fehlerfreies Einlesen der `.storyboard`-Dateien) sowie des IndexedDB-Autosaves (`persistence.ts`).
+- **Phase 5: Feinschliff & Print:** Markdown-Seiten, responsives Design, finale Print-CSS-Abnahme auf iPad Safari.
+- **Phase 6: Deployment:** Konfiguration des Repositories für das automatische Deployment über Cloudflare Workers Static Assets.

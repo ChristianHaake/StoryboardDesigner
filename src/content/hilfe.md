@@ -57,4 +57,4 @@ Hast du das Gerät oder den Browser gewechselt? Die automatische Sicherung gilt 
 Nein. Alles bleibt auf deinem Gerät. Es wird nichts ins Internet hochgeladen.
 
 **Wie viele Szenen kann ich anlegen?**
-So viele du brauchst. Für einen Kurzfilm reichen meist 8–15 Szenen.
+Bis zu 200. Für einen Kurzfilm reichen meist 8–15 Szenen.
