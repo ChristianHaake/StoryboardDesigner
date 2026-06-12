@@ -33,7 +33,7 @@ export default function AutoResizeTextarea({ className = '', onInput, ...props }
         resize(e.currentTarget);
         onInput?.(e);
       }}
-      className={`w-full resize-none overflow-hidden bg-transparent text-gray-900 outline-none placeholder:text-gray-400 print:placeholder:text-transparent ${className}`}
+      className={`w-full resize-none overflow-hidden rounded-lg border border-transparent bg-gray-50 px-3 py-2.5 text-sm leading-6 text-gray-900 transition-colors placeholder:text-gray-400 hover:bg-gray-100 focus:border-blue-500 focus:bg-white focus:outline-none focus:ring-3 focus:ring-blue-100 print:rounded-none print:border-0 print:bg-transparent print:px-0 print:py-0 print:ring-0 print:placeholder:text-transparent ${className}`}
     />
   );
 }

@@ -47,73 +47,75 @@ function SceneCard({ scene }: SceneCardProps) {
     <article
       ref={setNodeRef}
       style={{ transform: CSS.Transform.toString(transform), transition }}
-      className={`group relative break-inside-avoid rounded-md border border-gray-200 p-4 print:rounded-none print:border-gray-300 ${
-        isDragging ? 'z-10 bg-white opacity-90 shadow-lg' : ''
+      className={`group relative break-inside-avoid rounded-xl border border-gray-200 bg-white p-4 transition-[border-color,box-shadow] hover:border-gray-300 hover:shadow-sm sm:p-5 print:rounded-none print:border-gray-300 print:p-3 ${
+        isDragging ? 'z-10 border-blue-300 bg-white opacity-95 shadow-xl' : ''
       }`}
     >
-      {/* Kontextaktionen: Hover/Fokus, auf Touch-Geräten dezent permanent */}
-      <div className="absolute -top-3 right-3 flex gap-1 opacity-0 transition-opacity group-focus-within:opacity-100 group-hover:opacity-100 pointer-coarse:opacity-100 print:hidden">
-        <button
-          type="button"
-          {...attributes}
-          {...listeners}
-          aria-label={`Szene ${scene.orderIndex + 1} verschieben`}
-          className="cursor-grab touch-none rounded-md border border-gray-300 bg-white px-2 py-1 text-gray-500 hover:bg-gray-100 active:cursor-grabbing"
-        >
-          <svg width="14" height="14" viewBox="0 0 16 16" fill="currentColor" aria-hidden="true">
-            <circle cx="5" cy="3" r="1.5" />
-            <circle cx="11" cy="3" r="1.5" />
-            <circle cx="5" cy="8" r="1.5" />
-            <circle cx="11" cy="8" r="1.5" />
-            <circle cx="5" cy="13" r="1.5" />
-            <circle cx="11" cy="13" r="1.5" />
-          </svg>
-        </button>
-        <button
-          type="button"
-          onClick={() => duplicateScene(scene.id)}
-          disabled={sceneLimitReached}
-          aria-label={`Szene ${scene.orderIndex + 1} duplizieren`}
-          className="rounded-md border border-gray-300 bg-white px-2 py-1 text-gray-500 hover:bg-gray-100 disabled:cursor-not-allowed disabled:opacity-40"
-        >
-          <svg
-            width="14"
-            height="14"
-            viewBox="0 0 16 16"
-            fill="none"
-            stroke="currentColor"
-            strokeWidth="1.5"
-            aria-hidden="true"
+      <div className="mb-3 flex min-h-11 items-center justify-between gap-3 print:min-h-0">
+        <h3 className="text-xs font-bold tracking-[0.14em] text-gray-700 uppercase">
+          Szene {scene.orderIndex + 1}
+        </h3>
+        <div className="flex items-center gap-1 print:hidden">
+          <button
+            type="button"
+            {...attributes}
+            {...listeners}
+            aria-label={`Szene ${scene.orderIndex + 1} verschieben`}
+            className="inline-flex size-11 cursor-grab touch-none items-center justify-center rounded-lg text-gray-500 transition-colors hover:bg-gray-100 hover:text-gray-800 active:cursor-grabbing"
           >
-            <rect x="5" y="5" width="9" height="9" rx="1" />
-            <path d="M11 5V3a1 1 0 0 0-1-1H3a1 1 0 0 0-1 1v7a1 1 0 0 0 1 1h2" />
-          </svg>
-        </button>
-        <button
-          type="button"
-          onClick={() => deleteScene(scene.id)}
-          aria-label={`Szene ${scene.orderIndex + 1} löschen`}
-          className="rounded-md border border-gray-300 bg-white px-2 py-1 text-gray-500 hover:bg-red-50 hover:text-red-600"
-        >
-          <svg
-            width="14"
-            height="14"
-            viewBox="0 0 16 16"
-            fill="none"
-            stroke="currentColor"
-            strokeWidth="1.5"
-            aria-hidden="true"
-          >
-            <path d="M2 4h12M5.5 4V2.5a1 1 0 0 1 1-1h3a1 1 0 0 1 1 1V4M6 7v5M10 7v5M3.5 4l.7 9.3a1 1 0 0 0 1 .7h5.6a1 1 0 0 0 1-.7L12.5 4" />
-          </svg>
-        </button>
+            <svg width="18" height="18" viewBox="0 0 16 16" fill="currentColor" aria-hidden="true">
+              <circle cx="5" cy="3" r="1.5" />
+              <circle cx="11" cy="3" r="1.5" />
+              <circle cx="5" cy="8" r="1.5" />
+              <circle cx="11" cy="8" r="1.5" />
+              <circle cx="5" cy="13" r="1.5" />
+              <circle cx="11" cy="13" r="1.5" />
+            </svg>
+          </button>
+          <div className="flex items-center gap-1 opacity-0 transition-opacity group-focus-within:opacity-100 group-hover:opacity-100 max-sm:opacity-100 pointer-coarse:opacity-100">
+            <button
+              type="button"
+              onClick={() => duplicateScene(scene.id)}
+              disabled={sceneLimitReached}
+              aria-label={`Szene ${scene.orderIndex + 1} duplizieren`}
+              className="inline-flex size-11 items-center justify-center rounded-lg text-gray-500 transition-colors hover:bg-gray-100 hover:text-gray-800 disabled:cursor-not-allowed disabled:opacity-40"
+            >
+              <svg
+                width="18"
+                height="18"
+                viewBox="0 0 16 16"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="1.5"
+                aria-hidden="true"
+              >
+                <rect x="5" y="5" width="9" height="9" rx="1" />
+                <path d="M11 5V3a1 1 0 0 0-1-1H3a1 1 0 0 0-1 1v7a1 1 0 0 0 1 1h2" />
+              </svg>
+            </button>
+            <button
+              type="button"
+              onClick={() => deleteScene(scene.id)}
+              aria-label={`Szene ${scene.orderIndex + 1} löschen`}
+              className="inline-flex size-11 items-center justify-center rounded-lg text-gray-500 transition-colors hover:bg-red-50 hover:text-red-700"
+            >
+              <svg
+                width="18"
+                height="18"
+                viewBox="0 0 16 16"
+                fill="none"
+                stroke="currentColor"
+                strokeWidth="1.5"
+                aria-hidden="true"
+              >
+                <path d="M2 4h12M5.5 4V2.5a1 1 0 0 1 1-1h3a1 1 0 0 1 1 1V4M6 7v5M10 7v5M3.5 4l.7 9.3a1 1 0 0 0 1 .7h5.6a1 1 0 0 0 1-.7L12.5 4" />
+              </svg>
+            </button>
+          </div>
+        </div>
       </div>
 
-      <h3 className="text-xs font-semibold uppercase tracking-wide text-gray-700">
-        Szene {scene.orderIndex + 1}
-      </h3>
-
-      <div className="mt-3 flex gap-4 max-sm:flex-col">
+      <div className="flex gap-5 max-sm:flex-col max-sm:gap-4">
         {/* Medien-Feld */}
         <div className={`relative w-48 shrink-0 max-sm:w-full ${imageUrl ? '' : 'print:hidden'}`}>
           {imageUrl ? (
@@ -122,23 +124,23 @@ function SceneCard({ scene }: SceneCardProps) {
                 type="button"
                 onClick={() => fileInputRef.current?.click()}
                 aria-label={`Bild der Szene ${scene.orderIndex + 1} ersetzen`}
-                className="block w-full"
+                className="block w-full overflow-hidden rounded-lg"
               >
                 <img
                   src={imageUrl}
                   alt={`Bild für Szene ${scene.orderIndex + 1}`}
-                  className="aspect-square w-full rounded-md object-cover print:rounded-none"
+                  className="aspect-square w-full object-cover max-sm:aspect-[4/3] print:aspect-square print:rounded-none"
                 />
               </button>
               <button
                 type="button"
                 onClick={() => removeSceneImage(scene.id)}
                 aria-label={`Bild der Szene ${scene.orderIndex + 1} entfernen`}
-                className="absolute top-1.5 right-1.5 rounded-md bg-white/90 px-2 py-1 text-gray-600 shadow-sm hover:bg-red-50 hover:text-red-600 print:hidden"
+                className="absolute top-2 right-2 inline-flex size-11 items-center justify-center rounded-lg bg-white/95 text-gray-700 shadow-md transition-colors hover:bg-red-50 hover:text-red-700 print:hidden"
               >
                 <svg
-                  width="12"
-                  height="12"
+                  width="16"
+                  height="16"
                   viewBox="0 0 16 16"
                   fill="none"
                   stroke="currentColor"
@@ -153,7 +155,7 @@ function SceneCard({ scene }: SceneCardProps) {
             <button
               type="button"
               onClick={() => fileInputRef.current?.click()}
-              className="flex aspect-square w-full items-center justify-center rounded-md border-2 border-dashed border-gray-300 text-center text-xs text-gray-400 hover:border-blue-500 hover:text-blue-600 print:border-gray-300"
+              className="flex aspect-square w-full items-center justify-center rounded-lg border border-dashed border-gray-300 bg-gray-50 text-center text-sm font-medium text-gray-500 transition-colors hover:border-blue-400 hover:bg-blue-50 hover:text-blue-700 max-sm:aspect-[4/3] print:aspect-square print:border-gray-300"
             >
               <span className="print:hidden">
                 {imageError ? 'Bild nicht lesbar — JPG oder PNG verwenden' : '+ Bild hinzufügen'}
@@ -169,7 +171,7 @@ function SceneCard({ scene }: SceneCardProps) {
           />
         </div>
 
-        <div className="min-w-0 flex-1 space-y-3">
+        <div className="min-w-0 flex-1 space-y-3.5">
           <div>
             <label className={labelClass} htmlFor={`visual-${scene.id}`}>
               Bildbeschreibung

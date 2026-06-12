@@ -28,18 +28,18 @@ export default function Notifications() {
   if (!lastDeleted && !errorMessage) return null;
 
   return (
-    <div className="fixed bottom-6 left-1/2 z-20 flex -translate-x-1/2 flex-col items-center gap-2 print:hidden">
+    <div className="fixed right-4 bottom-4 left-4 z-20 flex flex-col items-center gap-2 sm:right-auto sm:left-1/2 sm:-translate-x-1/2 print:hidden">
       {errorMessage && (
         <div
           role="alert"
-          className="flex items-center gap-4 rounded-md bg-red-700 px-4 py-3 text-sm text-white shadow-lg"
+          className="flex w-full max-w-lg items-center justify-between gap-4 rounded-xl bg-red-700 px-4 py-3 text-sm text-white shadow-xl shadow-red-950/15"
         >
           <span>{errorMessage}</span>
           <button
             type="button"
             onClick={clearErrorMessage}
             aria-label="Meldung schließen"
-            className="font-semibold underline-offset-2 hover:underline"
+            className="min-h-11 shrink-0 rounded-lg px-3 font-semibold hover:bg-white/10"
           >
             OK
           </button>
@@ -48,13 +48,13 @@ export default function Notifications() {
       {lastDeleted && (
         <div
           role="status"
-          className="flex items-center gap-4 rounded-md bg-gray-900 px-4 py-3 text-sm text-white shadow-lg"
+          className="flex w-full max-w-lg items-center justify-between gap-4 rounded-xl bg-gray-950 px-4 py-3 text-sm text-white shadow-xl shadow-gray-950/20"
         >
           <span>Szene {lastDeleted.index + 1} gelöscht</span>
           <button
             type="button"
             onClick={undoDelete}
-            className="font-semibold text-blue-300 underline-offset-2 hover:underline"
+            className="min-h-11 shrink-0 rounded-lg px-3 font-semibold text-blue-300 hover:bg-white/10"
           >
             Rückgängig
           </button>

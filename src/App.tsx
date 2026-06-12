@@ -47,7 +47,7 @@ export default function App() {
 
   return (
     <BrowserRouter>
-      <div className="flex min-h-screen flex-col bg-gray-200 print:bg-white">
+      <div className="flex min-h-screen flex-col bg-gray-200 text-gray-900 print:bg-white">
         <Suspense fallback={null}>
           <Routes>
             <Route
