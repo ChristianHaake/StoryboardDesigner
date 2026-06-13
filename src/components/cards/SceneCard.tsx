@@ -58,8 +58,10 @@ function SceneCard({ scene }: SceneCardProps) {
   return (
     <article
       ref={setNodeRef}
+      id={`scene-${scene.id}`}
+      tabIndex={-1}
       style={{ transform: CSS.Transform.toString(transform), transition }}
-      className={`group relative break-inside-avoid rounded-xl border border-slate-200 bg-white p-4 shadow-sm transition-[border-color,box-shadow] hover:border-slate-300 hover:shadow-md sm:p-5 print:rounded-none print:border-slate-300 print:p-3 print:shadow-none ${
+      className={`group relative scroll-mt-24 break-inside-avoid rounded-xl border border-slate-200 bg-white p-4 shadow-sm transition-[border-color,box-shadow] hover:border-slate-300 hover:shadow-md focus-visible:border-blue-400 sm:p-5 print:rounded-none print:border-slate-300 print:p-3 print:shadow-none ${
         isDragging ? 'z-10 border-blue-300 bg-white opacity-95 shadow-xl' : ''
       }`}
     >
@@ -79,6 +81,7 @@ function SceneCard({ scene }: SceneCardProps) {
             {...attributes}
             {...listeners}
             aria-label={t('scene.move', { n })}
+            title={t('scene.move', { n })}
             className="inline-flex size-11 cursor-grab touch-none items-center justify-center rounded-lg text-slate-500 transition-colors hover:bg-slate-100 hover:text-slate-800 active:cursor-grabbing"
           >
             <svg width="18" height="18" viewBox="0 0 16 16" fill="currentColor" aria-hidden="true">
@@ -96,6 +99,7 @@ function SceneCard({ scene }: SceneCardProps) {
               onClick={() => duplicateScene(scene.id)}
               disabled={sceneLimitReached}
               aria-label={t('scene.duplicate', { n })}
+              title={t('scene.duplicate', { n })}
               className="inline-flex size-11 items-center justify-center rounded-lg text-slate-500 transition-colors hover:bg-slate-100 hover:text-slate-800 disabled:cursor-not-allowed disabled:opacity-40"
             >
               <svg
@@ -115,6 +119,7 @@ function SceneCard({ scene }: SceneCardProps) {
               type="button"
               onClick={() => deleteScene(scene.id)}
               aria-label={t('scene.delete', { n })}
+              title={t('scene.delete', { n })}
               className="inline-flex size-11 items-center justify-center rounded-lg text-slate-500 transition-colors hover:bg-red-50 hover:text-red-700"
             >
               <svg
@@ -154,6 +159,7 @@ function SceneCard({ scene }: SceneCardProps) {
                 type="button"
                 onClick={() => removeSceneImage(scene.id)}
                 aria-label={t('scene.imageRemove', { n })}
+                title={t('scene.imageRemove', { n })}
                 className="absolute top-2 right-2 inline-flex size-11 items-center justify-center rounded-lg bg-white/95 text-slate-700 shadow-md transition-colors hover:bg-red-50 hover:text-red-700 print:hidden"
               >
                 <svg

@@ -6,12 +6,18 @@ import Footer from './components/layout/Footer';
 import Notifications from './components/layout/Notifications';
 import HeroIntro from './components/layout/HeroIntro';
 import FormatTabs from './components/layout/FormatTabs';
+import OnboardingOverlay from './components/layout/OnboardingOverlay';
 import EditorView from './views/EditorView';
 
 // Lazy: react-markdown bleibt aus dem Editor-Bundle (Hilfe-Seiten selten besucht).
 const MarkdownView = lazy(() => import('./views/MarkdownView'));
 import { useStoryboardStore, selectProject } from './store/useStoryboardStore';
-import { hasPendingAutosave, loadAutosave, scheduleAutosave } from './utils/persistence';
+import {
+  hasPendingAutosave,
+  loadAutosave,
+  scheduleAutosave,
+  setAutosaveStatusListener,
+} from './utils/persistence';
 import hilfeDe from './content/hilfe.md?raw';
 import hilfeEn from './content/hilfe.en.md?raw';
 import datenschutzText from './content/datenschutz.md?raw';
@@ -39,7 +45,24 @@ export default function App() {
       if (!state.touched) state.loadProject(payload.project, payload.images);
     });
 
-    const unsubscribe = useStoryboardStore.subscribe((state) => {
+    // Speicherhinweis aus dem Autosave-Lifecycle speisen (#6a).
+    setAutosaveStatusListener((status) => {
+      useStoryboardStore.getState().setSaveStatus(status);
+    });
+
+    // Nur bei echten Inhaltsänderungen speichern. Reine UI-State-Updates
+    // (saveStatus, feedbackMode, Notifications) dürfen keinen Autosave auslösen —
+    // sonst entsteht über setSaveStatus eine Endlosschleife.
+    const unsubscribe = useStoryboardStore.subscribe((state, prev) => {
+      if (
+        state.metaData === prev.metaData &&
+        state.prePlanning === prev.prePlanning &&
+        state.fieldDefinitions === prev.fieldDefinitions &&
+        state.scenes === prev.scenes &&
+        state.images === prev.images
+      ) {
+        return;
+      }
       scheduleAutosave({ project: selectProject(state), images: state.images });
     });
 
@@ -55,6 +78,7 @@ export default function App() {
     return () => {
       cancelled = true;
       unsubscribe();
+      setAutosaveStatusListener(null);
       window.removeEventListener('beforeunload', onBeforeUnload);
     };
   }, []);
@@ -89,6 +113,7 @@ export default function App() {
           </Routes>
         </Suspense>
         <Footer />
+        <OnboardingOverlay />
       </div>
     </BrowserRouter>
   );

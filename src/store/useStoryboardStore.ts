@@ -32,12 +32,6 @@ function createEmptyScene(orderIndex: number): Scene {
   };
 }
 
-// Lokales Datum, nicht UTC — toISOString() würde nach Mitternacht CET den Vortag liefern.
-function todayLocalISO(): string {
-  const d = new Date();
-  return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
-}
-
 function createInitialMetaData(): MetaData {
   return {
     id: generateId(),
@@ -45,7 +39,8 @@ function createInitialMetaData(): MetaData {
     participants: '',
     subject: '',
     formatType: 'film',
-    date: todayLocalISO(),
+    // Kein Vorbelegen mit heute — Nutzer wählt das Projektdatum selbst (#8).
+    date: '',
   };
 }
 
@@ -83,12 +78,16 @@ interface StoryboardState {
   /** Feedback-Modus (Lehrkraft-Sicht): blendet die Kommentar-UI je Szene ein.
    *  Reine Ansichtseinstellung, nicht Teil des Projekts/Autosaves. */
   feedbackMode: boolean;
+  /** Autosave-Status für den sichtbaren Speicherhinweis (#6a). Reine UI-State,
+   *  nicht Teil des Projekts/Autosaves. */
+  saveStatus: 'idle' | 'saving' | 'saved' | 'error';
   updateMetaData: (patch: Partial<MetaData>) => void;
   setFormatType: (formatType: MetaData['formatType']) => number;
   updatePrePlanning: (patch: Partial<PrePlanning>) => void;
   updateScene: (id: string, patch: Partial<Scene>) => void;
   updateCustomField: (sceneId: string, fieldKey: string, value: string) => void;
   toggleFeedbackMode: () => void;
+  setSaveStatus: (status: StoryboardState['saveStatus']) => void;
   addComment: (sceneId: string, text: string) => void;
   toggleCommentDone: (sceneId: string, commentId: string) => void;
   deleteComment: (sceneId: string, commentId: string) => void;
@@ -107,6 +106,7 @@ interface StoryboardState {
   setErrorMessage: (message: string) => void;
   clearErrorMessage: () => void;
   moveScene: (activeId: string, overId: string) => void;
+  resetProject: () => void;
   loadProject: (
     project: StoryboardProject,
     images?: Record<string, Blob>,
@@ -126,6 +126,7 @@ export const useStoryboardStore = create<StoryboardState>((set) => ({
   lastDeleted: null,
   errorMessage: null,
   feedbackMode: false,
+  saveStatus: 'idle',
 
   updateMetaData: (patch) =>
     set((state) => ({
@@ -181,6 +182,9 @@ export const useStoryboardStore = create<StoryboardState>((set) => ({
     })),
 
   toggleFeedbackMode: () => set((state) => ({ feedbackMode: !state.feedbackMode })),
+
+  // Kein touched: true — Speicherstatus ist kein Nutzerinhalt.
+  setSaveStatus: (saveStatus) => set({ saveStatus }),
 
   addComment: (sceneId, text) =>
     set((state) => {
@@ -460,6 +464,24 @@ export const useStoryboardStore = create<StoryboardState>((set) => ({
       const [moved] = scenes.splice(from, 1);
       scenes.splice(to, 0, moved);
       return { touched: true, hasContent: true, scenes: renumber(scenes) };
+    }),
+
+  resetProject: () =>
+    set((state) => {
+      // Alle Object-URLs freigeben, bevor der State auf Anfang gesetzt wird.
+      Object.values(state.imageUrls).forEach((url) => URL.revokeObjectURL(url));
+      return {
+        metaData: createInitialMetaData(),
+        prePlanning: initialPrePlanning,
+        fieldDefinitions: getFormatPreset('film'),
+        scenes: [],
+        images: {},
+        imageUrls: {},
+        touched: false,
+        hasContent: false,
+        lastDeleted: null,
+        errorMessage: null,
+      };
     }),
 
   loadProject: (project, images = {}, markTouched = false) =>

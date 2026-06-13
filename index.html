@@ -2,10 +2,23 @@
 <html lang="de">
   <head>
     <meta charset="UTF-8" />
-    <meta name="color-scheme" content="light" />
+    <meta name="color-scheme" content="light dark" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <!-- lang wird nach dem Mount per i18n-Sprache aktualisiert (App.tsx). -->
     <title>StoryboardDesigner</title>
+    <!-- Theme/Schriftgröße vor dem ersten Paint setzen, sonst Flash (#2). -->
+    <script>
+      (function () {
+        try {
+          var t = localStorage.getItem('theme');
+          if (t === 'dark' || t === 'contrast')
+            document.documentElement.setAttribute('data-theme', t);
+          var f = localStorage.getItem('fontScale');
+          if (f === 'large' || f === 'xlarge')
+            document.documentElement.setAttribute('data-font', f);
+        } catch (e) {}
+      })();
+    </script>
   </head>
   <body>
     <div id="root"></div>

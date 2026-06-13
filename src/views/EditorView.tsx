@@ -20,6 +20,7 @@ import type { MetaData } from '../types';
 import { inputClass, labelClass } from '../components/forms/fieldStyles';
 import { MAX_SCENES } from '../utils/projectCodec';
 import FieldConfigDialog from '../components/forms/FieldConfigDialog';
+import SceneNavigator from '../components/layout/SceneNavigator';
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 
@@ -207,6 +208,7 @@ export default function EditorView() {
               {t('editor.configureFields')}
             </button>
           </div>
+          <SceneNavigator />
           <DndContext
             sensors={sensors}
             collisionDetection={closestCenter}

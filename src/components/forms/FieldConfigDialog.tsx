@@ -66,6 +66,7 @@ function FieldDefinitionRow({
           type="button"
           onClick={() => onDelete(definition.key, definition.label)}
           aria-label={t('fieldConfig.deleteField', { label: definition.label })}
+          title={t('fieldConfig.deleteField', { label: definition.label })}
           className="inline-flex size-11 items-center justify-center rounded-lg text-slate-500 hover:bg-red-50 hover:text-red-700"
         >
           <svg
@@ -214,6 +215,7 @@ export default function FieldConfigDialog({ open, onClose }: FieldConfigDialogPr
             type="button"
             onClick={closeDialog}
             aria-label={t('fieldConfig.close')}
+            title={t('fieldConfig.close')}
             className="inline-flex size-11 shrink-0 items-center justify-center rounded-lg text-slate-500 hover:bg-slate-100 hover:text-slate-900"
           >
             <svg

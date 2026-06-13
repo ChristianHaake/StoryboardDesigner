@@ -28,7 +28,7 @@ https://github.com/ChristianHaake/haak3-webapp-standard
 ## App-specific rules
 
 - App name: `StoryboardDesigner`
-- Live URL: `TODO: confirm Cloudflare Workers URL before publishing`
+- Live URL (stage): `https://stage-storyboarddesigner.notionsworker.workers.dev/`
 - Repository: `https://github.com/ChristianHaake/StoryboardDesigner`
 - Client-only React 19 + Vite app. Projects stored locally as `.storyboard`
   ZIP files (`data.json` + images). No backend, no accounts, no data transfer.

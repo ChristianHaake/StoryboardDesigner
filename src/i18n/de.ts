@@ -4,6 +4,39 @@ const de = {
   common: {
     appTitle: 'StoryboardDesigner',
   },
+  save: {
+    saving: 'Speichern …',
+    saved: 'Gespeichert',
+    error: 'Nicht gespeichert',
+  },
+  navigator: {
+    label: 'Szenen-Navigation',
+    heading: 'Szenen',
+    jump: 'Zu Szene {{n}} springen',
+  },
+  onboarding: {
+    kicker: 'Erste Schritte',
+    step1Title: 'Format wählen',
+    step1Body: 'Wähle oben ein Format — Film, Fotostory oder Rede. Passende Felder werden automatisch ergänzt.',
+    step2Title: 'Szenen aufbauen',
+    step2Body: 'Füge Szenen hinzu und beschreibe Bild, Ton und Notizen. Per Drag-and-Drop oder Szenen-Navigation behältst du den Überblick.',
+    step3Title: 'Anpassen & sichern',
+    step3Body: 'Über „Felder konfigurieren" ergänzt du eigene Felder. Speichere als .storyboard-Datei oder exportiere ein PDF.',
+    skip: 'Überspringen',
+    back: 'Zurück',
+    next: 'Weiter',
+    done: 'Los geht’s',
+  },
+  display: {
+    themeLabel: 'Darstellung: {{mode}}. Klicken zum Wechseln.',
+    themeLight: 'Hell',
+    themeDark: 'Dunkel',
+    themeContrast: 'Hoher Kontrast',
+    fontLabel: 'Schriftgröße: {{size}}. Klicken zum Wechseln.',
+    fontNormal: 'Normal',
+    fontLarge: 'Groß',
+    fontXlarge: 'Sehr groß',
+  },
   brand: {
     tagline: 'Workshop für digitale Formate',
     localPill: 'Inhalte bleiben lokal',
@@ -35,6 +68,9 @@ const de = {
     pdfFallbackName: 'Storyboard',
     confirmReplace:
       'Aktuelles Projekt ersetzen? Es wird durch die geladene Datei überschrieben.',
+    reset: 'Zurücksetzen',
+    confirmReset:
+      'Alle lokal gespeicherten Daten löschen und neu beginnen? Das kann nicht rückgängig gemacht werden. Exportiere vorher, um nichts zu verlieren.',
     exportFailed: 'Projekt konnte nicht gespeichert werden.',
     importFailed: 'Die Datei konnte nicht geladen werden.',
   },

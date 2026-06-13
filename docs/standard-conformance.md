@@ -44,6 +44,14 @@ Review date: n/a
 - PDF export uses native `window.print()` with print CSS, not a server.
 - State persists via `idb-keyval` / IndexedDB (autosave) plus `.storyboard`
   ZIP files (`jszip` + `file-saver`) for durable backups.
+- **Theming** (light / dark / high-contrast) is implemented by overriding
+  Tailwind v4 theme variables (`--color-*`) under `html[data-theme]` in
+  `index.css`, rather than migrating every component className to semantic
+  token classes. Components keep referencing Tailwind utilities, which compile
+  to `var(--color-*)`; the data-theme scope remaps the neutral/accent ramp.
+  Semantic baseline tokens (`--surface`, `--text`, `--primary` …) are defined
+  in `:root`. Theme + font scale persist in `localStorage` and apply pre-paint
+  via a boot script (no flash).
 
 ## Known gaps
 

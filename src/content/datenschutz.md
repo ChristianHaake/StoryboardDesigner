@@ -41,6 +41,8 @@ Der StoryboardDesigner verarbeitet eingegebene Texte und ausgewählte Bilder lok
 
 Damit die Arbeit bei einem Neuladen der Seite nicht verloren geht, speichert die App das aktuelle Projekt einschließlich der Bilder automatisch in der lokalen Browserdatenbank IndexedDB. Diese Daten verbleiben auf dem verwendeten Gerät und können über die Browser-Einstellungen durch Löschen der Website-Daten entfernt werden.
 
+Alternativ entfernt die Schaltfläche **„Zurücksetzen"** in der Aktionsleiste nach einer Bestätigung das aktuelle Projekt samt automatisch gespeichertem Stand und beginnt mit einem leeren Storyboard.
+
 Beim lokalen Speichern wird eine `.storyboard`-Datei auf dem Gerät erzeugt. Beim PDF-Export wird die native Druckfunktion des Browsers verwendet. Die App überträgt diese Dateien nicht an einen Server und hat nach dem Speichern keinen Zugriff darauf.
 
 ## 5. Cookies

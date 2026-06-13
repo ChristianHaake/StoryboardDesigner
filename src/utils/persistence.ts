@@ -1,4 +1,4 @@
-import { get, set } from 'idb-keyval';
+import { del, get, set } from 'idb-keyval';
 import type { StoryboardProject } from '../types';
 import { decodeProject } from './projectCodec';
 
@@ -16,6 +16,19 @@ let timer: number | undefined;
 let pending = false;
 let saveSeq = 0;
 
+export type SaveStatus = 'saving' | 'saved' | 'error';
+let statusListener: ((status: SaveStatus) => void) | null = null;
+
+// Erlaubt der UI, den Autosave-Fortschritt anzuzeigen (#6a). Nur ein Listener
+// (App-Singleton); null hebt die Registrierung wieder auf.
+export function setAutosaveStatusListener(fn: ((status: SaveStatus) => void) | null): void {
+  statusListener = fn;
+}
+
+function emitStatus(status: SaveStatus): void {
+  statusListener?.(status);
+}
+
 function isRecord(value: unknown): value is Record<string, unknown> {
   return typeof value === 'object' && value !== null && !Array.isArray(value);
 }
@@ -26,6 +39,7 @@ export function hasPendingAutosave(): boolean {
 
 export function scheduleAutosave(payload: AutosavePayload): void {
   pending = true;
+  emitStatus('saving');
   // Sequenznummer: ein noch laufender älterer Save darf pending nicht
   // zurücksetzen, wenn inzwischen neuere Änderungen anstehen.
   const seq = ++saveSeq;
@@ -33,14 +47,27 @@ export function scheduleAutosave(payload: AutosavePayload): void {
   timer = window.setTimeout(() => {
     void set(AUTOSAVE_KEY, payload)
       .then(() => {
-        if (seq === saveSeq) pending = false;
+        if (seq === saveSeq) {
+          pending = false;
+          emitStatus('saved');
+        }
       })
       .catch((error: unknown) => {
         // Autosave ist Sicherheitsnetz, kein Speichern — Fehler nicht eskalieren,
         // aber pending lassen, damit die beforeunload-Warnung greift.
         console.warn('Autosave fehlgeschlagen:', error);
+        emitStatus('error');
       });
   }, DEBOUNCE_MS);
+}
+
+// Löscht den Autosave-Stand und stoppt einen anstehenden Debounce-Write,
+// damit „Daten zurücksetzen" nicht direkt wieder überschrieben wird (#12).
+export async function clearAutosave(): Promise<void> {
+  window.clearTimeout(timer);
+  pending = false;
+  saveSeq++;
+  await del(AUTOSAVE_KEY);
 }
 
 export async function loadAutosave(): Promise<AutosavePayload | undefined> {
