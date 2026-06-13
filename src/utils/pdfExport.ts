@@ -5,6 +5,9 @@
 const RENDER_SCALE = 2; // Auflösung der Zwischengrafik
 const A4_WIDTH_MM = 210;
 const A4_HEIGHT_MM = 297;
+// Browser-Canvas haben ein Höhenlimit (~32 k px). Bei sehr vielen Szenen die
+// Auflösung reduzieren, statt eine leere/abgeschnittene Grafik zu erzeugen.
+const MAX_CANVAS_PX = 30000;
 
 /**
  * Berechnet Seitenhöhen so, dass möglichst an sicheren Kanten (Szenengrenzen)
@@ -34,12 +37,43 @@ export async function exportElementToPdf(
 ): Promise<void> {
   const [{ jsPDF }, { toPng }] = await Promise.all([import('jspdf'), import('html-to-image')]);
 
-  const pixelRatio = RENDER_SCALE;
-  const dataUrl = await toPng(element, {
-    pixelRatio,
-    backgroundColor: '#ffffff',
-    cacheBust: true,
+  // html-to-image rastert die Bildschirmansicht; `print:hidden` greift nur unter
+  // @media print. Diese Knoten daher vorübergehend hart ausblenden, damit das
+  // Layout neu umbricht (lückenlos) und Platzhalter, Aktions-Buttons sowie
+  // Feedback-Threads nicht ins PDF geraten. Im finally-Block wiederhergestellt.
+  const hiddenEls = Array.from(element.querySelectorAll<HTMLElement>('.print\\:hidden'));
+  const prevDisplay = hiddenEls.map((el) => el.style.display);
+  hiddenEls.forEach((el) => {
+    el.style.display = 'none';
   });
+
+  let dataUrl: string;
+  let safeBreaks: number[];
+  let pixelRatio: number;
+  try {
+    // Nach dem Ausblenden messen — Layout ist jetzt reduziert.
+    const rawHeight = element.scrollHeight || 1;
+    pixelRatio =
+      rawHeight * RENDER_SCALE > MAX_CANVAS_PX
+        ? Math.max(1, MAX_CANVAS_PX / rawHeight)
+        : RENDER_SCALE;
+    const ratio = pixelRatio;
+    const elementTop = element.getBoundingClientRect().top;
+    safeBreaks = safeBreakSelector
+      ? Array.from(element.querySelectorAll(safeBreakSelector)).map(
+          (node) => (node.getBoundingClientRect().bottom - elementTop) * ratio,
+        )
+      : [];
+    dataUrl = await toPng(element, {
+      pixelRatio,
+      backgroundColor: '#ffffff',
+      cacheBust: true,
+    });
+  } finally {
+    hiddenEls.forEach((el, index) => {
+      el.style.display = prevDisplay[index];
+    });
+  }
 
   const image = await new Promise<HTMLImageElement>((resolve, reject) => {
     const img = new Image();
@@ -47,14 +81,6 @@ export async function exportElementToPdf(
     img.onerror = reject;
     img.src = dataUrl;
   });
-
-  // Sichere Umbruchkanten (Unterkanten der Szenenkarten) auf Bildpixel skalieren.
-  const elementTop = element.getBoundingClientRect().top;
-  const safeBreaks = safeBreakSelector
-    ? Array.from(element.querySelectorAll(safeBreakSelector)).map(
-        (node) => (node.getBoundingClientRect().bottom - elementTop) * pixelRatio,
-      )
-    : [];
 
   const pdf = new jsPDF({ format: 'a4', orientation: 'portrait', unit: 'mm' });
   // Seitenhöhe in Bildpixeln, die einer vollen A4-Seite (gleiche Breite) entspricht.

@@ -61,21 +61,23 @@ export default function CommentThread({ sceneId, sceneNumber, comments }: Commen
               key={comment.id}
               className="flex items-start gap-2 rounded-lg bg-white px-3 py-2 text-sm text-slate-800 shadow-sm"
             >
-              <input
-                type="checkbox"
-                checked={comment.done}
-                onChange={() => toggleCommentDone(sceneId, comment.id)}
-                aria-label={t('feedback.markDone')}
-                className="mt-1 size-4 shrink-0 accent-blue-600"
-              />
+              <label className="-m-1.5 inline-flex size-11 shrink-0 cursor-pointer items-center justify-center">
+                <input
+                  type="checkbox"
+                  checked={comment.done}
+                  onChange={() => toggleCommentDone(sceneId, comment.id)}
+                  aria-label={t('feedback.markDone', { text: comment.text })}
+                  className="size-5 accent-blue-600"
+                />
+              </label>
               <span className={`min-w-0 flex-1 break-words ${comment.done ? 'text-slate-400 line-through' : ''}`}>
                 {comment.text}
               </span>
               <button
                 type="button"
                 onClick={() => deleteComment(sceneId, comment.id)}
-                aria-label={t('feedback.delete')}
-                className="inline-flex size-8 shrink-0 items-center justify-center rounded-md text-slate-400 hover:bg-red-50 hover:text-red-700"
+                aria-label={t('feedback.delete', { text: comment.text })}
+                className="-m-1.5 inline-flex size-11 shrink-0 items-center justify-center rounded-md text-slate-400 hover:bg-red-50 hover:text-red-700"
               >
                 <svg
                   width="16"
@@ -107,9 +109,9 @@ export default function CommentThread({ sceneId, sceneNumber, comments }: Commen
               submit();
             }
           }}
-          className="min-h-10 flex-1 rounded-lg border border-amber-200 bg-white px-3 text-sm outline-none focus:border-blue-500 focus:ring-3 focus:ring-blue-100"
+          className="min-h-11 flex-1 rounded-lg border border-amber-200 bg-white px-3 text-sm outline-none focus:border-blue-500 focus:ring-3 focus:ring-blue-100"
         />
-        <button type="button" onClick={submit} className={`${buttonPrimary} min-h-10`}>
+        <button type="button" onClick={submit} className={`${buttonPrimary} min-h-11`}>
           {t('feedback.add')}
         </button>
       </div>
