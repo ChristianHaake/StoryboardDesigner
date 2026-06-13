@@ -1,7 +1,6 @@
 import { Link } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import BrandLogo from './BrandLogo';
-import StatusPill from './StatusPill';
 
 export default function Footer() {
   const { t } = useTranslation();
@@ -23,7 +22,7 @@ export default function Footer() {
             {t('footer.imprint')}
           </Link>
         </nav>
-        <StatusPill label={t('brand.localPill')} className="max-sm:hidden" />
+        <p className="text-xs text-slate-500 max-sm:w-full">{t('footer.localNote')}</p>
       </div>
     </footer>
   );

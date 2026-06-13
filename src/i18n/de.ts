@@ -15,7 +15,7 @@ const de = {
   hero: {
     kicker: 'PLANEN · GESTALTEN · DRUCKEN',
     title: 'Erstelle dein Storyboard.',
-    subtitle: 'Plane Film, Fotostory oder Rede Szene für Szene — ohne Konto, direkt im Browser.',
+    subtitle: 'Plane Film, Fotostory oder Rede Szene für Szene.',
   },
   language: {
     label: 'Sprache',
@@ -44,6 +44,7 @@ const de = {
     subjectPlaceholder: 'z. B. Wasserkreislauf',
     format: 'Format',
     date: 'Datum',
+    emptyState: 'Noch keine Szene. Lege deine erste Szene an, um loszulegen.',
     planning: 'Planung',
     logline: 'Logline',
     loglinePlaceholder: 'Worum geht es? Ein Satz.',
@@ -59,6 +60,7 @@ const de = {
     maxScenes: 'Maximal {{max}} Szenen',
   },
   format: {
+    choose: 'Format auswählen',
     film: 'Film',
     fotostory: 'Fotostory',
     rede: 'Rede',
@@ -140,6 +142,7 @@ const de = {
     help: 'Hilfe',
     privacy: 'Datenschutz',
     imprint: 'Impressum',
+    localNote: 'StoryboardCreator · Inhalte bleiben auf deinem Gerät',
   },
   fields: {
     labelEmpty: 'Bitte eine Feldbezeichnung eingeben.',

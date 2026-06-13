@@ -1,3 +1,5 @@
+Historisches Planungsdokument — alle Sprints 1–12 abgeschlossen (Stand: Version 1.2). Aktueller Ist-Zustand: [ARCHITECTURE.md](ARCHITECTURE.md).
+
 Die technische Umsetzung wird in Sprints unterteilt. Der Entwickler übernimmt die volle Kontrolle über das Repository, die Commits und das Deployment.
 
 ### 1. Angepasste Entwicklungsvorgaben

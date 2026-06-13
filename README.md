@@ -4,14 +4,15 @@ Eine rein clientseitige Web-App für Lernende zum Erstellen von Storyboards (Fil
 
 ## Tech-Stack
 
-- **Build & Framework:** Vite, React, TypeScript (strict)
+- **Build & Framework:** Vite, React 19, TypeScript (strict)
 - **Styling:** Tailwind CSS v4
-- **State Management:** Zustand (ab Sprint 2)
-- **Drag & Drop:** @dnd-kit (ab Sprint 2)
-- **Dateiformat:** jszip + file-saver (ab Sprint 4)
-- **Autosave:** idb-keyval / IndexedDB (ab Sprint 2)
+- **State Management:** Zustand 5
+- **Drag & Drop:** @dnd-kit
+- **Dateiformat:** jszip + file-saver (`.storyboard` ZIP)
+- **Autosave:** idb-keyval / IndexedDB
 - **PDF-Export:** native Druckfunktion (`window.print()`) mit Print-CSS
 - **Feldsystem:** projektweite Zusatzfelder und Formatvorlagen
+- **Mehrsprachigkeit:** i18next + react-i18next (DE/EN, Browser-Erkennung)
 
 ## Lokales Setup
 
@@ -25,7 +26,7 @@ npm run lint     # ESLint
 npm run format   # Prettier
 ```
 
-Voraussetzung: Node.js ≥ 20.
+Voraussetzung: Node.js ≥ 22.12 (gepinnt in `.node-version`, Vite 8 benötigt ≥ 22.12).
 
 ## Deployment
 
@@ -45,5 +46,6 @@ Vor Veröffentlichung müssen die Rechtstexte durch den Betreiber rechtlich gepr
 - [Codingplan.md](Codingplan.md) — Architektur, Datenmodell, Kernfunktionen
 - [UIX-Codingplan.md](UIX-Codingplan.md) — UI/UX-Konzept (A4-Dokument, WYSIWYG)
 - [Sprint-Planung.md](Sprint-Planung.md) — Sprints 1–12
+- [UI-Backlog.md](UI-Backlog.md) — User-Stories zur UI-Verbesserung (Befunde + Epics A–D)
 - [RulesofWorking.md](RulesofWorking.md) — Entwicklungsvorgaben
 - [CHANGELOG.md](CHANGELOG.md) — Änderungshistorie

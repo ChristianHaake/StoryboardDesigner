@@ -169,3 +169,4 @@ werden beim Import auf das 1.1-Modell normalisiert.
 - **Phase 5: Feinschliff & Print:** Markdown-Seiten, responsives Design, finale Print-CSS-Abnahme auf iPad Safari.
 - **Phase 6: Deployment:** Konfiguration des Repositories für das automatische Deployment über Cloudflare Workers Static Assets.
 - **Phase 7: Version 1.1:** Rechtstexte, kompatibles Feldschema, Formatvorlagen, Konfigurationsdialog und Abnahme aller Datenwege.
+- **Phase 8: Version 1.2:** Mehrsprachigkeit DE/EN (i18next, react-i18next, Browser-Erkennung, localStorage-Cache, Key-Parität-Test). UI-Redesign im Stil von smc.haak3.de: BrandLogo, StatusPill, InfoBanner, HeroIntro, 2-reihiger TopBar, slate-100-Hintergrund, SMC-Blau #2563EB, vollständiges `print:hidden`-Chrome.

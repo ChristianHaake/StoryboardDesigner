@@ -63,8 +63,8 @@ export default function EditorView() {
     <main>
       <A4Page>
         {/* Metadaten */}
-        <header className="border-b border-gray-200 pb-7">
-          <p className="mb-3 text-xs font-bold tracking-[0.16em] text-blue-700 uppercase print:text-gray-700">
+        <header className="border-b border-slate-200 pb-8">
+          <p className="mb-4 text-xs font-bold tracking-[0.16em] text-blue-700 uppercase print:text-slate-700">
             {t('editor.kicker')}
           </p>
           <label className={labelClass} htmlFor="projectName">
@@ -78,7 +78,7 @@ export default function EditorView() {
             value={metaData.projectName}
             onChange={(e) => updateMetaData({ projectName: e.target.value })}
           />
-          <div className="mt-5 grid grid-cols-2 gap-x-5 gap-y-4 max-sm:grid-cols-1">
+          <div className="mt-6 grid grid-cols-2 gap-x-6 gap-y-4 max-sm:grid-cols-1">
             <div>
               <label className={labelClass} htmlFor="participants">
                 {t('editor.participants')}
@@ -137,14 +137,14 @@ export default function EditorView() {
         </header>
 
         {/* Pre-Planning */}
-        <section className="mt-7">
+        <section className="mt-8">
           <div className="flex items-center gap-3">
-            <h2 className="text-xs font-bold tracking-[0.16em] text-gray-700 uppercase">
+            <h2 className="text-xs font-bold tracking-[0.16em] text-slate-700 uppercase">
               {t('editor.planning')}
             </h2>
-            <span className="h-px flex-1 bg-gray-200" aria-hidden="true" />
+            <span className="h-px flex-1 bg-slate-200" aria-hidden="true" />
           </div>
-          <div className="mt-4 grid grid-cols-2 gap-x-5 gap-y-4 max-sm:grid-cols-1">
+          <div className="mt-4 grid grid-cols-2 gap-x-6 gap-y-4 max-sm:grid-cols-1">
             <div>
               <label className={labelClass} htmlFor="logline">
                 {t('editor.logline')}
@@ -193,12 +193,12 @@ export default function EditorView() {
         </section>
 
         {/* Szenen */}
-        <section className="mt-9">
+        <section className="mt-8">
           <div className="flex items-center gap-3">
-            <h2 className="text-xs font-bold tracking-[0.16em] text-gray-700 uppercase">
+            <h2 className="text-xs font-bold tracking-[0.16em] text-slate-700 uppercase">
               {t('editor.storyboard')}
             </h2>
-            <span className="h-px flex-1 bg-gray-200" aria-hidden="true" />
+            <span className="h-px flex-1 bg-slate-200" aria-hidden="true" />
             <button
               type="button"
               onClick={() => setFieldDialogOpen(true)}
@@ -218,6 +218,11 @@ export default function EditorView() {
               strategy={verticalListSortingStrategy}
             >
               <div className="mt-4 space-y-3">
+                {scenes.length === 0 && (
+                  <p className="rounded-xl border border-dashed border-slate-300 bg-slate-50 px-4 py-8 text-center text-sm text-slate-500 print:hidden">
+                    {t('editor.emptyState')}
+                  </p>
+                )}
                 {scenes.map((scene) => (
                   <SceneCard key={scene.id} scene={scene} />
                 ))}
@@ -229,7 +234,7 @@ export default function EditorView() {
             type="button"
             onClick={addScene}
             disabled={scenes.length >= MAX_SCENES}
-            className="mt-4 min-h-12 w-full rounded-xl border border-dashed border-gray-300 bg-gray-50 px-4 text-sm font-semibold text-gray-600 transition-colors hover:border-blue-400 hover:bg-blue-50 hover:text-blue-700 focus-visible:border-blue-500 disabled:cursor-not-allowed disabled:opacity-50 disabled:hover:border-gray-300 disabled:hover:bg-gray-50 disabled:hover:text-gray-600 print:hidden"
+            className="mt-4 min-h-12 w-full rounded-xl border border-dashed border-slate-300 bg-slate-50 px-4 text-sm font-semibold text-slate-600 transition-colors hover:border-blue-400 hover:bg-blue-50 hover:text-blue-700 focus-visible:border-blue-500 disabled:cursor-not-allowed disabled:opacity-50 disabled:hover:border-slate-300 disabled:hover:bg-slate-50 disabled:hover:text-slate-600 print:hidden"
           >
             {scenes.length >= MAX_SCENES
               ? t('editor.maxScenes', { max: MAX_SCENES })

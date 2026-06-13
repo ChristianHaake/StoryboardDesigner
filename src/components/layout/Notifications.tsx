@@ -50,7 +50,7 @@ export default function Notifications() {
       {lastDeleted && (
         <div
           role="status"
-          className="flex w-full max-w-lg items-center justify-between gap-4 rounded-xl bg-gray-950 px-4 py-3 text-sm text-white shadow-xl shadow-gray-950/20"
+          className="flex w-full max-w-lg items-center justify-between gap-4 rounded-xl bg-slate-950 px-4 py-3 text-sm text-white shadow-xl shadow-slate-950/20"
         >
           <span>{t('notifications.sceneDeleted', { n: lastDeleted.index + 1 })}</span>
           <button

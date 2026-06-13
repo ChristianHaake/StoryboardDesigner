@@ -2,6 +2,7 @@ import { useCallback, useEffect, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useStoryboardStore } from '../../store/useStoryboardStore';
 import { MAX_CUSTOM_FIELDS, MAX_CUSTOM_FIELD_LABEL_LENGTH } from '../../utils/customFields';
+import { buttonPrimary, buttonSecondary } from './fieldStyles';
 import type { CustomFieldDefinition, MetaData } from '../../types';
 
 interface FieldConfigDialogProps {
@@ -24,7 +25,7 @@ function FieldDefinitionRow({
   const [label, setLabel] = useState(definition.label);
 
   return (
-    <div className="flex items-center gap-2 rounded-xl border border-gray-200 p-2 max-sm:flex-wrap">
+    <div className="flex items-center gap-2 rounded-xl border border-slate-200 p-2 max-sm:flex-wrap">
       <input
         type="text"
         value={label}
@@ -37,7 +38,7 @@ function FieldDefinitionRow({
             onRename(definition.key, label);
           }
         }}
-        className="min-h-11 min-w-0 flex-1 rounded-lg border border-transparent bg-gray-50 px-3 text-sm outline-none focus:border-blue-500 focus:bg-white focus:ring-3 focus:ring-blue-100 max-sm:w-full max-sm:flex-none"
+        className="min-h-11 min-w-0 flex-1 rounded-lg border border-transparent bg-slate-50 px-3 text-sm outline-none focus:border-blue-500 focus:bg-white focus:ring-3 focus:ring-blue-100 max-sm:w-full max-sm:flex-none"
       />
       <button
         type="button"
@@ -50,7 +51,7 @@ function FieldDefinitionRow({
         type="button"
         onClick={() => onDelete(definition.key, definition.label)}
         aria-label={t('fieldConfig.deleteField', { label: definition.label })}
-        className="inline-flex size-11 items-center justify-center rounded-lg text-gray-500 hover:bg-red-50 hover:text-red-700"
+        className="inline-flex size-11 items-center justify-center rounded-lg text-slate-500 hover:bg-red-50 hover:text-red-700"
       >
         <svg
           width="18"
@@ -151,7 +152,7 @@ export default function FieldConfigDialog({ open, onClose }: FieldConfigDialogPr
     <dialog
       ref={dialogRef}
       aria-labelledby="field-config-title"
-      className="m-auto max-h-[min(90vh,760px)] w-[min(92vw,640px)] overflow-hidden rounded-2xl border border-gray-200 bg-white p-0 text-gray-900 shadow-2xl backdrop:bg-gray-950/50"
+      className="m-auto max-h-[min(90vh,760px)] w-[min(92vw,640px)] overflow-hidden rounded-2xl border border-slate-200 bg-white p-0 text-slate-900 shadow-2xl backdrop:bg-slate-950/50"
       onCancel={(event) => {
         event.preventDefault();
         closeDialog();
@@ -161,18 +162,18 @@ export default function FieldConfigDialog({ open, onClose }: FieldConfigDialogPr
       }}
     >
       <div className="flex max-h-[min(90vh,760px)] flex-col">
-        <header className="flex items-start justify-between gap-4 border-b border-gray-200 px-5 py-4 sm:px-6">
+        <header className="flex items-start justify-between gap-4 border-b border-slate-200 px-5 py-4 sm:px-6">
           <div>
             <h2 id="field-config-title" className="text-lg font-bold tracking-tight">
               {t('fieldConfig.title')}
             </h2>
-            <p className="mt-1 text-sm text-gray-600">{t('fieldConfig.description')}</p>
+            <p className="mt-1 text-sm text-slate-600">{t('fieldConfig.description')}</p>
           </div>
           <button
             type="button"
             onClick={closeDialog}
             aria-label={t('fieldConfig.close')}
-            className="inline-flex size-11 shrink-0 items-center justify-center rounded-lg text-gray-500 hover:bg-gray-100 hover:text-gray-900"
+            className="inline-flex size-11 shrink-0 items-center justify-center rounded-lg text-slate-500 hover:bg-slate-100 hover:text-slate-900"
           >
             <svg
               width="20"
@@ -192,10 +193,10 @@ export default function FieldConfigDialog({ open, onClose }: FieldConfigDialogPr
           <section aria-labelledby="add-field-title">
             <div className="flex items-end justify-between gap-4">
               <div>
-                <h3 id="add-field-title" className="text-sm font-semibold text-gray-900">
+                <h3 id="add-field-title" className="text-sm font-semibold text-slate-900">
                   {t('fieldConfig.addHeading')}
                 </h3>
-                <p className="mt-1 text-xs text-gray-500">
+                <p className="mt-1 text-xs text-slate-500">
                   {t('fieldConfig.usage', { count: definitions.length, max: MAX_CUSTOM_FIELDS })}
                 </p>
               </div>
@@ -218,26 +219,26 @@ export default function FieldConfigDialog({ open, onClose }: FieldConfigDialogPr
                     handleAdd();
                   }
                 }}
-                className="min-h-11 flex-1 rounded-lg border border-gray-300 bg-gray-50 px-3 text-sm outline-none focus:border-blue-500 focus:bg-white focus:ring-3 focus:ring-blue-100"
+                className="min-h-11 flex-1 rounded-lg border border-slate-300 bg-slate-50 px-3 text-sm outline-none focus:border-blue-500 focus:bg-white focus:ring-3 focus:ring-blue-100"
               />
               <button
                 type="button"
                 onClick={handleAdd}
                 disabled={definitions.length >= MAX_CUSTOM_FIELDS}
-                className="min-h-11 rounded-lg bg-blue-600 px-4 text-sm font-semibold text-white hover:bg-blue-700 disabled:cursor-not-allowed disabled:opacity-50"
+                className={`${buttonPrimary} min-h-11`}
               >
                 {t('fieldConfig.add')}
               </button>
             </div>
           </section>
 
-          <section className="mt-6 border-t border-gray-200 pt-5" aria-labelledby="preset-title">
+          <section className="mt-6 border-t border-slate-200 pt-5" aria-labelledby="preset-title">
             <div className="flex items-center justify-between gap-4 max-sm:items-start">
               <div>
-                <h3 id="preset-title" className="text-sm font-semibold text-gray-900">
+                <h3 id="preset-title" className="text-sm font-semibold text-slate-900">
                   {t('fieldConfig.presetHeading')}
                 </h3>
-                <p className="mt-1 text-xs text-gray-500">
+                <p className="mt-1 text-xs text-slate-500">
                   {t('fieldConfig.presetDescription', { format: t(FORMAT_KEYS[formatType]) })}
                 </p>
               </div>
@@ -245,19 +246,19 @@ export default function FieldConfigDialog({ open, onClose }: FieldConfigDialogPr
                 type="button"
                 onClick={handleApplyPreset}
                 disabled={formatType === 'custom' || definitions.length >= MAX_CUSTOM_FIELDS}
-                className="min-h-11 shrink-0 rounded-lg border border-gray-300 px-3 text-sm font-semibold text-gray-700 hover:bg-gray-50 disabled:cursor-not-allowed disabled:opacity-50"
+                className={`${buttonSecondary} min-h-11 shrink-0`}
               >
                 {t('fieldConfig.apply')}
               </button>
             </div>
           </section>
 
-          <section className="mt-6 border-t border-gray-200 pt-5" aria-labelledby="fields-title">
-            <h3 id="fields-title" className="text-sm font-semibold text-gray-900">
+          <section className="mt-6 border-t border-slate-200 pt-5" aria-labelledby="fields-title">
+            <h3 id="fields-title" className="text-sm font-semibold text-slate-900">
               {t('fieldConfig.activeHeading')}
             </h3>
             {definitions.length === 0 ? (
-              <p className="mt-3 rounded-lg bg-gray-50 px-4 py-4 text-sm text-gray-600">
+              <p className="mt-3 rounded-lg bg-slate-50 px-4 py-4 text-sm text-slate-600">
                 {t('fieldConfig.empty')}
               </p>
             ) : (
@@ -281,11 +282,11 @@ export default function FieldConfigDialog({ open, onClose }: FieldConfigDialogPr
           )}
         </div>
 
-        <footer className="flex justify-end border-t border-gray-200 px-5 py-4 sm:px-6">
+        <footer className="flex justify-end border-t border-slate-200 px-5 py-4 sm:px-6">
           <button
             type="button"
             onClick={closeDialog}
-            className="min-h-11 rounded-lg bg-gray-900 px-5 text-sm font-semibold text-white hover:bg-gray-800"
+            className="min-h-11 rounded-lg bg-slate-900 px-5 text-sm font-semibold text-white hover:bg-slate-800"
           >
             {t('fieldConfig.done')}
           </button>
