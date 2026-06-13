@@ -47,5 +47,6 @@ Vor Veröffentlichung müssen die Rechtstexte durch den Betreiber rechtlich gepr
 - [UIX-Codingplan.md](UIX-Codingplan.md) — UI/UX-Konzept (A4-Dokument, WYSIWYG)
 - [Sprint-Planung.md](Sprint-Planung.md) — Sprints 1–12
 - [UI-Backlog.md](UI-Backlog.md) — User-Stories zur UI-Verbesserung (Befunde + Epics A–D)
+- [Feature-Backlog.md](Feature-Backlog.md) — geplante Funktionsfeatures (Releases 1.3 + 1.4)
 - [RulesofWorking.md](RulesofWorking.md) — Entwicklungsvorgaben
 - [CHANGELOG.md](CHANGELOG.md) — Änderungshistorie
