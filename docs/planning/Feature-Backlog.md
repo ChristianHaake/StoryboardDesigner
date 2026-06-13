@@ -2,7 +2,7 @@
 
 Geplante Funktionsfeatures auf Basis der eingereichten User-Stories (Stand 2026-06-13), validiert gegen den Ist-Stand (Version 1.2) und die Schwester-Apps [SocialMediaCreator](https://github.com/ChristianHaake/SocialMediaCreator) und [Feedbackbogen-Generator](https://github.com/ChristianHaake/Feedbackbogen-Generator).
 
-Reine UI-Verbesserungen siehe [UI-Backlog.md](UI-Backlog.md). UX-Konzept: [UIX-Codingplan.md](UIX-Codingplan.md). Architektur: [ARCHITECTURE.md](ARCHITECTURE.md).
+Reine UI-Verbesserungen siehe [UI-Backlog.md](UI-Backlog.md). UX-Konzept: [UIX-Codingplan.md](UIX-Codingplan.md). Architektur: [architecture.md](../architecture.md).
 
 ## Validierung gegen Ist-Stand
 

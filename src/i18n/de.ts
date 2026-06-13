@@ -2,7 +2,7 @@
 // Interpolation: i18next-Syntax {{name}}. Pluralisierung: *_one / *_other mit `count`.
 const de = {
   common: {
-    appTitle: 'StoryboardCreator',
+    appTitle: 'StoryboardDesigner',
   },
   brand: {
     tagline: 'Workshop für digitale Formate',
@@ -174,7 +174,7 @@ const de = {
     help: 'Hilfe',
     privacy: 'Datenschutz',
     imprint: 'Impressum',
-    localNote: 'StoryboardCreator · Inhalte bleiben auf deinem Gerät',
+    localNote: 'StoryboardDesigner · Inhalte bleiben auf deinem Gerät',
   },
   fields: {
     labelEmpty: 'Bitte eine Feldbezeichnung eingeben.',
@@ -202,7 +202,7 @@ const de = {
     exportFileTooLarge: 'Projektdatei ist zu groß (max. 100 MB).',
     versionMissing: 'Versionsangabe fehlt.',
     versionInvalid: 'Ungültige Projektversion.',
-    versionTooNew: 'Diese Datei wurde mit einer neueren Version des StoryboardCreators erstellt.',
+    versionTooNew: 'Diese Datei wurde mit einer neueren Version des StoryboardDesigners erstellt.',
     incompleteStructure: 'Projektstruktur unvollständig.',
     codecTooManyScenes: 'Zu viele Szenen (max. {{max}}).',
     sceneCorrupt: 'Szene {{n}} ist beschädigt.',

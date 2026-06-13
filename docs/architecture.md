@@ -1,7 +1,7 @@
 # Architektur
 
 Technischer Überblick für Entwickler:innen. Ist-Zustand nach Version 1.4.
-Detailplanung: [Codingplan.md](Codingplan.md) (Architektur-Soll), [UIX-Codingplan.md](UIX-Codingplan.md) (UI-Konzept), [Sprint-Planung.md](Sprint-Planung.md) (Roadmap).
+Detailplanung: [Codingplan.md](planning/Codingplan.md) (Architektur-Soll), [UIX-Codingplan.md](planning/UIX-Codingplan.md) (UI-Konzept), [Sprint-Planung.md](planning/Sprint-Planung.md) (Roadmap).
 
 ## Kontext und Ziele
 
@@ -73,7 +73,7 @@ App ─ Autosave-Wiring (Effect), beforeunload, html-lang + document.title (i18n
 
 ## Design-System (SMC-Familie)
 
-StoryboardCreator folgt der visuellen Sprache von smc.haak3.de:
+StoryboardDesigner folgt der visuellen Sprache von smc.haak3.de:
 
 | Token         | Wert                                 |
 | ------------- | ------------------------------------ |

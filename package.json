@@ -1,7 +1,8 @@
 {
-  "name": "storyboardcreator",
+  "name": "storyboarddesigner",
   "private": true,
   "version": "1.4.0",
+  "license": "GPL-3.0-only",
   "type": "module",
   "scripts": {
     "dev": "vite",
@@ -9,6 +10,7 @@
     "build": "tsc -b && vite build && node scripts/clean-cloudflare-assets.mjs",
     "preview": "vite preview",
     "test": "vitest run",
+    "typecheck": "tsc -b",
     "lint": "eslint .",
     "format": "prettier --write \"src/**/*.{ts,tsx,css,md}\" \"*.{js,ts,json,md}\""
   },
