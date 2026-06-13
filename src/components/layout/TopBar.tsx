@@ -41,7 +41,9 @@ export default function TopBar() {
     const state = useStoryboardStore.getState();
     const element = document.getElementById('storyboard-document');
     if (!element) return;
-    const name = state.metaData.projectName.trim() || t('topbar.pdfFallbackName');
+    const rawName = state.metaData.projectName.trim() || t('topbar.pdfFallbackName');
+    // Unzulässige Dateinamen-Zeichen ersetzen, damit der Download-Name nicht bricht.
+    const name = rawName.replace(/[/\\:*?"<>|]/g, '_');
     setPdfBusy(true);
     try {
       await exportElementToPdf(element, `${name}.pdf`, 'article');
