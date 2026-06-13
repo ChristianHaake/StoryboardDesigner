@@ -26,10 +26,15 @@ export interface Scene {
   customFields?: Record<string, string>; // ab v1.1
 }
 
-// Ab v1.1: projektweite Definition dynamischer Felder (Konfigurations-Modal)
+// Ab v1.1: projektweite Definition dynamischer Felder (Konfigurations-Modal).
+// Ab v1.3: optionaler Feldtyp. Fehlt `type`, gilt 'text' (rückwärtskompatibel).
+export type CustomFieldType = 'text' | 'select';
+
 export interface CustomFieldDefinition {
   key: string;
   label: string;
+  type?: CustomFieldType; // default 'text'
+  options?: string[]; // nur bei type 'select'
 }
 
 export interface StoryboardProject {

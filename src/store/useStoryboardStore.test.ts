@@ -138,13 +138,14 @@ describe('useStoryboardStore', () => {
       ],
     });
 
-    expect(useStoryboardStore.getState().setFormatType('rede')).toBe(2);
+    expect(useStoryboardStore.getState().setFormatType('rede')).toBe(3);
     const state = useStoryboardStore.getState();
     expect(state.metaData.formatType).toBe('rede');
     expect(state.fieldDefinitions?.map((field) => field.label)).toEqual([
       'Licht',
       'Kernaussage',
       'Visualisierung',
+      'Bildunterschrift',
     ]);
     expect(state.scenes[0]?.customFields?.['custom:light']).toBe('Warm');
     expect(useStoryboardStore.getState().setFormatType('rede')).toBe(0);

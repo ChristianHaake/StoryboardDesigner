@@ -1,6 +1,7 @@
 import { create } from 'zustand';
 import type {
   CustomFieldDefinition,
+  CustomFieldType,
   MetaData,
   PrePlanning,
   Scene,
@@ -13,7 +14,9 @@ import {
   createCustomFieldDefinition,
   getFormatPreset,
   mergeFormatPreset,
+  normalizeSelectOptions,
   validateCustomFieldLabel,
+  validateSelectOptions,
 } from '../utils/customFields';
 import i18n from '../i18n';
 
@@ -81,8 +84,9 @@ interface StoryboardState {
   updatePrePlanning: (patch: Partial<PrePlanning>) => void;
   updateScene: (id: string, patch: Partial<Scene>) => void;
   updateCustomField: (sceneId: string, fieldKey: string, value: string) => void;
-  addCustomField: (label: string) => string | null;
+  addCustomField: (label: string, type?: CustomFieldType, options?: string[]) => string | null;
   renameCustomField: (key: string, label: string) => string | null;
+  updateCustomFieldOptions: (key: string, options: string[]) => string | null;
   deleteCustomField: (key: string) => void;
   applyCurrentFormatPreset: () => number;
   setSceneImage: (id: string, blob: Blob) => void;
@@ -167,12 +171,16 @@ export const useStoryboardStore = create<StoryboardState>((set) => ({
       ),
     })),
 
-  addCustomField: (label) => {
+  addCustomField: (label, type = 'text', options = []) => {
     let error: string | null = null;
     set((state) => {
       const definitions = state.fieldDefinitions ?? [];
       error = validateCustomFieldLabel(label, definitions);
       if (error) return state;
+      if (type === 'select') {
+        error = validateSelectOptions(options);
+        if (error) return state;
+      }
       if (definitions.length >= MAX_CUSTOM_FIELDS) {
         error = i18n.t('fields.maxFields', { max: MAX_CUSTOM_FIELDS });
         return state;
@@ -180,7 +188,7 @@ export const useStoryboardStore = create<StoryboardState>((set) => ({
       return {
         touched: true,
         hasContent: true,
-        fieldDefinitions: [...definitions, createCustomFieldDefinition(label)],
+        fieldDefinitions: [...definitions, createCustomFieldDefinition(label, type, options)],
       };
     });
     return error;
@@ -201,6 +209,30 @@ export const useStoryboardStore = create<StoryboardState>((set) => ({
         hasContent: true,
         fieldDefinitions: definitions.map((definition) =>
           definition.key === key ? { ...definition, label: label.trim() } : definition,
+        ),
+      };
+    });
+    return error;
+  },
+
+  updateCustomFieldOptions: (key, options) => {
+    let error: string | null = null;
+    set((state) => {
+      const definitions = state.fieldDefinitions ?? [];
+      const target = definitions.find((definition) => definition.key === key);
+      if (!target || target.type !== 'select') {
+        error = i18n.t('fields.notFound');
+        return state;
+      }
+      error = validateSelectOptions(options);
+      if (error) return state;
+      return {
+        touched: true,
+        hasContent: true,
+        fieldDefinitions: definitions.map((definition) =>
+          definition.key === key
+            ? { ...definition, options: normalizeSelectOptions(options) }
+            : definition,
         ),
       };
     });

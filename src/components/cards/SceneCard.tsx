@@ -7,7 +7,7 @@ import type { Scene } from '../../types';
 import { useStoryboardStore } from '../../store/useStoryboardStore';
 import { resizeImage } from '../../utils/imageResizer';
 import AutoResizeTextarea from '../forms/AutoResizeTextarea';
-import { labelClass } from '../forms/fieldStyles';
+import { inputClass, labelClass } from '../forms/fieldStyles';
 import { MAX_SCENES } from '../../utils/projectCodec';
 
 const EMPTY_FIELD_DEFINITIONS: NonNullable<
@@ -222,19 +222,44 @@ function SceneCard({ scene }: SceneCardProps) {
           </div>
           {fieldDefinitions.map((definition) => {
             const value = scene.customFields?.[definition.key] ?? '';
+            const fieldId = `custom-${definition.key}-${scene.id}`;
+            const isSelect = definition.type === 'select' && definition.options;
+            // Altwert, der nicht (mehr) in den Optionen liegt, bleibt wählbar.
+            const options =
+              isSelect && value && !definition.options!.includes(value)
+                ? [value, ...definition.options!]
+                : definition.options ?? [];
             return (
               <div key={definition.key} className={value ? '' : 'print:hidden'}>
-                <label className={labelClass} htmlFor={`custom-${definition.key}-${scene.id}`}>
+                <label className={labelClass} htmlFor={fieldId}>
                   {definition.label}
                 </label>
-                <AutoResizeTextarea
-                  id={`custom-${definition.key}-${scene.id}`}
-                  placeholder={t('scene.customPlaceholder', { label: definition.label })}
-                  value={value}
-                  onChange={(event) =>
-                    updateCustomField(scene.id, definition.key, event.target.value)
-                  }
-                />
+                {isSelect ? (
+                  <select
+                    id={fieldId}
+                    className={`${inputClass} appearance-none`}
+                    value={value}
+                    onChange={(event) =>
+                      updateCustomField(scene.id, definition.key, event.target.value)
+                    }
+                  >
+                    <option value="">{t('scene.selectPlaceholder')}</option>
+                    {options.map((option) => (
+                      <option key={option} value={option}>
+                        {option}
+                      </option>
+                    ))}
+                  </select>
+                ) : (
+                  <AutoResizeTextarea
+                    id={fieldId}
+                    placeholder={t('scene.customPlaceholder', { label: definition.label })}
+                    value={value}
+                    onChange={(event) =>
+                      updateCustomField(scene.id, definition.key, event.target.value)
+                    }
+                  />
+                )}
               </div>
             );
           })}

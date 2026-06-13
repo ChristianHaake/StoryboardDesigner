@@ -1,6 +1,6 @@
 # Architektur
 
-Technischer Überblick für Entwickler:innen. Ist-Zustand nach Version 1.2.
+Technischer Überblick für Entwickler:innen. Ist-Zustand nach Version 1.3.
 Detailplanung: [Codingplan.md](Codingplan.md) (Architektur-Soll), [UIX-Codingplan.md](UIX-Codingplan.md) (UI-Konzept), [Sprint-Planung.md](Sprint-Planung.md) (Roadmap).
 
 ## Kontext und Ziele
@@ -13,7 +13,7 @@ Storyboard-Editor für Lernende an Schulen. Harte Anforderungen:
 
 ## Stack
 
-Vite · React 19 · TypeScript (strict) · Tailwind CSS 4 · Zustand 5 · @dnd-kit · idb-keyval · jszip · file-saver · react-markdown · react-router-dom · i18next · react-i18next · i18next-browser-languagedetector · Vitest
+Vite · React 19 · TypeScript (strict) · Tailwind CSS 4 · Zustand 5 · @dnd-kit · idb-keyval · jszip · file-saver · react-markdown · react-router-dom · i18next · react-i18next · i18next-browser-languagedetector · jspdf + html-to-image (lazy, PDF-Export) · Vitest
 
 ## Datenfluss
 
@@ -97,6 +97,8 @@ StoryboardCreator folgt der visuellen Sprache von smc.haak3.de:
 | Zusatzfelder besitzen stabile Schlüssel                | Umbenennen erhält alle Szenenwerte                             | Schlüssel sind technische, dauerhaft reservierte Projektbestandteile                            |
 | i18next-Singleton statt React-Context                  | Nutzbar in Store-Aktionen und Utils ohne Komponenten-Kontext   | Sprache ändert sich global; kein selektives Übersetzen einzelner Teile                          |
 | SMC-Chrome vollständig `print:hidden`                  | Druck zeigt nur A4-Inhalt, kein UI-Overhead                    | Markenelemente nicht im PDF sichtbar                                                            |
+| Select-Feldtyp über `CustomFieldDefinition.type` (v1.3)| Dropdowns (z. B. Kameraeinstellung) ohne Kernfeld-Umbau        | Werte außerhalb der Optionen bleiben erhalten, sind aber nur als Altwert wählbar                |
+| PDF-Export lazy (jspdf + html-to-image, eigener Chunk) | Echte .pdf-Datei (iPad-tauglich) ohne Main-Bundle-Bloat        | DOM→Bild→PDF ist Raster, kein selektierbarer Text; `window.print()` bleibt als Alternative      |
 
 ## Bekannte Grenzen / offene Punkte
 

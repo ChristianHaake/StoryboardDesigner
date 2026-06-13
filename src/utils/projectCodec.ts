@@ -1,9 +1,13 @@
 import type { CustomFieldDefinition, MetaData, Scene, StoryboardProject } from '../types';
-import { MAX_CUSTOM_FIELDS, MAX_CUSTOM_FIELD_LABEL_LENGTH } from './customFields';
+import {
+  MAX_CUSTOM_FIELDS,
+  MAX_CUSTOM_FIELD_LABEL_LENGTH,
+  normalizeSelectOptions,
+} from './customFields';
 import { generateId } from './idGenerator';
 import i18n from '../i18n';
 
-export const PROJECT_VERSION = '1.1';
+export const PROJECT_VERSION = '1.3';
 export const MAX_SCENES = 200;
 
 export class ProjectValidationError extends Error {}
@@ -44,7 +48,15 @@ function validateFieldDefinitions(value: unknown): CustomFieldDefinition[] | und
     if (!key || !label || seenKeys.has(key) || seenLabels.has(normalizedLabel)) continue;
     seenKeys.add(key);
     seenLabels.add(normalizedLabel);
-    definitions.push({ key, label });
+    // type 'select' nur mit gültigen Optionen; sonst auf Freitext zurückfallen.
+    const options = Array.isArray(item.options)
+      ? normalizeSelectOptions(item.options.filter((o): o is string => typeof o === 'string'))
+      : [];
+    if (item.type === 'select' && options.length > 0) {
+      definitions.push({ key, label, type: 'select', options });
+    } else {
+      definitions.push({ key, label });
+    }
   }
   return definitions.length > 0 ? definitions : undefined;
 }

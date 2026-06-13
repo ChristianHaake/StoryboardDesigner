@@ -40,7 +40,7 @@ describe('loadAutosave', () => {
   it('validates legacy project payloads', async () => {
     getMock.mockResolvedValue(project());
     await expect(loadAutosave()).resolves.toMatchObject({
-      project: { version: '1.1' },
+      project: { version: '1.3' },
       images: {},
     });
   });

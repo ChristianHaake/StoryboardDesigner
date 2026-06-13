@@ -29,7 +29,7 @@ Das v1.1-System „projektweite Zusatzfelder + Formatvorlagen" wurde gebaut, um 
 
 ---
 
-# Release 1.3 — Must-haves vervollständigen
+# Release 1.3 — Must-haves vervollständigen ✅ umgesetzt (2026-06-13)
 
 ## F1 — Select-Feldtyp für Zusatzfelder (Story 4 Kamera-Dropdown)
 

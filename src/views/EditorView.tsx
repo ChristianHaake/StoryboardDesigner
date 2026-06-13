@@ -61,7 +61,7 @@ export default function EditorView() {
 
   return (
     <main>
-      <A4Page>
+      <A4Page id="storyboard-document">
         {/* Metadaten */}
         <header className="border-b border-slate-200 pb-8">
           <p className="mb-4 text-xs font-bold tracking-[0.16em] text-blue-700 uppercase print:text-slate-700">
