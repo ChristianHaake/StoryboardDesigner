@@ -1,6 +1,6 @@
 # Architektur
 
-Technischer Überblick für Entwickler:innen. Ist-Zustand nach Sprint 12 (Version 1.1).
+Technischer Überblick für Entwickler:innen. Ist-Zustand nach Version 1.2.
 Detailplanung: [Codingplan.md](Codingplan.md) (Architektur-Soll), [UIX-Codingplan.md](UIX-Codingplan.md) (UI-Konzept), [Sprint-Planung.md](Sprint-Planung.md) (Roadmap).
 
 ## Kontext und Ziele
@@ -13,7 +13,7 @@ Storyboard-Editor für Lernende an Schulen. Harte Anforderungen:
 
 ## Stack
 
-Vite · React 19 · TypeScript (strict) · Tailwind CSS 4 · Zustand 5 · @dnd-kit · idb-keyval · jszip · file-saver · react-markdown · react-router-dom · Vitest
+Vite · React 19 · TypeScript (strict) · Tailwind CSS 4 · Zustand 5 · @dnd-kit · idb-keyval · jszip · file-saver · react-markdown · react-router-dom · i18next · react-i18next · i18next-browser-languagedetector · Vitest
 
 ## Datenfluss
 
@@ -37,23 +37,51 @@ Vite · React 19 · TypeScript (strict) · Tailwind CSS 4 · Zustand 5 · @dnd-k
 ```
 
 - **`selectProject(state)`** serialisiert den Store als `StoryboardProject` — dieselbe Struktur landet im Autosave und als `data.json` im ZIP.
-- **`decodeProject(raw)`** ist der gemeinsame Validierungs- und Migrationspfad für ZIP und IndexedDB. Neuere Major-Versionen werden abgewiesen; v1-Daten werden normalisiert.
+- **`decodeProject(raw)`** ist der gemeinsame Validierungs- und Migrationspfad für ZIP und IndexedDB. Neuere Major-Versionen werden abgewiesen; v1.0- und v1.1-Daten werden normalisiert.
 - **Autosave** ([src/utils/persistence.ts](src/utils/persistence.ts)): debounced, Sequenz-Guard verhindert, dass ein noch laufender älterer Save das `pending`-Flag löscht. `pending` speist die `beforeunload`-Warnung.
-- **Restore-Guard:** `touched` wird von jeder mutierenden Store-Aktion gesetzt. Der asynchrone Restore beim App-Start schreibt nur in einen unberührten Store — verhindert Überschreiben frischer Eingaben.
+- **Restore-Guard:** `touched` wird von jeder mutierenden Store-Aktion gesetzt. Der asynchrone Restore beim App-Start schreibt nur in einen unberührten Store.
+
+## Mehrsprachigkeit
+
+i18next-Singleton, Initialisierung synchron vor dem ersten React-Render (`src/main.tsx`). Browser-Sprache via `i18next-browser-languagedetector` (Reihenfolge: `localStorage` → `navigator`), Fallback Deutsch.
+
+- Namespaces: `common`, `brand`, `hero`, `language`, `topbar`, `editor`, `format`, `presets`, `scene`, `dnd`, `fieldConfig`, `notifications`, `markdown`, `footer`, `fields`, `errors`
+- Außerhalb von React-Komponenten: `i18n.t()` direkt (Store-Aktionen, Utils).
+- Typsicherheit: Mapped-Type `Translations` in `src/i18n/en.ts` erzwingt Key-Parität mit DE-Referenz; `react-i18next.d.ts` bindet Typen für `useTranslation()`.
+- Test: `src/i18n/i18n.test.ts` prüft Key-Parität, keine leeren Strings, konsistente Interpolations-Platzhalter.
 
 ## Komponenten
 
 ```text
-App ─ Autosave-Wiring (Effect), beforeunload
-├── TopBar            Sticky-Aktionen für Laden, Speichern und PDF
+App ─ Autosave-Wiring (Effect), beforeunload, html-lang + document.title (i18n)
+├── TopBar            2-reihiger SMC-Header (sticky, print:hidden)
+│   ├── BrandLogo     Marken-Logo mit Tagline
+│   ├── StatusPill    „Inhalte bleiben lokal"-Pill
+│   ├── LanguageToggle DE/EN-Segmentschalter
+│   └── Aktionsbuttons  Laden / Speichern / PDF
+├── InfoBanner        Amber-Bildungshinweis (print:hidden)
+├── HeroIntro         Kicker + Headline + Subline (print:hidden)
 ├── EditorView        A4-Arbeitsfläche; DndContext + SortableContext
-│   ├── A4Page        Weißes "Papier", Print-Reset
+│   ├── A4Page        Weißes „Papier", Print-Reset
 │   ├── (Metadaten + Planung: controlled inputs, AutoResizeTextarea)
 │   ├── FieldConfigDialog Projektweite Zusatzfelder und Formatvorlagen
 │   └── SceneCard[]   useSortable; Bild-Upload,
 │                     3 Kernfelder, Zusatzfelder, Hover-/Touch-Aktionen
-└── Notifications     Importfehler und Rückgängig für Szenen-Löschung
+├── Notifications     Importfehler und Rückgängig für Szenen-Löschung
+└── Footer            BrandLogo + Nav-Links + StatusPill (print:hidden)
 ```
+
+## Design-System (SMC-Familie)
+
+StoryboardCreator folgt der visuellen Sprache von smc.haak3.de:
+
+| Token         | Wert                                 |
+| ------------- | ------------------------------------ |
+| Akzent        | `blue-600` (#2563EB)                 |
+| Hintergrund   | `slate-100` (#f1f5f9)                |
+| Arbeitsfläche | Weiß, `rounded-xl`, weicher Schatten |
+| Sekundär      | `emerald-*` (lokal), `amber-*` (Hinweis) |
+| Chrome        | Vollständig `print:hidden`           |
 
 ## Entscheidungen und Trade-offs
 
@@ -67,10 +95,12 @@ App ─ Autosave-Wiring (Effect), beforeunload
 | Undo-Puffer (`lastDeleted`) statt Lösch-Dialog         | Touch-Fehltipps häufig; Dialog nervt bei absichtlichem Löschen | Nur einstufiges Undo, nur für Szenen-Löschung                                                   |
 | Formatvorlagen ergänzen nur fehlende Felder            | Formatwechsel bleibt nicht destruktiv                          | Nicht mehr benötigte Vorlagenfelder müssen bewusst gelöscht werden                              |
 | Zusatzfelder besitzen stabile Schlüssel                | Umbenennen erhält alle Szenenwerte                             | Schlüssel sind technische, dauerhaft reservierte Projektbestandteile                            |
+| i18next-Singleton statt React-Context                  | Nutzbar in Store-Aktionen und Utils ohne Komponenten-Kontext   | Sprache ändert sich global; kein selektives Übersetzen einzelner Teile                          |
+| SMC-Chrome vollständig `print:hidden`                  | Druck zeigt nur A4-Inhalt, kein UI-Overhead                    | Markenelemente nicht im PDF sichtbar                                                            |
 
 ## Bekannte Grenzen / offene Punkte
 
 - Drucktest auf echten Zielgeräten (iPad Safari, MDM) steht aus.
-- Die Rechtstexte benötigen die finale Prüfung durch den Betreiber.
+- Rechtstexte (Impressum, Datenschutz) benötigen finale Prüfung durch den Betreiber.
 - ZIP-Import bleibt sicherheitsrelevant: Limits und Codec sind automatisiert getestet und müssen bei Schemaänderungen mitgepflegt werden.
-- Vitest deckt Codec und zentrale Store-Übergänge ab; Browser-/Drucktests bleiben manuell.
+- Vitest deckt Codec, i18n-Parität und zentrale Store-Übergänge ab; Browser-/Drucktests bleiben manuell.

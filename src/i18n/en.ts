@@ -23,7 +23,7 @@ const en: Translations = {
   hero: {
     kicker: 'PLAN · DESIGN · PRINT',
     title: 'Create your storyboard.',
-    subtitle: 'Plan a film, photo story or speech scene by scene — no account, right in the browser.',
+    subtitle: 'Plan a film, photo story or speech scene by scene.',
   },
   language: {
     label: 'Language',
@@ -51,6 +51,7 @@ const en: Translations = {
     subjectPlaceholder: 'e.g. water cycle',
     format: 'Format',
     date: 'Date',
+    emptyState: 'No scenes yet. Add your first scene to get started.',
     planning: 'Planning',
     logline: 'Logline',
     loglinePlaceholder: 'What is it about? One sentence.',
@@ -66,6 +67,7 @@ const en: Translations = {
     maxScenes: 'Maximum {{max}} scenes',
   },
   format: {
+    choose: 'Choose a format',
     film: 'Film',
     fotostory: 'Photo story',
     rede: 'Speech',
@@ -147,6 +149,7 @@ const en: Translations = {
     help: 'Help',
     privacy: 'Privacy',
     imprint: 'Imprint',
+    localNote: 'StoryboardCreator · Content stays on your device',
   },
   fields: {
     labelEmpty: 'Please enter a field name.',

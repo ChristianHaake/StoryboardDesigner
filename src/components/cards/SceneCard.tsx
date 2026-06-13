@@ -56,15 +56,15 @@ function SceneCard({ scene }: SceneCardProps) {
     <article
       ref={setNodeRef}
       style={{ transform: CSS.Transform.toString(transform), transition }}
-      className={`group relative break-inside-avoid rounded-xl border border-slate-200 bg-white p-4 shadow-sm transition-[border-color,box-shadow] hover:border-slate-300 hover:shadow-md sm:p-5 print:rounded-none print:border-gray-300 print:p-3 print:shadow-none ${
+      className={`group relative break-inside-avoid rounded-xl border border-slate-200 bg-white p-4 shadow-sm transition-[border-color,box-shadow] hover:border-slate-300 hover:shadow-md sm:p-5 print:rounded-none print:border-slate-300 print:p-3 print:shadow-none ${
         isDragging ? 'z-10 border-blue-300 bg-white opacity-95 shadow-xl' : ''
       }`}
     >
       <div className="mb-3 flex min-h-11 items-center justify-between gap-3 print:min-h-0">
-        <h3 className="flex items-center gap-2.5 text-xs font-bold tracking-[0.14em] text-gray-700 uppercase">
+        <h3 className="flex items-center gap-2.5 text-xs font-bold tracking-[0.14em] text-slate-700 uppercase">
           <span
             aria-hidden="true"
-            className="inline-flex size-6 items-center justify-center rounded-md bg-blue-50 text-xs font-bold text-blue-700 tabular-nums print:bg-transparent print:text-gray-700"
+            className="inline-flex size-6 items-center justify-center rounded-md bg-blue-50 text-xs font-bold text-blue-700 tabular-nums print:bg-transparent print:text-slate-700"
           >
             {n}
           </span>
@@ -76,7 +76,7 @@ function SceneCard({ scene }: SceneCardProps) {
             {...attributes}
             {...listeners}
             aria-label={t('scene.move', { n })}
-            className="inline-flex size-11 cursor-grab touch-none items-center justify-center rounded-lg text-gray-500 transition-colors hover:bg-gray-100 hover:text-gray-800 active:cursor-grabbing"
+            className="inline-flex size-11 cursor-grab touch-none items-center justify-center rounded-lg text-slate-500 transition-colors hover:bg-slate-100 hover:text-slate-800 active:cursor-grabbing"
           >
             <svg width="18" height="18" viewBox="0 0 16 16" fill="currentColor" aria-hidden="true">
               <circle cx="5" cy="3" r="1.5" />
@@ -93,7 +93,7 @@ function SceneCard({ scene }: SceneCardProps) {
               onClick={() => duplicateScene(scene.id)}
               disabled={sceneLimitReached}
               aria-label={t('scene.duplicate', { n })}
-              className="inline-flex size-11 items-center justify-center rounded-lg text-gray-500 transition-colors hover:bg-gray-100 hover:text-gray-800 disabled:cursor-not-allowed disabled:opacity-40"
+              className="inline-flex size-11 items-center justify-center rounded-lg text-slate-500 transition-colors hover:bg-slate-100 hover:text-slate-800 disabled:cursor-not-allowed disabled:opacity-40"
             >
               <svg
                 width="18"
@@ -112,7 +112,7 @@ function SceneCard({ scene }: SceneCardProps) {
               type="button"
               onClick={() => deleteScene(scene.id)}
               aria-label={t('scene.delete', { n })}
-              className="inline-flex size-11 items-center justify-center rounded-lg text-gray-500 transition-colors hover:bg-red-50 hover:text-red-700"
+              className="inline-flex size-11 items-center justify-center rounded-lg text-slate-500 transition-colors hover:bg-red-50 hover:text-red-700"
             >
               <svg
                 width="18"
@@ -151,7 +151,7 @@ function SceneCard({ scene }: SceneCardProps) {
                 type="button"
                 onClick={() => removeSceneImage(scene.id)}
                 aria-label={t('scene.imageRemove', { n })}
-                className="absolute top-2 right-2 inline-flex size-11 items-center justify-center rounded-lg bg-white/95 text-gray-700 shadow-md transition-colors hover:bg-red-50 hover:text-red-700 print:hidden"
+                className="absolute top-2 right-2 inline-flex size-11 items-center justify-center rounded-lg bg-white/95 text-slate-700 shadow-md transition-colors hover:bg-red-50 hover:text-red-700 print:hidden"
               >
                 <svg
                   width="16"
@@ -170,7 +170,7 @@ function SceneCard({ scene }: SceneCardProps) {
             <button
               type="button"
               onClick={() => fileInputRef.current?.click()}
-              className="flex aspect-square w-full items-center justify-center rounded-lg border border-dashed border-gray-300 bg-gray-50 text-center text-sm font-medium text-gray-500 transition-colors hover:border-blue-400 hover:bg-blue-50 hover:text-blue-700 max-sm:aspect-[4/3] print:aspect-square print:border-gray-300"
+              className="flex aspect-square w-full items-center justify-center rounded-lg border border-dashed border-slate-300 bg-slate-50 text-center text-sm font-medium text-slate-500 transition-colors hover:border-blue-400 hover:bg-blue-50 hover:text-blue-700 max-sm:aspect-[4/3] print:aspect-square print:border-slate-300"
             >
               <span className="print:hidden">
                 {imageError ? t('scene.imageError') : t('scene.imageAdd')}

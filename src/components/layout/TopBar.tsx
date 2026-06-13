@@ -1,4 +1,4 @@
-import { useRef } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import type { ChangeEvent } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Link } from 'react-router-dom';
@@ -7,10 +7,21 @@ import { exportProject, importProject, ImportError } from '../../utils/zipHandle
 import LanguageToggle from './LanguageToggle';
 import BrandLogo from './BrandLogo';
 import StatusPill from './StatusPill';
+import { buttonPrimary, buttonSecondary } from '../forms/fieldStyles';
 
 export default function TopBar() {
   const { t } = useTranslation();
   const fileInputRef = useRef<HTMLInputElement>(null);
+  // Beim Scrollen die Marken-Zeile einklappen, damit auf Tablets mehr
+  // Dokument sichtbar bleibt. focus-within klappt sie für Tastatur wieder auf.
+  const [collapsed, setCollapsed] = useState(false);
+
+  useEffect(() => {
+    const onScroll = () => setCollapsed(window.scrollY > 80);
+    onScroll();
+    window.addEventListener('scroll', onScroll, { passive: true });
+    return () => window.removeEventListener('scroll', onScroll);
+  }, []);
 
   async function handleExport() {
     const state = useStoryboardStore.getState();
@@ -41,8 +52,12 @@ export default function TopBar() {
 
   return (
     <header className="sticky top-0 z-10 border-b border-slate-200 bg-white/90 shadow-sm backdrop-blur print:hidden">
-      {/* Reihe 1: Marke + Status/Sprache/Lehrkräfte */}
-      <div className="mx-auto flex max-w-screen-lg items-center justify-between gap-4 px-4 py-2.5">
+      {/* Reihe 1: Marke + Status/Sprache/Lehrkräfte — klappt beim Scrollen ein */}
+      <div
+        className={`mx-auto flex max-w-screen-lg items-center justify-between gap-4 overflow-hidden px-4 transition-all duration-200 focus-within:max-h-24 focus-within:py-2.5 focus-within:opacity-100 ${
+          collapsed ? 'max-h-0 py-0 opacity-0' : 'max-h-24 py-2.5 opacity-100'
+        }`}
+      >
         <BrandLogo />
         <div className="flex items-center gap-2 sm:gap-3">
           <StatusPill label={t('brand.localPill')} className="max-sm:hidden" />
@@ -68,7 +83,7 @@ export default function TopBar() {
           <button
             type="button"
             onClick={() => fileInputRef.current?.click()}
-            className="inline-flex min-h-11 items-center justify-center gap-2 rounded-lg border border-slate-300 bg-white px-3 text-sm font-semibold text-slate-700 shadow-sm transition-colors hover:border-slate-400 hover:bg-slate-50"
+            className={`${buttonSecondary} min-h-11`}
           >
             <svg
               width="18"
@@ -87,7 +102,7 @@ export default function TopBar() {
           <button
             type="button"
             onClick={handleExport}
-            className="inline-flex min-h-11 items-center justify-center gap-2 rounded-lg border border-slate-300 bg-white px-3 text-sm font-semibold text-slate-700 shadow-sm transition-colors hover:border-slate-400 hover:bg-slate-50"
+            className={`${buttonSecondary} min-h-11`}
           >
             <svg
               width="18"
@@ -106,7 +121,7 @@ export default function TopBar() {
           <button
             type="button"
             onClick={() => window.print()}
-            className="inline-flex min-h-11 items-center justify-center gap-2 rounded-lg bg-blue-600 px-3 text-sm font-semibold text-white shadow-sm shadow-blue-600/20 transition-colors hover:bg-blue-700 max-sm:col-span-1"
+            className={`${buttonPrimary} min-h-11 max-sm:col-span-1`}
           >
             <svg
               width="18"

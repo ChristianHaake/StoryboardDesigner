@@ -21,11 +21,11 @@ export default function BrandLogo({ showTagline = true, className = '' }: BrandL
         </svg>
       </span>
       <span className="leading-tight">
-        <span className="block text-base font-bold tracking-tight text-gray-950">
+        <span className="block text-base font-bold tracking-tight text-slate-950">
           {t('common.appTitle')}
         </span>
         {showTagline && (
-          <span className="block text-xs text-gray-500">{t('brand.tagline')}</span>
+          <span className="block text-xs text-slate-500">{t('brand.tagline')}</span>
         )}
       </span>
     </div>
