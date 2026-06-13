@@ -90,7 +90,7 @@ Lazy-geladener echter PDF-Export nach SMC-Muster.
 
 ---
 
-# Release 1.4 — Feedback-Modul (Story 8)
+# Release 1.4 — Feedback-Modul (Story 8) ✅ umgesetzt (2026-06-13)
 
 Dateibasiert nach Familienmuster: keine Accounts, kein Server. Die Lehrkraft öffnet die `.storyboard`-Datei der Lernenden, kommentiert Szenen, markiert erledigt, speichert die Datei zurück.
 

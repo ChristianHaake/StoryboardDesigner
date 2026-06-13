@@ -7,12 +7,14 @@ import type { Scene } from '../../types';
 import { useStoryboardStore } from '../../store/useStoryboardStore';
 import { resizeImage } from '../../utils/imageResizer';
 import AutoResizeTextarea from '../forms/AutoResizeTextarea';
+import CommentThread from './CommentThread';
 import { inputClass, labelClass } from '../forms/fieldStyles';
 import { MAX_SCENES } from '../../utils/projectCodec';
 
 const EMPTY_FIELD_DEFINITIONS: NonNullable<
   ReturnType<typeof useStoryboardStore.getState>['fieldDefinitions']
 > = [];
+const EMPTY_COMMENTS: NonNullable<Scene['comments']> = [];
 
 interface SceneCardProps {
   scene: Scene;
@@ -30,6 +32,7 @@ function SceneCard({ scene }: SceneCardProps) {
   const setSceneImage = useStoryboardStore((s) => s.setSceneImage);
   const removeSceneImage = useStoryboardStore((s) => s.removeSceneImage);
   const sceneLimitReached = useStoryboardStore((s) => s.scenes.length >= MAX_SCENES);
+  const feedbackMode = useStoryboardStore((s) => s.feedbackMode);
 
   const fileInputRef = useRef<HTMLInputElement>(null);
   const [imageError, setImageError] = useState(false);
@@ -265,6 +268,14 @@ function SceneCard({ scene }: SceneCardProps) {
           })}
         </div>
       </div>
+
+      {feedbackMode && (
+        <CommentThread
+          sceneId={scene.id}
+          sceneNumber={n}
+          comments={scene.comments ?? EMPTY_COMMENTS}
+        />
+      )}
     </article>
   );
 }

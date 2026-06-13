@@ -85,7 +85,7 @@ describe('zipHandler', () => {
     const archive = await zip.generateAsync({ type: 'uint8array' });
 
     const imported = await importProject(archive as unknown as Blob);
-    expect(imported.project.version).toBe('1.3');
+    expect(imported.project.version).toBe('1.4');
     expect(imported.project.fieldDefinitions).toEqual(data.fieldDefinitions);
     expect(imported.project.scenes[0]?.customFields).toEqual({ 'custom:light': 'Warm' });
   });

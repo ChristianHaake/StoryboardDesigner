@@ -153,6 +153,18 @@ const de = {
     undo: 'Rückgängig',
     dismiss: 'Meldung schließen',
   },
+  feedback: {
+    toggle: 'Feedback',
+    heading: 'Feedback',
+    sceneHeading: 'Feedback zu Szene {{n}}',
+    openCount_one: '{{count}} offen',
+    openCount_other: '{{count}} offen',
+    markDone: 'Als erledigt markieren',
+    delete: 'Kommentar löschen',
+    addPlaceholder: 'Kommentar schreiben …',
+    addLabel: 'Kommentar zu Szene {{n}}',
+    add: 'Senden',
+  },
   markdown: {
     backToEditor: '← Zurück zum Editor',
     germanOnly: 'Diese Seite ist nur auf Deutsch verfügbar.',

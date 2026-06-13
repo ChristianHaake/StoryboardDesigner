@@ -160,6 +160,18 @@ const en: Translations = {
     undo: 'Undo',
     dismiss: 'Dismiss message',
   },
+  feedback: {
+    toggle: 'Feedback',
+    heading: 'Feedback',
+    sceneHeading: 'Feedback on scene {{n}}',
+    openCount_one: '{{count}} open',
+    openCount_other: '{{count}} open',
+    markDone: 'Mark as done',
+    delete: 'Delete comment',
+    addPlaceholder: 'Write a comment …',
+    addLabel: 'Comment on scene {{n}}',
+    add: 'Send',
+  },
   markdown: {
     backToEditor: '← Back to editor',
     germanOnly: 'This page is only available in German.',

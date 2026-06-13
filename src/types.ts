@@ -16,6 +16,14 @@ export interface PrePlanning {
   resources: string;
 }
 
+// Ab v1.4: szenenbezogenes Feedback (Lehrkraft kommentiert die .storyboard-Datei).
+export interface SceneComment {
+  id: string;
+  text: string;
+  done: boolean;
+  createdAt: string; // ISO-Zeitstempel
+}
+
 export interface Scene {
   id: string;
   orderIndex: number;
@@ -24,6 +32,7 @@ export interface Scene {
   audioText: string;
   directorNotes: string;
   customFields?: Record<string, string>; // ab v1.1
+  comments?: SceneComment[]; // ab v1.4
 }
 
 // Ab v1.1: projektweite Definition dynamischer Felder (Konfigurations-Modal).

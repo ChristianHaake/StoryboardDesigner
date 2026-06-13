@@ -17,6 +17,8 @@ export default function TopBar() {
   // Dokument sichtbar bleibt. focus-within klappt sie für Tastatur wieder auf.
   const [collapsed, setCollapsed] = useState(false);
   const [pdfBusy, setPdfBusy] = useState(false);
+  const feedbackMode = useStoryboardStore((s) => s.feedbackMode);
+  const toggleFeedbackMode = useStoryboardStore((s) => s.toggleFeedbackMode);
 
   useEffect(() => {
     const onScroll = () => setCollapsed(window.scrollY > 80);
@@ -90,6 +92,21 @@ export default function TopBar() {
             </svg>
             <span className="max-sm:hidden">{t('brand.forEducators')}</span>
           </Link>
+          <button
+            type="button"
+            onClick={toggleFeedbackMode}
+            aria-pressed={feedbackMode}
+            className={`inline-flex min-h-10 items-center gap-1.5 rounded-lg px-2.5 text-sm font-semibold transition-colors ${
+              feedbackMode
+                ? 'bg-amber-100 text-amber-900 hover:bg-amber-200'
+                : 'text-slate-600 hover:bg-slate-100 hover:text-slate-900'
+            }`}
+          >
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" aria-hidden="true">
+              <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z" />
+            </svg>
+            <span className="max-sm:hidden">{t('feedback.toggle')}</span>
+          </button>
           <LanguageToggle />
         </div>
       </div>

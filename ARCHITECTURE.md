@@ -1,6 +1,6 @@
 # Architektur
 
-Technischer Überblick für Entwickler:innen. Ist-Zustand nach Version 1.3.
+Technischer Überblick für Entwickler:innen. Ist-Zustand nach Version 1.4.
 Detailplanung: [Codingplan.md](Codingplan.md) (Architektur-Soll), [UIX-Codingplan.md](UIX-Codingplan.md) (UI-Konzept), [Sprint-Planung.md](Sprint-Planung.md) (Roadmap).
 
 ## Kontext und Ziele
@@ -99,6 +99,7 @@ StoryboardCreator folgt der visuellen Sprache von smc.haak3.de:
 | SMC-Chrome vollständig `print:hidden`                  | Druck zeigt nur A4-Inhalt, kein UI-Overhead                    | Markenelemente nicht im PDF sichtbar                                                            |
 | Select-Feldtyp über `CustomFieldDefinition.type` (v1.3)| Dropdowns (z. B. Kameraeinstellung) ohne Kernfeld-Umbau        | Werte außerhalb der Optionen bleiben erhalten, sind aber nur als Altwert wählbar                |
 | PDF-Export lazy (jspdf + html-to-image, eigener Chunk) | Echte .pdf-Datei (iPad-tauglich) ohne Main-Bundle-Bloat        | DOM→Bild→PDF ist Raster, kein selektierbarer Text; `window.print()` bleibt als Alternative      |
+| Feedback dateibasiert in `Scene.comments` (v1.4)       | Kein Backend/Accounts — Lehrkraft kommentiert die `.storyboard` und gibt sie zurück | Kein Live-Austausch; Feedback-Modus ist reine Ansicht (nicht im Projekt persistiert)            |
 
 ## Bekannte Grenzen / offene Punkte
 
