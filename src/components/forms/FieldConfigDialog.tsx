@@ -3,7 +3,10 @@ import { useTranslation } from 'react-i18next';
 import { useStoryboardStore } from '../../store/useStoryboardStore';
 import { MAX_CUSTOM_FIELDS, MAX_CUSTOM_FIELD_LABEL_LENGTH } from '../../utils/customFields';
 import { buttonPrimary, buttonSecondary } from './fieldStyles';
-import type { CustomFieldDefinition, MetaData } from '../../types';
+import type { CustomFieldDefinition, CustomFieldType, MetaData } from '../../types';
+
+const dialogInputClass =
+  'min-h-11 w-full rounded-lg border border-slate-300 bg-slate-50 px-3 text-sm outline-none focus:border-blue-500 focus:bg-white focus:ring-3 focus:ring-blue-100';
 
 interface FieldConfigDialogProps {
   open: boolean;
@@ -14,57 +17,80 @@ const EMPTY_DEFINITIONS: never[] = [];
 
 function FieldDefinitionRow({
   definition,
-  onRename,
+  onSave,
   onDelete,
 }: {
   definition: CustomFieldDefinition;
-  onRename: (key: string, label: string) => void;
+  onSave: (key: string, label: string, options?: string[]) => void;
   onDelete: (key: string, label: string) => void;
 }) {
   const { t } = useTranslation();
+  const isSelect = definition.type === 'select';
   const [label, setLabel] = useState(definition.label);
+  const [optionsText, setOptionsText] = useState((definition.options ?? []).join('\n'));
+
+  function save() {
+    onSave(definition.key, label, isSelect ? optionsText.split('\n') : undefined);
+  }
 
   return (
-    <div className="flex items-center gap-2 rounded-xl border border-slate-200 p-2 max-sm:flex-wrap">
-      <input
-        type="text"
-        value={label}
-        maxLength={MAX_CUSTOM_FIELD_LABEL_LENGTH}
-        aria-label={t('fieldConfig.rowLabel', { label: definition.label })}
-        onChange={(event) => setLabel(event.target.value)}
-        onKeyDown={(event) => {
-          if (event.key === 'Enter') {
-            event.preventDefault();
-            onRename(definition.key, label);
-          }
-        }}
-        className="min-h-11 min-w-0 flex-1 rounded-lg border border-transparent bg-slate-50 px-3 text-sm outline-none focus:border-blue-500 focus:bg-white focus:ring-3 focus:ring-blue-100 max-sm:w-full max-sm:flex-none"
-      />
-      <button
-        type="button"
-        onClick={() => onRename(definition.key, label)}
-        className="min-h-11 rounded-lg px-3 text-sm font-semibold text-blue-700 hover:bg-blue-50"
-      >
-        {t('fieldConfig.saveRow')}
-      </button>
-      <button
-        type="button"
-        onClick={() => onDelete(definition.key, definition.label)}
-        aria-label={t('fieldConfig.deleteField', { label: definition.label })}
-        className="inline-flex size-11 items-center justify-center rounded-lg text-slate-500 hover:bg-red-50 hover:text-red-700"
-      >
-        <svg
-          width="18"
-          height="18"
-          viewBox="0 0 24 24"
-          fill="none"
-          stroke="currentColor"
-          strokeWidth="1.8"
-          aria-hidden="true"
+    <div className="rounded-xl border border-slate-200 p-2">
+      <div className="flex items-center gap-2 max-sm:flex-wrap">
+        <input
+          type="text"
+          value={label}
+          maxLength={MAX_CUSTOM_FIELD_LABEL_LENGTH}
+          aria-label={t('fieldConfig.rowLabel', { label: definition.label })}
+          onChange={(event) => setLabel(event.target.value)}
+          onKeyDown={(event) => {
+            if (event.key === 'Enter') {
+              event.preventDefault();
+              save();
+            }
+          }}
+          className="min-h-11 min-w-0 flex-1 rounded-lg border border-transparent bg-slate-50 px-3 text-sm outline-none focus:border-blue-500 focus:bg-white focus:ring-3 focus:ring-blue-100 max-sm:w-full max-sm:flex-none"
+        />
+        {isSelect && (
+          <span className="rounded-md bg-blue-50 px-2 py-1 text-xs font-semibold text-blue-700">
+            {t('fieldConfig.typeSelect')}
+          </span>
+        )}
+        <button
+          type="button"
+          onClick={save}
+          className="min-h-11 rounded-lg px-3 text-sm font-semibold text-blue-700 hover:bg-blue-50"
         >
-          <path d="M4 7h16M9 7V4h6v3M7 7l1 13h8l1-13M10 11v5M14 11v5" />
-        </svg>
-      </button>
+          {t('fieldConfig.saveRow')}
+        </button>
+        <button
+          type="button"
+          onClick={() => onDelete(definition.key, definition.label)}
+          aria-label={t('fieldConfig.deleteField', { label: definition.label })}
+          className="inline-flex size-11 items-center justify-center rounded-lg text-slate-500 hover:bg-red-50 hover:text-red-700"
+        >
+          <svg
+            width="18"
+            height="18"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            strokeWidth="1.8"
+            aria-hidden="true"
+          >
+            <path d="M4 7h16M9 7V4h6v3M7 7l1 13h8l1-13M10 11v5M14 11v5" />
+          </svg>
+        </button>
+      </div>
+      {isSelect && (
+        <textarea
+          value={optionsText}
+          onChange={(event) => setOptionsText(event.target.value)}
+          rows={3}
+          aria-label={t('fieldConfig.optionsLabel', { label: definition.label })}
+          placeholder={t('fieldConfig.optionsPlaceholder')}
+          className={`${dialogInputClass} mt-2 resize-y py-2 leading-6`}
+        />
+      )}
     </div>
   );
 }
@@ -84,9 +110,12 @@ export default function FieldConfigDialog({ open, onClose }: FieldConfigDialogPr
   const formatType = useStoryboardStore((state) => state.metaData.formatType);
   const addCustomField = useStoryboardStore((state) => state.addCustomField);
   const renameCustomField = useStoryboardStore((state) => state.renameCustomField);
+  const updateCustomFieldOptions = useStoryboardStore((state) => state.updateCustomFieldOptions);
   const deleteCustomField = useStoryboardStore((state) => state.deleteCustomField);
   const applyCurrentFormatPreset = useStoryboardStore((state) => state.applyCurrentFormatPreset);
   const [newLabel, setNewLabel] = useState('');
+  const [newType, setNewType] = useState<CustomFieldType>('text');
+  const [newOptions, setNewOptions] = useState('');
   const [message, setMessage] = useState<string | null>(null);
 
   const closeDialog = useCallback(() => {
@@ -114,19 +143,31 @@ export default function FieldConfigDialog({ open, onClose }: FieldConfigDialogPr
   }, [closeDialog, open]);
 
   function handleAdd() {
-    const error = addCustomField(newLabel);
+    const options = newType === 'select' ? newOptions.split('\n') : [];
+    const error = addCustomField(newLabel, newType, options);
     if (error) {
       setMessage(error);
       return;
     }
     setNewLabel('');
+    setNewOptions('');
+    setNewType('text');
     setMessage(t('fieldConfig.added'));
     addInputRef.current?.focus();
   }
 
-  function handleRename(key: string, label: string) {
-    const error = renameCustomField(key, label);
-    setMessage(error ?? t('fieldConfig.renamed'));
+  function handleSave(key: string, label: string, options?: string[]) {
+    const renameError = renameCustomField(key, label);
+    if (renameError) {
+      setMessage(renameError);
+      return;
+    }
+    if (options) {
+      const optionsError = updateCustomFieldOptions(key, options);
+      setMessage(optionsError ?? t('fieldConfig.renamed'));
+      return;
+    }
+    setMessage(t('fieldConfig.renamed'));
   }
 
   function handleDelete(key: string, label: string) {
@@ -201,34 +242,61 @@ export default function FieldConfigDialog({ open, onClose }: FieldConfigDialogPr
                 </p>
               </div>
             </div>
-            <div className="mt-3 flex gap-2 max-sm:flex-col">
-              <input
-                ref={addInputRef}
-                type="text"
-                value={newLabel}
-                maxLength={MAX_CUSTOM_FIELD_LABEL_LENGTH}
-                placeholder={t('fieldConfig.newPlaceholder')}
-                aria-label={t('fieldConfig.newLabel')}
-                onChange={(event) => {
-                  setNewLabel(event.target.value);
-                  setMessage(null);
-                }}
-                onKeyDown={(event) => {
-                  if (event.key === 'Enter') {
-                    event.preventDefault();
-                    handleAdd();
-                  }
-                }}
-                className="min-h-11 flex-1 rounded-lg border border-slate-300 bg-slate-50 px-3 text-sm outline-none focus:border-blue-500 focus:bg-white focus:ring-3 focus:ring-blue-100"
-              />
-              <button
-                type="button"
-                onClick={handleAdd}
-                disabled={definitions.length >= MAX_CUSTOM_FIELDS}
-                className={`${buttonPrimary} min-h-11`}
-              >
-                {t('fieldConfig.add')}
-              </button>
+            <div className="mt-3 space-y-2">
+              <div className="flex gap-2 max-sm:flex-col">
+                <input
+                  ref={addInputRef}
+                  type="text"
+                  value={newLabel}
+                  maxLength={MAX_CUSTOM_FIELD_LABEL_LENGTH}
+                  placeholder={t('fieldConfig.newPlaceholder')}
+                  aria-label={t('fieldConfig.newLabel')}
+                  onChange={(event) => {
+                    setNewLabel(event.target.value);
+                    setMessage(null);
+                  }}
+                  onKeyDown={(event) => {
+                    if (event.key === 'Enter' && newType === 'text') {
+                      event.preventDefault();
+                      handleAdd();
+                    }
+                  }}
+                  className={`${dialogInputClass} flex-1`}
+                />
+                <select
+                  value={newType}
+                  aria-label={t('fieldConfig.typeLabel')}
+                  onChange={(event) => {
+                    setNewType(event.target.value as CustomFieldType);
+                    setMessage(null);
+                  }}
+                  className={`${dialogInputClass} appearance-none sm:w-40`}
+                >
+                  <option value="text">{t('fieldConfig.typeText')}</option>
+                  <option value="select">{t('fieldConfig.typeSelect')}</option>
+                </select>
+                <button
+                  type="button"
+                  onClick={handleAdd}
+                  disabled={definitions.length >= MAX_CUSTOM_FIELDS}
+                  className={`${buttonPrimary} min-h-11`}
+                >
+                  {t('fieldConfig.add')}
+                </button>
+              </div>
+              {newType === 'select' && (
+                <textarea
+                  value={newOptions}
+                  onChange={(event) => {
+                    setNewOptions(event.target.value);
+                    setMessage(null);
+                  }}
+                  rows={3}
+                  aria-label={t('fieldConfig.optionsAdd')}
+                  placeholder={t('fieldConfig.optionsPlaceholder')}
+                  className={`${dialogInputClass} resize-y py-2 leading-6`}
+                />
+              )}
             </div>
           </section>
 
@@ -267,7 +335,7 @@ export default function FieldConfigDialog({ open, onClose }: FieldConfigDialogPr
                   <FieldDefinitionRow
                     key={definition.key}
                     definition={definition}
-                    onRename={handleRename}
+                    onSave={handleSave}
                     onDelete={handleDelete}
                   />
                 ))}

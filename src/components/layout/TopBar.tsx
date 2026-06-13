@@ -4,6 +4,7 @@ import { useTranslation } from 'react-i18next';
 import { Link } from 'react-router-dom';
 import { selectProject, useStoryboardStore } from '../../store/useStoryboardStore';
 import { exportProject, importProject, ImportError } from '../../utils/zipHandler';
+import { exportElementToPdf } from '../../utils/pdfExport';
 import LanguageToggle from './LanguageToggle';
 import BrandLogo from './BrandLogo';
 import StatusPill from './StatusPill';
@@ -15,6 +16,9 @@ export default function TopBar() {
   // Beim Scrollen die Marken-Zeile einklappen, damit auf Tablets mehr
   // Dokument sichtbar bleibt. focus-within klappt sie für Tastatur wieder auf.
   const [collapsed, setCollapsed] = useState(false);
+  const [pdfBusy, setPdfBusy] = useState(false);
+  const feedbackMode = useStoryboardStore((s) => s.feedbackMode);
+  const toggleFeedbackMode = useStoryboardStore((s) => s.toggleFeedbackMode);
 
   useEffect(() => {
     const onScroll = () => setCollapsed(window.scrollY > 80);
@@ -30,6 +34,23 @@ export default function TopBar() {
     } catch (err: unknown) {
       console.warn('Export fehlgeschlagen:', err);
       state.setErrorMessage(t('topbar.exportFailed'));
+    }
+  }
+
+  async function handlePdf() {
+    const state = useStoryboardStore.getState();
+    const element = document.getElementById('storyboard-document');
+    if (!element) return;
+    const name = state.metaData.projectName.trim() || t('topbar.pdfFallbackName');
+    setPdfBusy(true);
+    try {
+      await exportElementToPdf(element, `${name}.pdf`, 'article');
+      state.clearErrorMessage();
+    } catch (err: unknown) {
+      console.warn('PDF-Export fehlgeschlagen:', err);
+      state.setErrorMessage(t('topbar.pdfFailed'));
+    } finally {
+      setPdfBusy(false);
     }
   }
 
@@ -71,6 +92,21 @@ export default function TopBar() {
             </svg>
             <span className="max-sm:hidden">{t('brand.forEducators')}</span>
           </Link>
+          <button
+            type="button"
+            onClick={toggleFeedbackMode}
+            aria-pressed={feedbackMode}
+            className={`inline-flex min-h-10 items-center gap-1.5 rounded-lg px-2.5 text-sm font-semibold transition-colors ${
+              feedbackMode
+                ? 'bg-amber-100 text-amber-900 hover:bg-amber-200'
+                : 'text-slate-600 hover:bg-slate-100 hover:text-slate-900'
+            }`}
+          >
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" aria-hidden="true">
+              <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z" />
+            </svg>
+            <span className="max-sm:hidden">{t('feedback.toggle')}</span>
+          </button>
           <LanguageToggle />
         </div>
       </div>
@@ -78,7 +114,7 @@ export default function TopBar() {
       <div className="border-t border-slate-100 bg-slate-50/60">
         <nav
           aria-label={t('topbar.actions')}
-          className="mx-auto flex max-w-screen-lg items-center gap-2 px-4 py-2 max-sm:grid max-sm:grid-cols-3"
+          className="mx-auto flex max-w-screen-lg items-center gap-2 px-4 py-2 max-sm:grid max-sm:grid-cols-2"
         >
           <button
             type="button"
@@ -121,7 +157,7 @@ export default function TopBar() {
           <button
             type="button"
             onClick={() => window.print()}
-            className={`${buttonPrimary} min-h-11 max-sm:col-span-1`}
+            className={`${buttonSecondary} min-h-11`}
           >
             <svg
               width="18"
@@ -137,6 +173,29 @@ export default function TopBar() {
               <path d="M7 14h10v7H7z" />
             </svg>
             <span className="max-[430px]:text-xs">{t('topbar.print')}</span>
+          </button>
+          <button
+            type="button"
+            onClick={handlePdf}
+            disabled={pdfBusy}
+            aria-busy={pdfBusy}
+            className={`${buttonPrimary} min-h-11`}
+          >
+            <svg
+              width="18"
+              height="18"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              strokeWidth="1.8"
+              aria-hidden="true"
+            >
+              <path d="M14 3H6a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V9z" />
+              <path d="M14 3v6h6" />
+            </svg>
+            <span className="max-[430px]:text-xs">
+              {pdfBusy ? t('topbar.pdfBusy') : t('topbar.pdf')}
+            </span>
           </button>
         </nav>
         <input

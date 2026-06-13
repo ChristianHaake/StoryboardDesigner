@@ -1,9 +1,11 @@
 import { create } from 'zustand';
 import type {
   CustomFieldDefinition,
+  CustomFieldType,
   MetaData,
   PrePlanning,
   Scene,
+  SceneComment,
   StoryboardProject,
 } from '../types';
 import { generateId } from '../utils/idGenerator';
@@ -13,7 +15,9 @@ import {
   createCustomFieldDefinition,
   getFormatPreset,
   mergeFormatPreset,
+  normalizeSelectOptions,
   validateCustomFieldLabel,
+  validateSelectOptions,
 } from '../utils/customFields';
 import i18n from '../i18n';
 
@@ -76,13 +80,21 @@ interface StoryboardState {
   lastDeleted: { scene: Scene; index: number; image: Blob | null } | null;
   /** Nutzer-Fehlermeldung (z. B. Import fehlgeschlagen) für den Notification-Stack. */
   errorMessage: string | null;
+  /** Feedback-Modus (Lehrkraft-Sicht): blendet die Kommentar-UI je Szene ein.
+   *  Reine Ansichtseinstellung, nicht Teil des Projekts/Autosaves. */
+  feedbackMode: boolean;
   updateMetaData: (patch: Partial<MetaData>) => void;
   setFormatType: (formatType: MetaData['formatType']) => number;
   updatePrePlanning: (patch: Partial<PrePlanning>) => void;
   updateScene: (id: string, patch: Partial<Scene>) => void;
   updateCustomField: (sceneId: string, fieldKey: string, value: string) => void;
-  addCustomField: (label: string) => string | null;
+  toggleFeedbackMode: () => void;
+  addComment: (sceneId: string, text: string) => void;
+  toggleCommentDone: (sceneId: string, commentId: string) => void;
+  deleteComment: (sceneId: string, commentId: string) => void;
+  addCustomField: (label: string, type?: CustomFieldType, options?: string[]) => string | null;
   renameCustomField: (key: string, label: string) => string | null;
+  updateCustomFieldOptions: (key: string, options: string[]) => string | null;
   deleteCustomField: (key: string) => void;
   applyCurrentFormatPreset: () => number;
   setSceneImage: (id: string, blob: Blob) => void;
@@ -113,6 +125,7 @@ export const useStoryboardStore = create<StoryboardState>((set) => ({
   hasContent: false,
   lastDeleted: null,
   errorMessage: null,
+  feedbackMode: false,
 
   updateMetaData: (patch) =>
     set((state) => ({
@@ -167,12 +180,66 @@ export const useStoryboardStore = create<StoryboardState>((set) => ({
       ),
     })),
 
-  addCustomField: (label) => {
+  toggleFeedbackMode: () => set((state) => ({ feedbackMode: !state.feedbackMode })),
+
+  addComment: (sceneId, text) =>
+    set((state) => {
+      const trimmed = text.trim();
+      if (!trimmed) return state;
+      const comment: SceneComment = {
+        id: generateId(),
+        text: trimmed,
+        done: false,
+        createdAt: new Date().toISOString(),
+      };
+      return {
+        touched: true,
+        hasContent: true,
+        scenes: state.scenes.map((scene) =>
+          scene.id === sceneId
+            ? { ...scene, comments: [...(scene.comments ?? []), comment] }
+            : scene,
+        ),
+      };
+    }),
+
+  toggleCommentDone: (sceneId, commentId) =>
+    set((state) => ({
+      touched: true,
+      scenes: state.scenes.map((scene) =>
+        scene.id === sceneId
+          ? {
+              ...scene,
+              comments: (scene.comments ?? []).map((comment) =>
+                comment.id === commentId ? { ...comment, done: !comment.done } : comment,
+              ),
+            }
+          : scene,
+      ),
+    })),
+
+  deleteComment: (sceneId, commentId) =>
+    set((state) => ({
+      touched: true,
+      scenes: state.scenes.map((scene) => {
+        if (scene.id !== sceneId) return scene;
+        const comments = (scene.comments ?? []).filter((comment) => comment.id !== commentId);
+        return comments.length > 0
+          ? { ...scene, comments }
+          : { ...scene, comments: undefined };
+      }),
+    })),
+
+  addCustomField: (label, type = 'text', options = []) => {
     let error: string | null = null;
     set((state) => {
       const definitions = state.fieldDefinitions ?? [];
       error = validateCustomFieldLabel(label, definitions);
       if (error) return state;
+      if (type === 'select') {
+        error = validateSelectOptions(options);
+        if (error) return state;
+      }
       if (definitions.length >= MAX_CUSTOM_FIELDS) {
         error = i18n.t('fields.maxFields', { max: MAX_CUSTOM_FIELDS });
         return state;
@@ -180,7 +247,7 @@ export const useStoryboardStore = create<StoryboardState>((set) => ({
       return {
         touched: true,
         hasContent: true,
-        fieldDefinitions: [...definitions, createCustomFieldDefinition(label)],
+        fieldDefinitions: [...definitions, createCustomFieldDefinition(label, type, options)],
       };
     });
     return error;
@@ -201,6 +268,30 @@ export const useStoryboardStore = create<StoryboardState>((set) => ({
         hasContent: true,
         fieldDefinitions: definitions.map((definition) =>
           definition.key === key ? { ...definition, label: label.trim() } : definition,
+        ),
+      };
+    });
+    return error;
+  },
+
+  updateCustomFieldOptions: (key, options) => {
+    let error: string | null = null;
+    set((state) => {
+      const definitions = state.fieldDefinitions ?? [];
+      const target = definitions.find((definition) => definition.key === key);
+      if (!target || target.type !== 'select') {
+        error = i18n.t('fields.notFound');
+        return state;
+      }
+      error = validateSelectOptions(options);
+      if (error) return state;
+      return {
+        touched: true,
+        hasContent: true,
+        fieldDefinitions: definitions.map((definition) =>
+          definition.key === key
+            ? { ...definition, options: normalizeSelectOptions(options) }
+            : definition,
         ),
       };
     });
@@ -288,6 +379,8 @@ export const useStoryboardStore = create<StoryboardState>((set) => ({
         id: generateId(),
         // customFields tief kopieren — geteilte Referenz wäre eine latente Falle (v1.1).
         ...(original.customFields ? { customFields: { ...original.customFields } } : {}),
+        // Feedback gehört zur Originalszene, nicht zur Kopie.
+        comments: undefined,
       };
       const scenes = [...state.scenes];
       scenes.splice(index + 1, 0, copy);

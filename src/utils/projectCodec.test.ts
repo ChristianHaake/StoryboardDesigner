@@ -43,9 +43,67 @@ describe('decodeProject', () => {
       }),
     );
 
-    expect(decoded.version).toBe('1.1');
+    expect(decoded.version).toBe('1.4');
     expect(decoded.fieldDefinitions).toEqual([{ key: 'camera', label: 'Kamera' }]);
     expect(decoded.scenes[0]?.customFields).toEqual({ camera: 'Totale' });
+  });
+
+  it('preserves select field type with options and downgrades invalid selects', () => {
+    const decoded = decodeProject(
+      project({
+        version: '1.3',
+        fieldDefinitions: [
+          { key: 'shot', label: 'Einstellung', type: 'select', options: ['Totale', 'Nah', 'Nah'] },
+          { key: 'empty', label: 'Leer', type: 'select', options: [] },
+          { key: 'free', label: 'Frei', type: 'text' },
+        ],
+      }),
+    );
+
+    expect(decoded.fieldDefinitions?.[0]).toEqual({
+      key: 'shot',
+      label: 'Einstellung',
+      type: 'select',
+      options: ['Totale', 'Nah'], // dedupliziert
+    });
+    // Select ohne Optionen fällt auf Freitext zurück (kein type-Feld).
+    expect(decoded.fieldDefinitions?.[1]).toEqual({ key: 'empty', label: 'Leer' });
+    expect(decoded.fieldDefinitions?.[2]).toEqual({ key: 'free', label: 'Frei' });
+  });
+
+  it('preserves and normalizes scene comments', () => {
+    const decoded = decodeProject(
+      project({
+        version: '1.4',
+        scenes: [
+          {
+            id: 'scene-1',
+            orderIndex: 0,
+            imageFileName: null,
+            visualDescription: '',
+            audioText: '',
+            directorNotes: '',
+            comments: [
+              { id: 'c1', text: 'Gut!', done: true, createdAt: '2026-06-13T10:00:00Z' },
+              { id: 'c2', text: '   ', done: false }, // leer → verworfen
+              { text: 'Ohne ID', done: 'nope' }, // ID generiert, done → false
+            ],
+          },
+        ],
+      }),
+    );
+
+    const comments = decoded.scenes[0]?.comments ?? [];
+    expect(comments).toHaveLength(2);
+    expect(comments[0]).toEqual({
+      id: 'c1',
+      text: 'Gut!',
+      done: true,
+      createdAt: '2026-06-13T10:00:00Z',
+    });
+    expect(comments[1]?.text).toBe('Ohne ID');
+    expect(comments[1]?.done).toBe(false);
+    expect(comments[1]?.id).toBeTruthy();
   });
 
   it('normalizes duplicate labels and excessive field definitions', () => {
