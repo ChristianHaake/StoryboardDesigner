@@ -32,12 +32,6 @@ function createEmptyScene(orderIndex: number): Scene {
   };
 }
 
-// Lokales Datum, nicht UTC — toISOString() würde nach Mitternacht CET den Vortag liefern.
-function todayLocalISO(): string {
-  const d = new Date();
-  return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
-}
-
 function createInitialMetaData(): MetaData {
   return {
     id: generateId(),
@@ -45,7 +39,8 @@ function createInitialMetaData(): MetaData {
     participants: '',
     subject: '',
     formatType: 'film',
-    date: todayLocalISO(),
+    // Kein Vorbelegen mit heute — Nutzer wählt das Projektdatum selbst (#8).
+    date: '',
   };
 }
 
@@ -80,20 +75,44 @@ interface StoryboardState {
   lastDeleted: { scene: Scene; index: number; image: Blob | null } | null;
   /** Nutzer-Fehlermeldung (z. B. Import fehlgeschlagen) für den Notification-Stack. */
   errorMessage: string | null;
+  /** Erfolgsmeldung (z. B. Export erfolgreich) für den Notification-Stack. */
+  successMessage: string | null;
   /** Feedback-Modus (Lehrkraft-Sicht): blendet die Kommentar-UI je Szene ein.
    *  Reine Ansichtseinstellung, nicht Teil des Projekts/Autosaves. */
   feedbackMode: boolean;
+  /** Autosave-Status für den sichtbaren Speicherhinweis (#6a). Reine UI-State,
+   *  nicht Teil des Projekts/Autosaves. */
+  saveStatus: 'idle' | 'saving' | 'saved' | 'error';
+  collapsedScenes: Record<string, boolean>;
+  /** Undo/Redo-Verfügbarkeit (#6b). Wird vom History-Manager gespeist. */
+  canUndo: boolean;
+  canRedo: boolean;
   updateMetaData: (patch: Partial<MetaData>) => void;
   setFormatType: (formatType: MetaData['formatType']) => number;
   updatePrePlanning: (patch: Partial<PrePlanning>) => void;
   updateScene: (id: string, patch: Partial<Scene>) => void;
   updateCustomField: (sceneId: string, fieldKey: string, value: string) => void;
   toggleFeedbackMode: () => void;
+  setSaveStatus: (status: StoryboardState['saveStatus']) => void;
+  toggleSceneCollapse: (id: string, force?: boolean) => void;
+  collapseAllScenes: (collapse: boolean) => void;
+  setHistoryFlags: (canUndo: boolean, canRedo: boolean) => void;
+  restoreContent: (snapshot: {
+    metaData: MetaData;
+    prePlanning: PrePlanning;
+    fieldDefinitions?: CustomFieldDefinition[];
+    scenes: Scene[];
+  }) => void;
   addComment: (sceneId: string, text: string) => void;
   toggleCommentDone: (sceneId: string, commentId: string) => void;
   deleteComment: (sceneId: string, commentId: string) => void;
-  addCustomField: (label: string, type?: CustomFieldType, options?: string[]) => string | null;
-  renameCustomField: (key: string, label: string) => string | null;
+  addCustomField: (
+    label: string,
+    type?: CustomFieldType,
+    options?: string[],
+    description?: string,
+  ) => string | null;
+  renameCustomField: (key: string, label: string, description?: string) => string | null;
   updateCustomFieldOptions: (key: string, options: string[]) => string | null;
   deleteCustomField: (key: string) => void;
   applyCurrentFormatPreset: () => number;
@@ -106,7 +125,10 @@ interface StoryboardState {
   clearLastDeleted: () => void;
   setErrorMessage: (message: string) => void;
   clearErrorMessage: () => void;
+  setSuccessMessage: (message: string) => void;
+  clearSuccessMessage: () => void;
   moveScene: (activeId: string, overId: string) => void;
+  resetProject: () => void;
   loadProject: (
     project: StoryboardProject,
     images?: Record<string, Blob>,
@@ -125,7 +147,12 @@ export const useStoryboardStore = create<StoryboardState>((set) => ({
   hasContent: false,
   lastDeleted: null,
   errorMessage: null,
+  successMessage: null,
   feedbackMode: false,
+  saveStatus: 'idle',
+  collapsedScenes: {},
+  canUndo: false,
+  canRedo: false,
 
   updateMetaData: (patch) =>
     set((state) => ({
@@ -182,6 +209,43 @@ export const useStoryboardStore = create<StoryboardState>((set) => ({
 
   toggleFeedbackMode: () => set((state) => ({ feedbackMode: !state.feedbackMode })),
 
+  // Kein touched: true — Speicherstatus ist kein Nutzerinhalt.
+  setSaveStatus: (saveStatus) => set({ saveStatus }),
+
+  toggleSceneCollapse: (id, force) =>
+    set((state) => ({
+      collapsedScenes: {
+        ...state.collapsedScenes,
+        [id]: force !== undefined ? force : !state.collapsedScenes[id],
+      },
+    })),
+
+  collapseAllScenes: (collapse) =>
+    set((state) => {
+      const newCollapsed: Record<string, boolean> = {};
+      if (collapse) {
+        state.scenes.forEach((scene) => {
+          newCollapsed[scene.id] = true;
+        });
+      }
+      return { collapsedScenes: newCollapsed };
+    }),
+
+  // Kein touched: true — reine UI-Flags aus dem History-Manager.
+  setHistoryFlags: (canUndo, canRedo) => set({ canUndo, canRedo }),
+
+  // Setzt Projektinhalt aus einem History-Schnappschuss (Undo/Redo, #6b).
+  // Bilder bleiben unverändert.
+  restoreContent: (snapshot) =>
+    set({
+      touched: true,
+      hasContent: true,
+      metaData: snapshot.metaData,
+      prePlanning: snapshot.prePlanning,
+      fieldDefinitions: snapshot.fieldDefinitions,
+      scenes: snapshot.scenes,
+    }),
+
   addComment: (sceneId, text) =>
     set((state) => {
       const trimmed = text.trim();
@@ -224,13 +288,11 @@ export const useStoryboardStore = create<StoryboardState>((set) => ({
       scenes: state.scenes.map((scene) => {
         if (scene.id !== sceneId) return scene;
         const comments = (scene.comments ?? []).filter((comment) => comment.id !== commentId);
-        return comments.length > 0
-          ? { ...scene, comments }
-          : { ...scene, comments: undefined };
+        return comments.length > 0 ? { ...scene, comments } : { ...scene, comments: undefined };
       }),
     })),
 
-  addCustomField: (label, type = 'text', options = []) => {
+  addCustomField: (label, type = 'text', options = [], description?: string) => {
     let error: string | null = null;
     set((state) => {
       const definitions = state.fieldDefinitions ?? [];
@@ -247,13 +309,16 @@ export const useStoryboardStore = create<StoryboardState>((set) => ({
       return {
         touched: true,
         hasContent: true,
-        fieldDefinitions: [...definitions, createCustomFieldDefinition(label, type, options)],
+        fieldDefinitions: [
+          ...definitions,
+          createCustomFieldDefinition(label, type, options, description),
+        ],
       };
     });
     return error;
   },
 
-  renameCustomField: (key, label) => {
+  renameCustomField: (key, label, description?: string) => {
     let error: string | null = null;
     set((state) => {
       const definitions = state.fieldDefinitions ?? [];
@@ -267,7 +332,13 @@ export const useStoryboardStore = create<StoryboardState>((set) => ({
         touched: true,
         hasContent: true,
         fieldDefinitions: definitions.map((definition) =>
-          definition.key === key ? { ...definition, label: label.trim() } : definition,
+          definition.key === key
+            ? {
+                ...definition,
+                label: label.trim(),
+                description: description?.trim(),
+              }
+            : definition,
         ),
       };
     });
@@ -448,8 +519,10 @@ export const useStoryboardStore = create<StoryboardState>((set) => ({
 
   // Kein touched: true — Meldungen sind kein Nutzerinhalt.
   setErrorMessage: (message) => set({ errorMessage: message }),
-
   clearErrorMessage: () => set({ errorMessage: null }),
+
+  setSuccessMessage: (message) => set({ successMessage: message }),
+  clearSuccessMessage: () => set({ successMessage: null }),
 
   moveScene: (activeId, overId) =>
     set((state) => {
@@ -460,6 +533,24 @@ export const useStoryboardStore = create<StoryboardState>((set) => ({
       const [moved] = scenes.splice(from, 1);
       scenes.splice(to, 0, moved);
       return { touched: true, hasContent: true, scenes: renumber(scenes) };
+    }),
+
+  resetProject: () =>
+    set((state) => {
+      // Alle Object-URLs freigeben, bevor der State auf Anfang gesetzt wird.
+      Object.values(state.imageUrls).forEach((url) => URL.revokeObjectURL(url));
+      return {
+        metaData: createInitialMetaData(),
+        prePlanning: initialPrePlanning,
+        fieldDefinitions: getFormatPreset('film'),
+        scenes: [],
+        images: {},
+        imageUrls: {},
+        touched: false,
+        hasContent: false,
+        lastDeleted: null,
+        errorMessage: null,
+      };
     }),
 
   loadProject: (project, images = {}, markTouched = false) =>

@@ -43,7 +43,7 @@ describe('decodeProject', () => {
       }),
     );
 
-    expect(decoded.version).toBe('1.4');
+    expect(decoded.version).toBe('1.5');
     expect(decoded.fieldDefinitions).toEqual([{ key: 'camera', label: 'Kamera' }]);
     expect(decoded.scenes[0]?.customFields).toEqual({ camera: 'Totale' });
   });
@@ -69,6 +69,37 @@ describe('decodeProject', () => {
     // Select ohne Optionen fällt auf Freitext zurück (kein type-Feld).
     expect(decoded.fieldDefinitions?.[1]).toEqual({ key: 'empty', label: 'Leer' });
     expect(decoded.fieldDefinitions?.[2]).toEqual({ key: 'free', label: 'Frei' });
+  });
+
+  it('preserves alt text and drops empty alt text', () => {
+    const decoded = decodeProject(
+      project({
+        version: '1.4',
+        scenes: [
+          {
+            id: 'scene-1',
+            orderIndex: 0,
+            imageFileName: 'img-1.jpg',
+            visualDescription: '',
+            audioText: '',
+            directorNotes: '',
+            altText: 'Nahaufnahme einer Pflanze',
+          },
+          {
+            id: 'scene-2',
+            orderIndex: 1,
+            imageFileName: null,
+            visualDescription: '',
+            audioText: '',
+            directorNotes: '',
+            altText: '',
+          },
+        ],
+      }),
+    );
+
+    expect(decoded.scenes[0]?.altText).toBe('Nahaufnahme einer Pflanze');
+    expect(decoded.scenes[1]).not.toHaveProperty('altText');
   });
 
   it('preserves and normalizes scene comments', () => {
@@ -104,6 +135,41 @@ describe('decodeProject', () => {
     expect(comments[1]?.text).toBe('Ohne ID');
     expect(comments[1]?.done).toBe(false);
     expect(comments[1]?.id).toBeTruthy();
+  });
+
+  it('preserves v1.5 fields (imageFit, duration) and defaults them', () => {
+    const decoded = decodeProject(
+      project({
+        version: '1.5',
+        scenes: [
+          {
+            id: 'scene-1',
+            orderIndex: 0,
+            imageFileName: null,
+            visualDescription: '',
+            audioText: '',
+            directorNotes: '',
+            imageFit: 'contain',
+            duration: 10,
+          },
+          {
+            id: 'scene-2',
+            orderIndex: 1,
+            imageFileName: null,
+            visualDescription: '',
+            audioText: '',
+            directorNotes: '',
+            // missing v1.5 fields should fallback to defaults
+          },
+        ],
+      }),
+    );
+
+    expect(decoded.scenes[0]?.imageFit).toBe('contain');
+    expect(decoded.scenes[0]?.duration).toBe(10);
+
+    expect(decoded.scenes[1]?.imageFit).toBe('cover'); // default
+    expect(decoded.scenes[1]?.duration).toBe(3); // default
   });
 
   it('normalizes duplicate labels and excessive field definitions', () => {

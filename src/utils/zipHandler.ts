@@ -1,4 +1,4 @@
-import JSZip from 'jszip';
+import { strFromU8, strToU8, unzipSync, zipSync, type Zippable } from 'fflate';
 import { saveAs } from 'file-saver';
 import type { StoryboardProject } from '../types';
 import { decodeProject, MAX_SCENES, ProjectValidationError } from './projectCodec';
@@ -11,56 +11,6 @@ const MAX_FILE_BYTES = 100 * 1024 * 1024; // 100 MB Gesamtdatei
 
 /** Import-Fehler mit nutzerfreundlicher, übersetzter Meldung. */
 export class ImportError extends Error {}
-
-// internalStream ist dokumentierte JSZip-API (StreamHelper), fehlt aber in den
-// mitgelieferten Typdefinitionen — minimales Interface + Cast.
-interface JSZipStreamHelper {
-  on(event: 'data', callback: (chunk: Uint8Array<ArrayBuffer>) => void): this;
-  on(event: 'error', callback: (error: Error) => void): this;
-  on(event: 'end', callback: () => void): this;
-  pause(): this;
-  resume(): this;
-}
-
-/**
- * Entpackt einen ZIP-Eintrag mit Byte-Cap WÄHREND der Dekompression —
- * Zip-Bomb-Schutz: ein nachträglicher Größencheck käme zu spät, der
- * dekomprimierte Inhalt läge dann bereits komplett im Speicher.
- */
-function entryToBytesLimited(
-  entry: JSZip.JSZipObject,
-  maxBytes: number,
-  errorMessage: string,
-  totalBudget?: { remaining: number },
-): Promise<Uint8Array<ArrayBuffer>[]> {
-  return new Promise((resolve, reject) => {
-    const chunks: Uint8Array<ArrayBuffer>[] = [];
-    let total = 0;
-    let failed = false;
-    const stream = (
-      entry as unknown as { internalStream(type: 'uint8array'): JSZipStreamHelper }
-    ).internalStream('uint8array');
-    stream.on('data', (chunk) => {
-      if (failed) return;
-      total += chunk.length;
-      if (total > maxBytes || (totalBudget && chunk.length > totalBudget.remaining)) {
-        failed = true;
-        stream.pause();
-        reject(new ImportError(errorMessage));
-        return;
-      }
-      if (totalBudget) totalBudget.remaining -= chunk.length;
-      chunks.push(chunk);
-    });
-    stream.on('error', () => {
-      if (!failed) reject(new ImportError(i18n.t('errors.fileCorrupt')));
-    });
-    stream.on('end', () => {
-      if (!failed) resolve(chunks);
-    });
-    stream.resume();
-  });
-}
 
 function sanitizeFileName(name: string): string {
   const cleaned = name
@@ -88,25 +38,90 @@ export async function exportProject(
     }
   }
 
-  const zip = new JSZip();
-  // imageFileName erst beim Export vergeben — im Store ist `images` die Wahrheit.
+  const entries: Zippable = {};
   const scenes = project.scenes.map((scene) => ({
     ...scene,
     imageFileName: images[scene.id] ? `images/${scene.id}.jpg` : null,
   }));
   const dataJson = JSON.stringify({ ...project, scenes }, null, 2);
-  if (new TextEncoder().encode(dataJson).byteLength > MAX_DATA_JSON_BYTES) {
+  const dataJsonBytes = strToU8(dataJson);
+  if (dataJsonBytes.byteLength > MAX_DATA_JSON_BYTES) {
     throw new Error(i18n.t('errors.exportDataTooLarge'));
   }
-  zip.file('data.json', dataJson);
+
+  entries['data.json'] = [dataJsonBytes, { level: 6 }];
   for (const scene of scenes) {
-    if (scene.imageFileName) zip.file(scene.imageFileName, images[scene.id]);
+    if (scene.imageFileName && images[scene.id]) {
+      const buffer = await images[scene.id].arrayBuffer();
+      entries[scene.imageFileName] = [new Uint8Array(buffer), { level: 0 }];
+    }
   }
-  const blob = await zip.generateAsync({ type: 'blob' });
+
+  const zipped = zipSync(entries);
+  const blob = new Blob([zipped], { type: 'application/zip' });
   if (blob.size > MAX_FILE_BYTES) {
     throw new Error(i18n.t('errors.exportFileTooLarge'));
   }
   saveAs(blob, `${sanitizeFileName(project.metaData.projectName)}.storyboard`);
+}
+
+type CentralEntry = {
+  name: string;
+  compressedSize: number;
+  uncompressedSize: number;
+};
+
+function readCentralDirectory(bytes: Uint8Array): CentralEntry[] {
+  const view = new DataView(bytes.buffer, bytes.byteOffset, bytes.byteLength);
+  const minimumEocdSize = 22;
+  const start = Math.max(0, bytes.length - 65_557);
+  let eocd = -1;
+  for (let offset = bytes.length - minimumEocdSize; offset >= start; offset--) {
+    if (view.getUint32(offset, true) === 0x06054b50) {
+      eocd = offset;
+      break;
+    }
+  }
+  if (eocd < 0) throw new ImportError(i18n.t('errors.notStoryboard'));
+
+  const entryCount = view.getUint16(eocd + 10, true);
+  const centralSize = view.getUint32(eocd + 12, true);
+  const centralOffset = view.getUint32(eocd + 16, true);
+  if (
+    entryCount === 0xffff ||
+    centralSize === 0xffffffff ||
+    centralOffset === 0xffffffff ||
+    centralOffset + centralSize > eocd
+  ) {
+    throw new ImportError(i18n.t('errors.notStoryboard'));
+  }
+
+  const decoder = new TextDecoder();
+  const entries: CentralEntry[] = [];
+  let offset = centralOffset;
+  for (let index = 0; index < entryCount; index++) {
+    if (offset + 46 > bytes.length || view.getUint32(offset, true) !== 0x02014b50) {
+      throw new ImportError(i18n.t('errors.notStoryboard'));
+    }
+    const flags = view.getUint16(offset + 8, true);
+    const method = view.getUint16(offset + 10, true);
+    const compressedSize = view.getUint32(offset + 20, true);
+    const uncompressedSize = view.getUint32(offset + 24, true);
+    const nameLength = view.getUint16(offset + 28, true);
+    const extraLength = view.getUint16(offset + 30, true);
+    const commentLength = view.getUint16(offset + 32, true);
+    const nextOffset = offset + 46 + nameLength + extraLength + commentLength;
+    if (nextOffset > bytes.length || (flags & 1) !== 0 || (method !== 0 && method !== 8)) {
+      throw new ImportError(i18n.t('errors.notStoryboard'));
+    }
+    const name = decoder.decode(bytes.subarray(offset + 46, offset + 46 + nameLength));
+    entries.push({ name, compressedSize, uncompressedSize });
+    offset = nextOffset;
+  }
+  if (offset !== centralOffset + centralSize) {
+    throw new ImportError(i18n.t('errors.notStoryboard'));
+  }
+  return entries;
 }
 
 export async function importProject(
@@ -116,24 +131,40 @@ export async function importProject(
     throw new ImportError(i18n.t('errors.fileTooLargeImport'));
   }
 
-  let zip: JSZip;
+  const bytes = new Uint8Array(await file.arrayBuffer());
+  const centralEntries = readCentralDirectory(bytes);
+  let totalImagesSize = 0;
+
+  for (const entry of centralEntries) {
+    if (entry.name === 'data.json') {
+      if (entry.uncompressedSize > MAX_DATA_JSON_BYTES) {
+        throw new ImportError(i18n.t('errors.importDataTooLarge'));
+      }
+    } else if (entry.name.startsWith('images/')) {
+      if (entry.uncompressedSize > MAX_IMAGE_BYTES) {
+        throw new ImportError(i18n.t('errors.imagesTooLargeImport', { file: entry.name }));
+      }
+      totalImagesSize += entry.uncompressedSize;
+    }
+  }
+
+  if (totalImagesSize > MAX_TOTAL_IMAGE_BYTES) {
+    throw new ImportError(i18n.t('errors.imagesTooLargeImport', { file: 'total' }));
+  }
+
+  let extracted: Record<string, Uint8Array>;
   try {
-    zip = await JSZip.loadAsync(file);
+    extracted = unzipSync(bytes);
   } catch {
     throw new ImportError(i18n.t('errors.notStoryboard'));
   }
 
-  const dataEntry = zip.file('data.json');
-  if (!dataEntry) throw new ImportError(i18n.t('errors.noDataJson'));
+  const dataJsonBytes = extracted['data.json'];
+  if (!dataJsonBytes) throw new ImportError(i18n.t('errors.noDataJson'));
 
-  const dataChunks = await entryToBytesLimited(
-    dataEntry,
-    MAX_DATA_JSON_BYTES,
-    i18n.t('errors.importDataTooLarge'),
-  );
   let raw: unknown;
   try {
-    raw = JSON.parse(new TextDecoder().decode(await new Blob(dataChunks).arrayBuffer()));
+    raw = JSON.parse(strFromU8(dataJsonBytes));
   } catch {
     throw new ImportError(i18n.t('errors.dataCorrupt'));
   }
@@ -147,9 +178,7 @@ export async function importProject(
     );
   }
 
-  // Nur Bilder laden, die von Szenen referenziert werden — fremde ZIP-Einträge ignorieren.
   const images: Record<string, Blob> = {};
-  const imageBudget = { remaining: MAX_TOTAL_IMAGE_BYTES };
   const loadedImages = new Map<string, Blob>();
   for (const scene of project.scenes) {
     if (!scene.imageFileName) continue;
@@ -158,15 +187,9 @@ export async function importProject(
       images[scene.id] = loaded;
       continue;
     }
-    const entry = zip.file(scene.imageFileName);
-    if (!entry) continue; // fehlendes Bild tolerieren statt Abbruch
-    const chunks = await entryToBytesLimited(
-      entry,
-      MAX_IMAGE_BYTES,
-      i18n.t('errors.imagesTooLargeImport', { file: scene.imageFileName }),
-      imageBudget,
-    );
-    const blob = new Blob(chunks);
+    const mediaBytes = extracted[scene.imageFileName];
+    if (!mediaBytes) continue; // missing image tolerated
+    const blob = new Blob([new Uint8Array(mediaBytes)]);
     loadedImages.set(scene.imageFileName, blob);
     images[scene.id] = blob;
   }

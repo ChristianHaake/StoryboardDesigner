@@ -31,8 +31,11 @@ export interface Scene {
   visualDescription: string;
   audioText: string;
   directorNotes: string;
+  altText?: string; // ab v1.4: barrierefreie Bildbeschreibung (Alt-Text)
   customFields?: Record<string, string>; // ab v1.1
   comments?: SceneComment[]; // ab v1.4
+  imageFit?: 'cover' | 'contain'; // ab v1.5: Bildausrichtung
+  duration?: number; // ab v1.5: Dauer in Sekunden (für Präsentationsmodus)
 }
 
 // Ab v1.1: projektweite Definition dynamischer Felder (Konfigurations-Modal).
@@ -44,6 +47,7 @@ export interface CustomFieldDefinition {
   label: string;
   type?: CustomFieldType; // default 'text'
   options?: string[]; // nur bei type 'select'
+  description?: string; // ab v1.4: Hilfstext für das Feld
 }
 
 export interface StoryboardProject {

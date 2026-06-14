@@ -3,6 +3,7 @@ import { useTranslation } from 'react-i18next';
 import type { SceneComment } from '../../types';
 import { useStoryboardStore } from '../../store/useStoryboardStore';
 import { buttonPrimary } from '../forms/fieldStyles';
+import { MessageSquare, X } from 'lucide-react';
 
 interface CommentThreadProps {
   sceneId: string;
@@ -29,21 +30,10 @@ export default function CommentThread({ sceneId, sceneNumber, comments }: Commen
   return (
     <section
       aria-label={t('feedback.sceneHeading', { n: sceneNumber })}
-      className="mt-4 rounded-lg border border-amber-200 bg-amber-50/60 p-3 print:hidden"
+      className="mt-4 rounded-xl border border-amber-200 bg-amber-50/60 p-3 print:hidden"
     >
       <div className="mb-2 flex items-center gap-2">
-        <svg
-          width="16"
-          height="16"
-          viewBox="0 0 24 24"
-          fill="none"
-          stroke="currentColor"
-          strokeWidth="1.8"
-          className="text-amber-700"
-          aria-hidden="true"
-        >
-          <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z" />
-        </svg>
+        <MessageSquare className="w-4 h-4 text-amber-700" strokeWidth={1.8} aria-hidden="true" />
         <h4 className="text-xs font-bold tracking-[0.14em] text-amber-800 uppercase">
           {t('feedback.heading')}
         </h4>
@@ -70,7 +60,9 @@ export default function CommentThread({ sceneId, sceneNumber, comments }: Commen
                   className="size-5 accent-blue-600"
                 />
               </label>
-              <span className={`min-w-0 flex-1 break-words ${comment.done ? 'text-slate-400 line-through' : ''}`}>
+              <span
+                className={`min-w-0 flex-1 break-words ${comment.done ? 'text-slate-400 line-through' : ''}`}
+              >
                 {comment.text}
               </span>
               <button
@@ -79,17 +71,7 @@ export default function CommentThread({ sceneId, sceneNumber, comments }: Commen
                 aria-label={t('feedback.delete', { text: comment.text })}
                 className="-m-1.5 inline-flex size-11 shrink-0 items-center justify-center rounded-md text-slate-400 hover:bg-red-50 hover:text-red-700"
               >
-                <svg
-                  width="16"
-                  height="16"
-                  viewBox="0 0 24 24"
-                  fill="none"
-                  stroke="currentColor"
-                  strokeWidth="1.8"
-                  aria-hidden="true"
-                >
-                  <path d="M6 6l12 12M18 6 6 18" />
-                </svg>
+                <X className="w-4 h-4" strokeWidth={1.8} aria-hidden="true" />
               </button>
             </li>
           ))}

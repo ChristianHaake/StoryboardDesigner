@@ -13,7 +13,7 @@ import {
 import { generateId } from './idGenerator';
 import i18n from '../i18n';
 
-export const PROJECT_VERSION = '1.4';
+export const PROJECT_VERSION = '1.5';
 export const MAX_SCENES = 200;
 export const MAX_COMMENTS_PER_SCENE = 100;
 export const MAX_COMMENT_LENGTH = 2000;
@@ -126,6 +126,11 @@ export function decodeProject(raw: unknown): StoryboardProject {
       typeof scene.id === 'string' && scene.id && !seenIds.has(scene.id) ? scene.id : generateId();
     seenIds.add(id);
     const comments = validateComments(scene.comments);
+    const altText = str(scene.altText);
+    const imageFit = scene.imageFit === 'contain' ? 'contain' : 'cover';
+    const parsedDuration = typeof scene.duration === 'number' ? scene.duration : 3;
+    const duration = Math.max(1, Math.min(3600, parsedDuration));
+
     return {
       id,
       orderIndex: typeof scene.orderIndex === 'number' ? scene.orderIndex : index,
@@ -133,6 +138,9 @@ export function decodeProject(raw: unknown): StoryboardProject {
       visualDescription: str(scene.visualDescription),
       audioText: str(scene.audioText),
       directorNotes: str(scene.directorNotes),
+      imageFit,
+      duration,
+      ...(altText ? { altText } : {}),
       ...(customFields && Object.keys(customFields).length > 0 ? { customFields } : {}),
       ...(comments ? { comments } : {}),
     };

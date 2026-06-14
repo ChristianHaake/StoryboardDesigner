@@ -1,14 +1,19 @@
 {
-  "name": "storyboardcreator",
+  "name": "storyboarddesigner",
   "private": true,
   "version": "1.4.0",
+  "license": "GPL-3.0-only",
   "type": "module",
+  "workspaces": [
+    "packages/*"
+  ],
   "scripts": {
     "dev": "vite",
     "prebuild": "node scripts/clean-build-output.mjs",
     "build": "tsc -b && vite build && node scripts/clean-cloudflare-assets.mjs",
     "preview": "vite preview",
     "test": "vitest run",
+    "typecheck": "tsc -b",
     "lint": "eslint .",
     "format": "prettier --write \"src/**/*.{ts,tsx,css,md}\" \"*.{js,ts,json,md}\""
   },
@@ -16,13 +21,15 @@
     "@dnd-kit/core": "^6.3.1",
     "@dnd-kit/sortable": "^10.0.0",
     "@dnd-kit/utilities": "^3.2.2",
+    "@haak3/ui": "workspace:*",
+    "fflate": "^0.8.3",
     "file-saver": "^2.0.5",
     "html-to-image": "^1.11.13",
     "i18next": "^26.3.1",
     "i18next-browser-languagedetector": "^8.2.1",
     "idb-keyval": "^6.2.5",
     "jspdf": "^4.2.1",
-    "jszip": "^3.10.1",
+    "lucide-react": "^1.18.0",
     "react": "^19.2.7",
     "react-dom": "^19.2.7",
     "react-i18next": "^17.0.8",
@@ -47,6 +54,7 @@
     "typescript": "^6.0.3",
     "typescript-eslint": "^8.61.0",
     "vite": "^8.0.16",
+    "vite-plugin-pwa": "^1.3.0",
     "vitest": "^4.1.8"
   }
 }

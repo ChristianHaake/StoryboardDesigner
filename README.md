@@ -1,4 +1,4 @@
-# StoryboardCreator
+# StoryboardDesigner
 
 Eine rein clientseitige Web-App für Lernende zum Erstellen von Storyboards (Film, Fotostory, Rede). Projekte werden lokal als `.storyboard`-Datei (ZIP mit `data.json` und Bildern) gespeichert — kein Backend, keine Accounts, keine Datenübertragung.
 
@@ -40,13 +40,27 @@ Das Deployment erfolgt auf **Cloudflare** (Workers-Flow, statische Assets):
 
 Vor Veröffentlichung müssen die Rechtstexte durch den Betreiber rechtlich geprüft sowie Druck/PDF auf den eingesetzten iPads getestet werden.
 
+## haak3-Standard
+
+Diese App folgt dem
+[haak3 Web App Standard](https://github.com/ChristianHaake/haak3-webapp-standard).
+Agenten-Vorgaben stehen in [AGENTS.md](AGENTS.md); Konformität und Ausnahmen in
+[docs/standard-conformance.md](docs/standard-conformance.md).
+
 ## Projektdokumente
 
-- [ARCHITECTURE.md](ARCHITECTURE.md) — technischer Überblick (Ist-Zustand, Datenfluss, Entscheidungen)
-- [Codingplan.md](Codingplan.md) — Architektur, Datenmodell, Kernfunktionen
-- [UIX-Codingplan.md](UIX-Codingplan.md) — UI/UX-Konzept (A4-Dokument, WYSIWYG)
-- [Sprint-Planung.md](Sprint-Planung.md) — Sprints 1–12
-- [UI-Backlog.md](UI-Backlog.md) — User-Stories zur UI-Verbesserung (Befunde + Epics A–D)
-- [Feature-Backlog.md](Feature-Backlog.md) — geplante Funktionsfeatures (Releases 1.3 + 1.4)
-- [RulesofWorking.md](RulesofWorking.md) — Entwicklungsvorgaben
+- [docs/architecture.md](docs/architecture.md) — technischer Überblick (Ist-Zustand, Datenfluss, Entscheidungen)
+- [docs/standard-conformance.md](docs/standard-conformance.md) — Standard-Konformität und Ausnahmen
+- [docs/review-checklist.md](docs/review-checklist.md) — Release-Review-Checkliste
 - [CHANGELOG.md](CHANGELOG.md) — Änderungshistorie
+- [docs/planning/](docs/planning/) — Planungsdokumente:
+  - [Codingplan.md](docs/planning/Codingplan.md) — Architektur, Datenmodell, Kernfunktionen
+  - [UIX-Codingplan.md](docs/planning/UIX-Codingplan.md) — UI/UX-Konzept (A4-Dokument, WYSIWYG)
+  - [Sprint-Planung.md](docs/planning/Sprint-Planung.md) — Sprints 1–12
+  - [UI-Backlog.md](docs/planning/UI-Backlog.md) — User-Stories zur UI-Verbesserung (Befunde + Epics A–D)
+  - [Feature-Backlog.md](docs/planning/Feature-Backlog.md) — geplante Funktionsfeatures (Releases 1.3 + 1.4)
+  - [RulesofWorking.md](docs/planning/RulesofWorking.md) — Entwicklungsvorgaben
+
+## Lizenz
+
+GPL-3.0-only — siehe [LICENSE](LICENSE).

@@ -1,4 +1,4 @@
-import JSZip from 'jszip';
+import { strToU8, zipSync } from 'fflate';
 import { describe, expect, it, vi } from 'vitest';
 import type { StoryboardProject } from '../types';
 import { exportProject, importProject } from './zipHandler';
@@ -56,12 +56,13 @@ describe('zipHandler', () => {
       audioText: '',
       directorNotes: '',
     }));
-    const zip = new JSZip();
-    zip.file('data.json', JSON.stringify(data));
-    zip.file('images/shared.jpg', new Uint8Array([1, 2, 3]));
 
-    const archive = await zip.generateAsync({ type: 'uint8array' });
-    const imported = await importProject(archive as unknown as Blob);
+    const archive = zipSync({
+      'data.json': strToU8(JSON.stringify(data)),
+      'images/shared.jpg': new Uint8Array([1, 2, 3]),
+    });
+
+    const imported = await importProject(new Blob([archive]));
     expect(imported.images['scene-1']).toBe(imported.images['scene-2']);
     expect(imported.images['scene-1']?.size).toBe(3);
   });
@@ -80,12 +81,13 @@ describe('zipHandler', () => {
         customFields: { 'custom:light': 'Warm' },
       },
     ];
-    const zip = new JSZip();
-    zip.file('data.json', JSON.stringify(data));
-    const archive = await zip.generateAsync({ type: 'uint8array' });
 
-    const imported = await importProject(archive as unknown as Blob);
-    expect(imported.project.version).toBe('1.4');
+    const archive = zipSync({
+      'data.json': strToU8(JSON.stringify(data)),
+    });
+
+    const imported = await importProject(new Blob([archive]));
+    expect(imported.project.version).toBe('1.5');
     expect(imported.project.fieldDefinitions).toEqual(data.fieldDefinitions);
     expect(imported.project.scenes[0]?.customFields).toEqual({ 'custom:light': 'Warm' });
   });
@@ -102,12 +104,16 @@ describe('zipHandler', () => {
         directorNotes: '',
       },
     ];
-    const zip = new JSZip();
-    zip.file('data.json', JSON.stringify(data));
-    zip.file('images/large.jpg', new Uint8Array(10 * 1024 * 1024 + 1));
-    const archive = await zip.generateAsync({ type: 'uint8array', compression: 'DEFLATE' });
 
-    await expect(importProject(archive as unknown as Blob)).rejects.toThrow(
+    const archive = zipSync(
+      {
+        'data.json': strToU8(JSON.stringify(data)),
+        'images/large.jpg': new Uint8Array(10 * 1024 * 1024 + 1),
+      },
+      { level: 0 },
+    ); // level 0 for speed in tests when using large files
+
+    await expect(importProject(new Blob([archive]))).rejects.toThrow(
       'Bilder überschreiten das erlaubte Limit',
     );
   });

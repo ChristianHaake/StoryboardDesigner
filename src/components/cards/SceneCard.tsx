@@ -1,4 +1,4 @@
-import { memo, useRef, useState } from 'react';
+import { memo, useState, useRef, useEffect } from 'react';
 import type { ChangeEvent } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useSortable } from '@dnd-kit/sortable';
@@ -10,6 +10,7 @@ import AutoResizeTextarea from '../forms/AutoResizeTextarea';
 import CommentThread from './CommentThread';
 import { inputClass, labelClass } from '../forms/fieldStyles';
 import { MAX_SCENES } from '../../utils/projectCodec';
+import { GripVertical, Copy, Trash2, X, ChevronUp, ChevronDown } from 'lucide-react';
 
 const EMPTY_FIELD_DEFINITIONS: NonNullable<
   ReturnType<typeof useStoryboardStore.getState>['fieldDefinitions']
@@ -24,8 +25,12 @@ function SceneCard({ scene }: SceneCardProps) {
   const { t } = useTranslation();
   const n = scene.orderIndex + 1;
   const imageUrl = useStoryboardStore((s) => s.imageUrls[scene.id] ?? null);
-  const fieldDefinitions = useStoryboardStore((s) => s.fieldDefinitions ?? EMPTY_FIELD_DEFINITIONS);
-  const updateScene = useStoryboardStore((s) => s.updateScene);
+  const fieldDefinitions = useStoryboardStore(
+    (state) => state.fieldDefinitions ?? EMPTY_FIELD_DEFINITIONS,
+  );
+  const isCollapsed = useStoryboardStore((state) => state.collapsedScenes[scene.id] ?? false);
+  const toggleSceneCollapse = useStoryboardStore((state) => state.toggleSceneCollapse);
+  const updateScene = useStoryboardStore((state) => state.updateScene);
   const updateCustomField = useStoryboardStore((s) => s.updateCustomField);
   const duplicateScene = useStoryboardStore((s) => s.duplicateScene);
   const deleteScene = useStoryboardStore((s) => s.deleteScene);
@@ -34,8 +39,20 @@ function SceneCard({ scene }: SceneCardProps) {
   const sceneLimitReached = useStoryboardStore((s) => s.scenes.length >= MAX_SCENES);
   const feedbackMode = useStoryboardStore((s) => s.feedbackMode);
 
-  const fileInputRef = useRef<HTMLInputElement>(null);
   const [imageError, setImageError] = useState(false);
+  const [isTooTall, setIsTooTall] = useState(false);
+  const cardRef = useRef<HTMLElement | null>(null);
+
+  useEffect(() => {
+    if (!cardRef.current) return;
+    const observer = new ResizeObserver((entries) => {
+      for (const entry of entries) {
+        setIsTooTall(entry.contentRect.height > 900);
+      }
+    });
+    observer.observe(cardRef.current);
+    return () => observer.disconnect();
+  }, []);
 
   const { attributes, listeners, setNodeRef, transform, transition, isDragging } = useSortable({
     id: scene.id,
@@ -57,9 +74,17 @@ function SceneCard({ scene }: SceneCardProps) {
 
   return (
     <article
-      ref={setNodeRef}
+      ref={(node) => {
+        setNodeRef(node);
+        if (node) {
+          // Sync with local ref for ResizeObserver
+          cardRef.current = node;
+        }
+      }}
+      id={`scene-${scene.id}`}
+      tabIndex={-1}
       style={{ transform: CSS.Transform.toString(transform), transition }}
-      className={`group relative break-inside-avoid rounded-xl border border-slate-200 bg-white p-4 shadow-sm transition-[border-color,box-shadow] hover:border-slate-300 hover:shadow-md sm:p-5 print:rounded-none print:border-slate-300 print:p-3 print:shadow-none ${
+      className={`group relative scroll-mt-24 break-inside-avoid rounded-xl border border-slate-200/80 bg-white p-5 shadow-sm transition-[border-color,box-shadow] hover:border-slate-300 hover:shadow-md focus-visible:border-blue-400 sm:p-6 print:rounded-none print:border-slate-300 print:p-3 print:shadow-none ${
         isDragging ? 'z-10 border-blue-300 bg-white opacity-95 shadow-xl' : ''
       }`}
     >
@@ -72,6 +97,20 @@ function SceneCard({ scene }: SceneCardProps) {
             {n}
           </span>
           {t('scene.title', { n })}
+          <div className="ml-2 flex items-center gap-1 opacity-0 transition-opacity focus-within:opacity-100 group-hover:opacity-100 max-sm:opacity-100 pointer-coarse:opacity-100 print:hidden">
+            <input
+              type="number"
+              min="1"
+              max="3600"
+              value={scene.duration ?? 3}
+              onChange={(e) =>
+                updateScene(scene.id, { duration: parseInt(e.target.value, 10) || 3 })
+              }
+              className="w-12 h-6 rounded border border-slate-200 bg-slate-50 px-1 text-center text-xs font-normal tabular-nums text-slate-700 focus:border-blue-400 focus:outline-none focus:ring-1 focus:ring-blue-400"
+              title={t('scene.duration', 'Dauer in Sekunden')}
+            />
+            <span className="text-xs font-normal normal-case text-slate-500">s</span>
+          </div>
         </h3>
         <div className="flex items-center gap-1 print:hidden">
           <button
@@ -79,16 +118,10 @@ function SceneCard({ scene }: SceneCardProps) {
             {...attributes}
             {...listeners}
             aria-label={t('scene.move', { n })}
+            title={t('scene.move', { n })}
             className="inline-flex size-11 cursor-grab touch-none items-center justify-center rounded-lg text-slate-500 transition-colors hover:bg-slate-100 hover:text-slate-800 active:cursor-grabbing"
           >
-            <svg width="18" height="18" viewBox="0 0 16 16" fill="currentColor" aria-hidden="true">
-              <circle cx="5" cy="3" r="1.5" />
-              <circle cx="11" cy="3" r="1.5" />
-              <circle cx="5" cy="8" r="1.5" />
-              <circle cx="11" cy="8" r="1.5" />
-              <circle cx="5" cy="13" r="1.5" />
-              <circle cx="11" cy="13" r="1.5" />
-            </svg>
+            <GripVertical className="w-[18px] h-[18px]" strokeWidth={1.5} aria-hidden="true" />
           </button>
           <div className="flex items-center gap-1 opacity-0 transition-opacity group-focus-within:opacity-100 group-hover:opacity-100 max-sm:opacity-100 pointer-coarse:opacity-100">
             <button
@@ -96,185 +129,250 @@ function SceneCard({ scene }: SceneCardProps) {
               onClick={() => duplicateScene(scene.id)}
               disabled={sceneLimitReached}
               aria-label={t('scene.duplicate', { n })}
+              title={t('scene.duplicate', { n })}
               className="inline-flex size-11 items-center justify-center rounded-lg text-slate-500 transition-colors hover:bg-slate-100 hover:text-slate-800 disabled:cursor-not-allowed disabled:opacity-40"
             >
-              <svg
-                width="18"
-                height="18"
-                viewBox="0 0 16 16"
-                fill="none"
-                stroke="currentColor"
-                strokeWidth="1.5"
-                aria-hidden="true"
-              >
-                <rect x="5" y="5" width="9" height="9" rx="1" />
-                <path d="M11 5V3a1 1 0 0 0-1-1H3a1 1 0 0 0-1 1v7a1 1 0 0 0 1 1h2" />
-              </svg>
+              <Copy className="w-[18px] h-[18px]" strokeWidth={1.5} aria-hidden="true" />
             </button>
             <button
               type="button"
               onClick={() => deleteScene(scene.id)}
               aria-label={t('scene.delete', { n })}
+              title={t('scene.delete', { n })}
               className="inline-flex size-11 items-center justify-center rounded-lg text-slate-500 transition-colors hover:bg-red-50 hover:text-red-700"
             >
-              <svg
-                width="18"
-                height="18"
-                viewBox="0 0 16 16"
-                fill="none"
-                stroke="currentColor"
-                strokeWidth="1.5"
-                aria-hidden="true"
-              >
-                <path d="M2 4h12M5.5 4V2.5a1 1 0 0 1 1-1h3a1 1 0 0 1 1 1V4M6 7v5M10 7v5M3.5 4l.7 9.3a1 1 0 0 0 1 .7h5.6a1 1 0 0 0 1-.7L12.5 4" />
-              </svg>
+              <Trash2 className="w-[18px] h-[18px]" strokeWidth={1.5} aria-hidden="true" />
             </button>
-          </div>
-        </div>
-      </div>
-
-      <div className="flex gap-5 max-sm:flex-col max-sm:gap-4">
-        {/* Medien-Feld */}
-        <div className={`relative w-48 shrink-0 max-sm:w-full ${imageUrl ? '' : 'print:hidden'}`}>
-          {imageUrl ? (
-            <>
-              <button
-                type="button"
-                onClick={() => fileInputRef.current?.click()}
-                aria-label={t('scene.imageReplace', { n })}
-                className="block w-full overflow-hidden rounded-lg"
-              >
-                <img
-                  src={imageUrl}
-                  alt={t('scene.imageAlt', { n })}
-                  className="aspect-square w-full object-cover max-sm:aspect-[4/3] print:aspect-square print:rounded-none"
-                />
-              </button>
-              <button
-                type="button"
-                onClick={() => removeSceneImage(scene.id)}
-                aria-label={t('scene.imageRemove', { n })}
-                className="absolute top-2 right-2 inline-flex size-11 items-center justify-center rounded-lg bg-white/95 text-slate-700 shadow-md transition-colors hover:bg-red-50 hover:text-red-700 print:hidden"
-              >
-                <svg
-                  width="16"
-                  height="16"
-                  viewBox="0 0 16 16"
-                  fill="none"
-                  stroke="currentColor"
-                  strokeWidth="2"
-                  aria-hidden="true"
-                >
-                  <path d="M3 3l10 10M13 3L3 13" />
-                </svg>
-              </button>
-            </>
-          ) : (
             <button
               type="button"
-              onClick={() => fileInputRef.current?.click()}
-              className="flex aspect-square w-full items-center justify-center rounded-lg border border-dashed border-slate-300 bg-slate-50 text-center text-sm font-medium text-slate-500 transition-colors hover:border-blue-400 hover:bg-blue-50 hover:text-blue-700 max-sm:aspect-[4/3] print:aspect-square print:border-slate-300"
+              onClick={() => toggleSceneCollapse(scene.id)}
+              aria-expanded={!isCollapsed}
+              aria-label={
+                isCollapsed
+                  ? t('editor.expandAll', 'Ausklappen')
+                  : t('editor.collapseAll', 'Einklappen')
+              }
+              title={
+                isCollapsed
+                  ? t('editor.expandAll', 'Ausklappen')
+                  : t('editor.collapseAll', 'Einklappen')
+              }
+              className="inline-flex size-11 items-center justify-center rounded-lg text-slate-500 transition-colors hover:bg-slate-100 hover:text-slate-800"
             >
-              <span className="print:hidden">
-                {imageError ? t('scene.imageError') : t('scene.imageAdd')}
-              </span>
+              {isCollapsed ? (
+                <ChevronDown className="w-[18px] h-[18px]" strokeWidth={1.5} aria-hidden="true" />
+              ) : (
+                <ChevronUp className="w-[18px] h-[18px]" strokeWidth={1.5} aria-hidden="true" />
+              )}
             </button>
-          )}
-          <input
-            ref={fileInputRef}
-            type="file"
-            accept="image/*"
-            className="hidden"
-            onChange={handleFileChange}
-          />
-        </div>
-
-        <div className="min-w-0 flex-1 space-y-3.5">
-          <div>
-            <label className={labelClass} htmlFor={`visual-${scene.id}`}>
-              {t('scene.visual')}
-            </label>
-            <AutoResizeTextarea
-              id={`visual-${scene.id}`}
-              placeholder={t('scene.visualPlaceholder')}
-              value={scene.visualDescription}
-              onChange={(e) => updateScene(scene.id, { visualDescription: e.target.value })}
-            />
           </div>
-          <div>
-            <label className={labelClass} htmlFor={`audio-${scene.id}`}>
-              {t('scene.audio')}
-            </label>
-            <AutoResizeTextarea
-              id={`audio-${scene.id}`}
-              placeholder={t('scene.audioPlaceholder')}
-              value={scene.audioText}
-              onChange={(e) => updateScene(scene.id, { audioText: e.target.value })}
-            />
-          </div>
-          <div>
-            <label className={labelClass} htmlFor={`notes-${scene.id}`}>
-              {t('scene.notes')}
-            </label>
-            <AutoResizeTextarea
-              id={`notes-${scene.id}`}
-              placeholder={t('scene.notesPlaceholder')}
-              value={scene.directorNotes}
-              onChange={(e) => updateScene(scene.id, { directorNotes: e.target.value })}
-            />
-          </div>
-          {fieldDefinitions.map((definition) => {
-            const value = scene.customFields?.[definition.key] ?? '';
-            const fieldId = `custom-${definition.key}-${scene.id}`;
-            const isSelect = definition.type === 'select' && definition.options;
-            // Altwert, der nicht (mehr) in den Optionen liegt, bleibt wählbar.
-            const options =
-              isSelect && value && !definition.options!.includes(value)
-                ? [value, ...definition.options!]
-                : definition.options ?? [];
-            return (
-              <div key={definition.key} className={value ? '' : 'print:hidden'}>
-                <label className={labelClass} htmlFor={fieldId}>
-                  {definition.label}
-                </label>
-                {isSelect ? (
-                  <select
-                    id={fieldId}
-                    className={`${inputClass} appearance-none`}
-                    value={value}
-                    onChange={(event) =>
-                      updateCustomField(scene.id, definition.key, event.target.value)
-                    }
-                  >
-                    <option value="">{t('scene.selectPlaceholder')}</option>
-                    {options.map((option) => (
-                      <option key={option} value={option}>
-                        {option}
-                      </option>
-                    ))}
-                  </select>
-                ) : (
-                  <AutoResizeTextarea
-                    id={fieldId}
-                    placeholder={t('scene.customPlaceholder', { label: definition.label })}
-                    value={value}
-                    onChange={(event) =>
-                      updateCustomField(scene.id, definition.key, event.target.value)
-                    }
-                  />
-                )}
-              </div>
-            );
-          })}
         </div>
       </div>
 
-      {feedbackMode && (
-        <CommentThread
-          sceneId={scene.id}
-          sceneNumber={n}
-          comments={scene.comments ?? EMPTY_COMMENTS}
-        />
+      {!isCollapsed && (
+        <>
+          <div className="flex gap-5 max-sm:flex-col max-sm:gap-4">
+            {/* Medien-Feld */}
+            <div
+              className={`relative w-48 shrink-0 max-sm:w-full ${imageUrl ? '' : 'print:hidden'}`}
+            >
+              <div className="mb-1.5 flex items-center justify-between">
+                <span className="text-sm font-medium text-slate-700 print:text-xs">
+                  {t('scene.imageLabel', 'Szenenbild')}
+                </span>
+              </div>
+              {imageUrl ? (
+                <div className="relative group">
+                  <label
+                    htmlFor={`image-upload-${scene.id}`}
+                    aria-label={t('scene.imageReplace', { n })}
+                    className="block w-full cursor-pointer overflow-hidden rounded-lg focus-within:ring-2 focus-within:ring-blue-500 focus-within:ring-offset-2"
+                  >
+                    <img
+                      src={imageUrl}
+                      alt={scene.altText?.trim() ? scene.altText : t('scene.imageAlt', { n })}
+                      className={`aspect-square w-full max-sm:aspect-[4/3] print:aspect-square print:rounded-none ${
+                        scene.imageFit === 'contain'
+                          ? 'object-contain bg-slate-900'
+                          : 'object-cover'
+                      }`}
+                    />
+                  </label>
+                  <div className="absolute bottom-2 left-2 flex gap-1 print:hidden opacity-0 transition-opacity group-hover:opacity-100 focus-within:opacity-100">
+                    <button
+                      type="button"
+                      onClick={() =>
+                        updateScene(scene.id, {
+                          imageFit: scene.imageFit === 'contain' ? 'cover' : 'contain',
+                        })
+                      }
+                      className="inline-flex h-7 items-center justify-center rounded bg-slate-900/70 px-2 text-[10px] font-medium text-white backdrop-blur-md transition-colors hover:bg-slate-900"
+                    >
+                      {scene.imageFit === 'contain'
+                        ? t('scene.fitCover', 'Füllen')
+                        : t('scene.fitContain', 'Einpassen')}
+                    </button>
+                  </div>
+                  <button
+                    type="button"
+                    onClick={() => removeSceneImage(scene.id)}
+                    aria-label={t('scene.imageRemove', { n })}
+                    title={t('scene.imageRemove', { n })}
+                    className="absolute top-2 right-2 inline-flex size-11 items-center justify-center rounded-lg bg-white/95 text-slate-700 shadow-md transition-colors hover:bg-red-50 hover:text-red-700 print:hidden"
+                  >
+                    <X className="w-4 h-4" strokeWidth={2} aria-hidden="true" />
+                  </button>
+                </div>
+              ) : (
+                <label
+                  htmlFor={`image-upload-${scene.id}`}
+                  className="flex flex-col aspect-square w-full cursor-pointer items-center justify-center rounded-lg border border-dashed border-slate-300 bg-slate-50 p-4 text-center text-sm font-medium text-slate-500 transition-colors hover:border-blue-400 hover:bg-blue-50 hover:text-blue-700 focus-within:border-blue-400 focus-within:ring-2 focus-within:ring-blue-500 focus-within:ring-offset-2 max-sm:aspect-[4/3] print:aspect-square print:border-slate-300"
+                >
+                  <span className="print:hidden">
+                    {imageError ? (
+                      <span className="text-red-600">{t('scene.imageError')}</span>
+                    ) : (
+                      <>
+                        <span className="mb-1 block font-semibold text-slate-700">
+                          {t('scene.imageAdd', 'Bild hinzufügen')}
+                        </span>
+                        <span className="text-xs font-normal text-slate-500">
+                          {t('scene.imageInstruction', 'Klicken oder Datei ziehen')}
+                        </span>
+                      </>
+                    )}
+                  </span>
+                </label>
+              )}
+              <input
+                id={`image-upload-${scene.id}`}
+                type="file"
+                accept="image/*"
+                className="sr-only"
+                onChange={handleFileChange}
+              />
+              {imageUrl && (
+                <div className="mt-2 print:hidden">
+                  <label className={labelClass} htmlFor={`alt-${scene.id}`}>
+                    {t('scene.altLabel')}
+                  </label>
+                  <AutoResizeTextarea
+                    id={`alt-${scene.id}`}
+                    placeholder={t('scene.altPlaceholder')}
+                    value={scene.altText ?? ''}
+                    onChange={(e) => updateScene(scene.id, { altText: e.target.value })}
+                  />
+                </div>
+              )}
+            </div>
+
+            <div className="min-w-0 flex-1 space-y-3.5">
+              <div>
+                <label className={labelClass} htmlFor={`visual-${scene.id}`}>
+                  {t('scene.visual')}
+                </label>
+                <AutoResizeTextarea
+                  id={`visual-${scene.id}`}
+                  placeholder={t('scene.visualPlaceholder')}
+                  value={scene.visualDescription}
+                  onChange={(e) => updateScene(scene.id, { visualDescription: e.target.value })}
+                />
+              </div>
+              <div>
+                <label className={labelClass} htmlFor={`audio-${scene.id}`}>
+                  {t('scene.audio')}
+                </label>
+                <AutoResizeTextarea
+                  id={`audio-${scene.id}`}
+                  placeholder={t('scene.audioPlaceholder')}
+                  value={scene.audioText}
+                  onChange={(e) => updateScene(scene.id, { audioText: e.target.value })}
+                />
+              </div>
+              <div>
+                <label className={labelClass} htmlFor={`notes-${scene.id}`}>
+                  {t('scene.notes')}
+                </label>
+                <AutoResizeTextarea
+                  id={`notes-${scene.id}`}
+                  placeholder={t('scene.notesPlaceholder')}
+                  value={scene.directorNotes}
+                  onChange={(e) => updateScene(scene.id, { directorNotes: e.target.value })}
+                />
+              </div>
+              {fieldDefinitions.map((definition) => {
+                const value = scene.customFields?.[definition.key] ?? '';
+                const fieldId = `custom-${definition.key}-${scene.id}`;
+                const isSelect = definition.type === 'select' && definition.options;
+                // Altwert, der nicht (mehr) in den Optionen liegt, bleibt wählbar.
+                const options =
+                  isSelect && value && !definition.options!.includes(value)
+                    ? [value, ...definition.options!]
+                    : (definition.options ?? []);
+                return (
+                  <div key={definition.key} className={value ? '' : 'print:hidden'}>
+                    <label className={labelClass} htmlFor={fieldId}>
+                      {definition.label}
+                    </label>
+                    {isSelect ? (
+                      <select
+                        id={fieldId}
+                        className={`${inputClass} appearance-none`}
+                        value={value}
+                        aria-describedby={definition.description ? `${fieldId}-desc` : undefined}
+                        onChange={(event) =>
+                          updateCustomField(scene.id, definition.key, event.target.value)
+                        }
+                      >
+                        <option value="">{t('scene.selectPlaceholder')}</option>
+                        {options.map((option) => (
+                          <option key={option} value={option}>
+                            {option}
+                          </option>
+                        ))}
+                      </select>
+                    ) : (
+                      <AutoResizeTextarea
+                        id={fieldId}
+                        placeholder={t('scene.customPlaceholder', { label: definition.label })}
+                        aria-describedby={definition.description ? `${fieldId}-desc` : undefined}
+                        value={value}
+                        onChange={(event) =>
+                          updateCustomField(scene.id, definition.key, event.target.value)
+                        }
+                      />
+                    )}
+                    {definition.description && (
+                      <p
+                        className="mt-1.5 text-xs text-slate-500 print:hidden"
+                        id={`${fieldId}-desc`}
+                      >
+                        {definition.description}
+                      </p>
+                    )}
+                  </div>
+                );
+              })}
+            </div>
+          </div>
+
+          {feedbackMode && (
+            <CommentThread
+              sceneId={scene.id}
+              sceneNumber={n}
+              comments={scene.comments ?? EMPTY_COMMENTS}
+            />
+          )}
+        </>
+      )}
+
+      {isTooTall && !isCollapsed && (
+        <div className="mt-4 rounded-md border border-amber-200 bg-amber-50 p-3 text-sm text-amber-800 print:hidden">
+          {t(
+            'scene.heightWarning',
+            'Hinweis: Diese Szene ist sehr lang und könnte beim PDF-Druck auf zwei Seiten aufgeteilt werden.',
+          )}
+        </div>
       )}
     </article>
   );

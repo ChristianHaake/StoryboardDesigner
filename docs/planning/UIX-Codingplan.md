@@ -5,7 +5,7 @@ Stand nach Version 1.2 (SMC-Redesign). Die App verwendet eine dokumentenzentrier
 ## 1. Gestaltungsprinzipien
 
 - **Dokument im Mittelpunkt:** Desktop und Tablet zeigen eine weiße A4-Arbeitsfläche auf slate-100-Hintergrund. Smartphones verwenden einen randlosen Dokument-Stream.
-- **SMC-Produktfamilie:** StoryboardCreator teilt Markenelemente (Logo, Akzentfarbe, Status-Pill, Header-Struktur) mit smc.haak3.de.
+- **SMC-Produktfamilie:** StoryboardDesigner teilt Markenelemente (Logo, Akzentfarbe, Status-Pill, Header-Struktur) mit smc.haak3.de.
 - **Eine Akzentfarbe:** `blue-600` (#2563EB) kennzeichnet primäre Aktionen, Links, Fokuszustände und Markenelemente.
 - **Erkennbare Eingaben:** Editierbare Felder verwenden `slate-50`-Fläche. Hover hellt ab, Fokus zeigt weißen Hintergrund, blaue Kontur und Fokus-Ring.
 - **Ruhige Hierarchie:** Abschnittsnamen in kleinen Versalien. Feldlabels normal geschrieben, über Gewicht und Abstand gegliedert.

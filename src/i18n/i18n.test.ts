@@ -1,6 +1,10 @@
 import { describe, it, expect } from 'vitest';
 import de from './de';
 import en from './en';
+import es from './es';
+import fr from './fr';
+
+const TRANSLATIONS = { en, es, fr } as const;
 
 // Rekursiv alle Keys als Pfade sammeln (a.b.c) — fängt fehlende Übersetzungen.
 function collectKeys(obj: Record<string, unknown>, prefix = ''): string[] {
@@ -21,27 +25,35 @@ function collectValues(obj: Record<string, unknown>): string[] {
 }
 
 describe('i18n resources', () => {
-  it('have identical key sets in de and en', () => {
-    expect(collectKeys(en).sort()).toEqual(collectKeys(de).sort());
+  const deKeys = collectKeys(de).sort();
+
+  it.each(Object.keys(TRANSLATIONS))('has identical key set in de and %s', (lang) => {
+    expect(collectKeys(TRANSLATIONS[lang as keyof typeof TRANSLATIONS]).sort()).toEqual(deKeys);
   });
 
   it('have no empty strings', () => {
-    expect(collectValues(de).filter((v) => v.trim() === '')).toEqual([]);
-    expect(collectValues(en).filter((v) => v.trim() === '')).toEqual([]);
+    for (const resource of [de, ...Object.values(TRANSLATIONS)]) {
+      expect(collectValues(resource).filter((v) => v.trim() === '')).toEqual([]);
+    }
   });
 
-  it('keep interpolation placeholders consistent across languages', () => {
-    const placeholders = (value: string) => (value.match(/{{\s*\w+\s*}}/g) ?? []).sort();
-    function walk(d: Record<string, unknown>, e: Record<string, unknown>) {
-      for (const [key, dv] of Object.entries(d)) {
-        const ev = e[key];
-        if (typeof dv === 'object' && dv !== null) {
-          walk(dv as Record<string, unknown>, ev as Record<string, unknown>);
-        } else if (typeof dv === 'string' && typeof ev === 'string') {
-          expect(placeholders(ev), `placeholders for "${key}"`).toEqual(placeholders(dv));
+  it.each(Object.keys(TRANSLATIONS))(
+    'keeps interpolation placeholders consistent in %s',
+    (lang) => {
+      const placeholders = (value: string) => (value.match(/{{\s*\w+\s*}}/g) ?? []).sort();
+      function walk(d: Record<string, unknown>, e: Record<string, unknown>) {
+        for (const [key, dv] of Object.entries(d)) {
+          const ev = e[key];
+          if (typeof dv === 'object' && dv !== null) {
+            walk(dv as Record<string, unknown>, ev as Record<string, unknown>);
+          } else if (typeof dv === 'string' && typeof ev === 'string') {
+            expect(placeholders(ev), `placeholders for "${key}" in ${lang}`).toEqual(
+              placeholders(dv),
+            );
+          }
         }
       }
-    }
-    walk(de, en);
-  });
+      walk(de, TRANSLATIONS[lang as keyof typeof TRANSLATIONS]);
+    },
+  );
 });

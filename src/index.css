@@ -1,9 +1,26 @@
 @import 'tailwindcss';
 @plugin '@tailwindcss/typography';
 
+/*
+ * Semantic Design Tokens (haak3-Standard) + Theming.
+ * Theming-Strategie: Tailwind v4 kompiliert Farb-Utilities zu var(--color-*).
+ * Dark- und High-Contrast-Modus überschreiben daher die Neutral-/Akzent-Rampe
+ * unter html[data-theme], statt jede Komponenten-Klasse zu ändern (#2).
+ */
 :root {
-  color: #111827;
-  background: #f1f5f9;
+  --app-bg: #f1f5f9;
+  --surface: #ffffff;
+  --surface-subtle: #f8fafc;
+  --text: #111827;
+  --text-muted: #667085;
+  --border: #dfe3e8;
+  --primary: #2563eb;
+  --primary-hover: #1d4ed8;
+  --focus: rgb(59 130 246 / 0.35);
+
+  color: var(--text);
+  background: var(--app-bg);
+  color-scheme: light;
   font-family:
     Inter,
     ui-sans-serif,
@@ -18,7 +35,15 @@
 
 html {
   min-width: 320px;
-  background: #f1f5f9;
+  background: var(--app-bg);
+}
+
+/* Einstellbare Schriftgröße (#2) — rem-basiert, Layout bleibt proportional. */
+html[data-font='large'] {
+  font-size: 112.5%;
+}
+html[data-font='xlarge'] {
+  font-size: 125%;
 }
 
 body {
@@ -35,8 +60,97 @@ textarea {
 }
 
 :focus-visible {
-  outline: 3px solid rgb(59 130 246 / 0.35);
+  outline: 3px solid var(--focus);
   outline-offset: 2px;
+}
+
+/* ---- Dark-Modus: Neutral-Rampe invertieren, Akzente abdunkeln ---- */
+html[data-theme='dark'] {
+  color-scheme: dark;
+  --app-bg: #0b1220;
+  --surface: #1e293b;
+  --surface-subtle: #0f172a;
+  --text: #f8fafc;
+  --text-muted: #94a3b8;
+  --border: #334155;
+  --focus: rgb(96 165 250 / 0.45);
+
+  --color-white: #1e293b;
+  --color-slate-50: #0f172a;
+  --color-slate-100: #0b1220;
+  --color-slate-200: #334155;
+  --color-slate-300: #475569;
+  --color-slate-400: #64748b;
+  --color-slate-500: #94a3b8;
+  --color-slate-600: #cbd5e1;
+  --color-slate-700: #e2e8f0;
+  --color-slate-800: #f1f5f9;
+  --color-slate-900: #f8fafc;
+  --color-slate-950: #ffffff;
+
+  --color-blue-50: #1e3a5f;
+  --color-blue-100: #1e40af;
+  --color-blue-400: #60a5fa;
+  --color-blue-500: #3b82f6;
+  --color-blue-600: #3b82f6;
+  --color-blue-700: #93c5fd;
+
+  --color-emerald-50: #064e3b;
+  --color-emerald-200: #065f46;
+  --color-emerald-700: #6ee7b7;
+
+  --color-amber-100: #78350f;
+  --color-amber-200: #92400e;
+  --color-amber-900: #fde68a;
+
+  --color-red-50: #450a0a;
+  --color-red-300: #7f1d1d;
+  --color-red-700: #fca5a5;
+}
+
+/* ---- High-Contrast: helle Flächen, maximaler Textkontrast ---- */
+html[data-theme='contrast'] {
+  color-scheme: light;
+  --app-bg: #ffffff;
+  --surface: #ffffff;
+  --surface-subtle: #ffffff;
+  --text: #000000;
+  --text-muted: #1f2937;
+  --border: #1f2937;
+  --focus: rgb(0 0 0 / 0.6);
+
+  --color-white: #ffffff;
+  --color-slate-50: #ffffff;
+  --color-slate-100: #ffffff;
+  --color-slate-200: #1f2937;
+  --color-slate-300: #1f2937;
+  --color-slate-400: #374151;
+  --color-slate-500: #1f2937;
+  --color-slate-600: #111827;
+  --color-slate-700: #000000;
+  --color-slate-800: #000000;
+  --color-slate-900: #000000;
+  --color-slate-950: #000000;
+
+  --color-blue-50: #dbeafe;
+  --color-blue-600: #1d4ed8;
+  --color-blue-700: #1e3a8a;
+}
+
+html[data-theme='contrast'] :focus-visible {
+  outline-width: 4px;
+}
+
+/* Bewegung respektieren (#2, A11y-MUST) */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
 }
 
 @page {
@@ -44,9 +158,18 @@ textarea {
   margin: 15mm;
 }
 
+/* Druck immer auf Weiß, unabhängig vom Theme. */
 @media print {
   :root,
+  html[data-theme='dark'],
+  html[data-theme='contrast'],
   html {
+    color-scheme: light;
+    --color-white: #ffffff;
+    --color-slate-50: #f8fafc;
+    --color-slate-100: #ffffff;
+    --color-slate-900: #111827;
+    --color-slate-950: #000000;
     background: white;
   }
 
