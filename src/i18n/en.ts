@@ -109,6 +109,7 @@ const en: Translations = {
     fontXlarge: 'Extra large',
   },
   brand: {
+    name: 'StoryboardDesigner',
     tagline: 'Workshop for digital formats',
     localPill: 'Content stays local',
     eduNotice: 'This app runs entirely in your browser — your text and images stay on your device.',

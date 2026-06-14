@@ -110,6 +110,7 @@ const es: Translations = {
     fontXlarge: 'Muy grande',
   },
   brand: {
+    name: 'StoryboardDesigner',
     tagline: 'Taller de formatos digitales',
     localPill: 'El contenido permanece local',
     eduNotice:

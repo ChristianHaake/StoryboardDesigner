@@ -7,13 +7,10 @@ import { exportProject, importProject, ImportError } from '../../utils/zipHandle
 import { clearAutosave } from '../../utils/persistence';
 import { redo as historyRedo, undo as historyUndo } from '../../utils/history';
 import { exportElementToPdf } from '../../utils/pdfExport';
-import LanguageToggle from './LanguageToggle';
-import DisplaySettings from './DisplaySettings';
 import BrandLogo from './BrandLogo';
 import SaveIndicator from './SaveIndicator';
 import { buttonPrimary, buttonSecondary } from '../forms/fieldStyles';
 import {
-  GraduationCap,
   MessageSquare,
   Undo,
   Redo,
@@ -113,14 +110,6 @@ export default function TopBar() {
         controlsArea={
           <>
             <SaveIndicator />
-            <Link
-              to="/hilfe"
-              className="inline-flex min-h-10 items-center gap-1.5 rounded-lg px-2.5 text-sm font-semibold text-slate-600 transition-colors hover:bg-slate-100 hover:text-slate-900"
-              title={t('brand.forEducators')}
-            >
-              <GraduationCap className="w-[18px] h-[18px]" strokeWidth={1.8} aria-hidden="true" />
-              <span className="max-lg:hidden">{t('brand.forEducators')}</span>
-            </Link>
             <button
               type="button"
               onClick={toggleFeedbackMode}
@@ -135,8 +124,6 @@ export default function TopBar() {
               <MessageSquare className="w-[18px] h-[18px]" strokeWidth={1.8} aria-hidden="true" />
               <span className="max-lg:hidden">{t('feedback.toggle')}</span>
             </button>
-            <DisplaySettings />
-            <LanguageToggle />
           </>
         }
         actionsAriaLabel={t('topbar.actions')}

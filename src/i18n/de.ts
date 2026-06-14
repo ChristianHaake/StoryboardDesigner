@@ -101,6 +101,7 @@ const de = {
     fontXlarge: 'Sehr groß',
   },
   brand: {
+    name: 'StoryboardDesigner',
     tagline: 'Workshop für digitale Formate',
     localPill: 'Inhalte bleiben lokal',
     eduNotice:
