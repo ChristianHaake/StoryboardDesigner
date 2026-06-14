@@ -103,8 +103,8 @@ interface StoryboardState {
   addComment: (sceneId: string, text: string) => void;
   toggleCommentDone: (sceneId: string, commentId: string) => void;
   deleteComment: (sceneId: string, commentId: string) => void;
-  addCustomField: (label: string, type?: CustomFieldType, options?: string[]) => string | null;
-  renameCustomField: (key: string, label: string) => string | null;
+  addCustomField: (label: string, type?: CustomFieldType, options?: string[], description?: string) => string | null;
+  renameCustomField: (key: string, label: string, description?: string) => string | null;
   updateCustomFieldOptions: (key: string, options: string[]) => string | null;
   deleteCustomField: (key: string) => void;
   applyCurrentFormatPreset: () => number;
@@ -266,7 +266,7 @@ export const useStoryboardStore = create<StoryboardState>((set) => ({
       }),
     })),
 
-  addCustomField: (label, type = 'text', options = []) => {
+  addCustomField: (label, type = 'text', options = [], description?: string) => {
     let error: string | null = null;
     set((state) => {
       const definitions = state.fieldDefinitions ?? [];
@@ -283,13 +283,13 @@ export const useStoryboardStore = create<StoryboardState>((set) => ({
       return {
         touched: true,
         hasContent: true,
-        fieldDefinitions: [...definitions, createCustomFieldDefinition(label, type, options)],
+        fieldDefinitions: [...definitions, createCustomFieldDefinition(label, type, options, description)],
       };
     });
     return error;
   },
 
-  renameCustomField: (key, label) => {
+  renameCustomField: (key, label, description?: string) => {
     let error: string | null = null;
     set((state) => {
       const definitions = state.fieldDefinitions ?? [];
@@ -303,7 +303,11 @@ export const useStoryboardStore = create<StoryboardState>((set) => ({
         touched: true,
         hasContent: true,
         fieldDefinitions: definitions.map((definition) =>
-          definition.key === key ? { ...definition, label: label.trim() } : definition,
+          definition.key === key ? { 
+            ...definition, 
+            label: label.trim(),
+            description: description?.trim() 
+          } : definition,
         ),
       };
     });

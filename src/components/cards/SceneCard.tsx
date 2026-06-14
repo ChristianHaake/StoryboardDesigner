@@ -233,6 +233,7 @@ function SceneCard({ scene }: SceneCardProps) {
                     id={fieldId}
                     className={`${inputClass} appearance-none`}
                     value={value}
+                    aria-describedby={definition.description ? `${fieldId}-desc` : undefined}
                     onChange={(event) =>
                       updateCustomField(scene.id, definition.key, event.target.value)
                     }
@@ -248,11 +249,17 @@ function SceneCard({ scene }: SceneCardProps) {
                   <AutoResizeTextarea
                     id={fieldId}
                     placeholder={t('scene.customPlaceholder', { label: definition.label })}
+                    aria-describedby={definition.description ? `${fieldId}-desc` : undefined}
                     value={value}
                     onChange={(event) =>
                       updateCustomField(scene.id, definition.key, event.target.value)
                     }
                   />
+                )}
+                {definition.description && (
+                  <p className="mt-1.5 text-xs text-slate-500 print:hidden" id={`${fieldId}-desc`}>
+                    {definition.description}
+                  </p>
                 )}
               </div>
             );

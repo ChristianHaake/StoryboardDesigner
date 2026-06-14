@@ -12,6 +12,7 @@ interface PresetField {
   labelKey: string;
   type?: CustomFieldType;
   optionKeys?: string[]; // i18n-Keys der Auswahloptionen (nur bei type 'select')
+  descriptionKey?: string; // i18n-Key für den Hilfstext
 }
 
 // Stabile Keys; Labels und Optionen werden zur Aufruf-Zeit übersetzt. Bereits in
@@ -21,6 +22,7 @@ const FORMAT_FIELD_PRESETS: Record<MetaData['formatType'], PresetField[]> = {
     {
       key: 'preset:film:shot-size',
       labelKey: 'presets.filmShotSize',
+      descriptionKey: 'presets.filmShotSizeDesc',
       type: 'select',
       optionKeys: [
         'presets.shotWide',
@@ -58,6 +60,9 @@ export function getFormatPreset(formatType: MetaData['formatType']): CustomField
       key: definition.key,
       label: i18n.t(definition.labelKey),
     };
+    if (definition.descriptionKey) {
+      base.description = i18n.t(definition.descriptionKey);
+    }
     if (definition.type === 'select' && definition.optionKeys) {
       base.type = 'select';
       base.options = definition.optionKeys.map((optionKey) => i18n.t(optionKey));
@@ -109,11 +114,15 @@ export function createCustomFieldDefinition(
   label: string,
   type: CustomFieldType = 'text',
   options: string[] = [],
+  description?: string,
 ): CustomFieldDefinition {
   const definition: CustomFieldDefinition = {
     key: `custom:${generateId()}`,
     label: label.trim(),
   };
+  if (description?.trim()) {
+    definition.description = description.trim();
+  }
   if (type === 'select') {
     definition.type = 'select';
     definition.options = normalizeSelectOptions(options);

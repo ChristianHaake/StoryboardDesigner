@@ -174,6 +174,7 @@ const de = {
   },
   presets: {
     filmShotSize: 'Kameraeinstellung',
+    filmShotSizeDesc: 'Legt fest, wie groß das Motiv im Bildausschnitt zu sehen ist.',
     filmCameraMovement: 'Kamerabewegung',
     fotostoryFraming: 'Bildausschnitt',
     fotostoryCaption: 'Sprechblase / Text',
@@ -221,12 +222,14 @@ const de = {
   },
   fieldConfig: {
     title: 'Felder konfigurieren',
-    description: 'Zusatzfelder erscheinen in jeder Szene und werden mit dem Projekt gespeichert.',
+    description: 'Benutzerdefinierte Felder werden jeder Szene im Storyboard hinzugefügt (z.B. für Einstellungsgrößen oder Kameraführung).',
     close: 'Dialog schließen',
     addHeading: 'Eigenes Feld hinzufügen',
     usage: '{{count}} von {{max}} Feldern verwendet',
     newPlaceholder: 'z. B. Lichtstimmung',
     newLabel: 'Bezeichnung des neuen Feldes',
+    newDescLabel: 'Hilfstext (optional)',
+    newDescPlaceholder: 'z.B. Erklärt, wofür dieses Feld da ist',
     add: 'Hinzufügen',
     typeLabel: 'Feldtyp',
     typeText: 'Text',

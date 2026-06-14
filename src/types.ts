@@ -45,6 +45,7 @@ export interface CustomFieldDefinition {
   label: string;
   type?: CustomFieldType; // default 'text'
   options?: string[]; // nur bei type 'select'
+  description?: string; // ab v1.4: Hilfstext für das Feld
 }
 
 export interface StoryboardProject {
