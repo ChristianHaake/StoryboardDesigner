@@ -1,4 +1,4 @@
-
+import { Check } from 'lucide-react';
 
 export interface StatusPillProps {
   label: string;
@@ -11,9 +11,7 @@ export function StatusPill({ label, className = '' }: StatusPillProps) {
     <span
       className={`inline-flex items-center gap-1.5 rounded-full border border-emerald-200 bg-emerald-50 px-3 py-1 text-xs font-semibold text-emerald-700 ${className}`}
     >
-      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.4" aria-hidden="true">
-        <path d="M5 13l4 4L19 7" />
-      </svg>
+      <Check className="w-3.5 h-3.5" strokeWidth={2.4} aria-hidden="true" />
       {label}
     </span>
   );

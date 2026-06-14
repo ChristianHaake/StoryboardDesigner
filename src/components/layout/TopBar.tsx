@@ -13,6 +13,7 @@ import BrandLogo from './BrandLogo';
 import StatusPill from './StatusPill';
 import SaveIndicator from './SaveIndicator';
 import { buttonPrimary, buttonSecondary } from '../forms/fieldStyles';
+import { GraduationCap, MessageSquare, Undo, Redo, Upload, Download, Printer, FileText, Trash2 } from 'lucide-react';
 
 import { SharedTopBar } from '@haak3/ui';
 
@@ -90,10 +91,7 @@ export default function TopBar() {
               to="/hilfe"
               className="inline-flex min-h-10 items-center gap-1.5 rounded-lg px-2.5 text-sm font-semibold text-slate-600 transition-colors hover:bg-slate-100 hover:text-slate-900 max-[420px]:hidden"
             >
-              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" aria-hidden="true">
-                <path d="M3 9l9-5 9 5-9-5-9-5Z" />
-                <path d="M7 11v4c0 1.5 2.5 3 5 3s5-1.5 5-3v-4" />
-              </svg>
+              <GraduationCap className="w-[18px] h-[18px]" strokeWidth={1.8} aria-hidden="true" />
               <span className="max-sm:hidden">{t('brand.forEducators')}</span>
             </Link>
             <button
@@ -107,9 +105,7 @@ export default function TopBar() {
                   : 'text-slate-600 hover:bg-slate-100 hover:text-slate-900'
               }`}
             >
-              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" aria-hidden="true">
-                <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z" />
-              </svg>
+              <MessageSquare className="w-[18px] h-[18px]" strokeWidth={1.8} aria-hidden="true" />
               <span className="max-sm:hidden">{t('feedback.toggle')}</span>
             </button>
             <DisplaySettings />
@@ -128,10 +124,7 @@ export default function TopBar() {
                 title={t('topbar.undo')}
                 className={`${buttonSecondary} min-h-11 flex-1`}
               >
-                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" aria-hidden="true">
-                  <path d="M9 14 4 9l5-5" />
-                  <path d="M4 9h11a5 5 0 0 1 0 10h-1" />
-                </svg>
+                <Undo className="w-[18px] h-[18px]" strokeWidth={1.8} aria-hidden="true" />
                 <span className="max-[430px]:text-xs">{t('topbar.undo')}</span>
               </button>
               <button
@@ -142,10 +135,7 @@ export default function TopBar() {
                 title={t('topbar.redo')}
                 className={`${buttonSecondary} min-h-11 flex-1`}
               >
-                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" aria-hidden="true">
-                  <path d="m15 14 5-5-5-5" />
-                  <path d="M20 9H9a5 5 0 0 0 0 10h1" />
-                </svg>
+                <Redo className="w-[18px] h-[18px]" strokeWidth={1.8} aria-hidden="true" />
                 <span className="max-[430px]:text-xs">{t('topbar.redo')}</span>
               </button>
             </div>
@@ -154,18 +144,7 @@ export default function TopBar() {
               onClick={() => fileInputRef.current?.click()}
               className={`${buttonSecondary} min-h-11`}
             >
-              <svg
-                width="18"
-                height="18"
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="currentColor"
-                strokeWidth="1.8"
-                aria-hidden="true"
-              >
-                <path d="M12 3v12m0 0 4-4m-4 4-4-4" />
-                <path d="M4 17v2a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2v-2" />
-              </svg>
+              <Upload className="w-[18px] h-[18px]" strokeWidth={1.8} aria-hidden="true" />
               <span className="max-[430px]:text-xs">{t('topbar.load')}</span>
             </button>
             <button
@@ -173,18 +152,7 @@ export default function TopBar() {
               onClick={handleExport}
               className={`${buttonSecondary} min-h-11`}
             >
-              <svg
-                width="18"
-                height="18"
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="currentColor"
-                strokeWidth="1.8"
-                aria-hidden="true"
-              >
-                <path d="M12 21V9m0 0 4 4m-4-4-4 4" />
-                <path d="M4 7V5a2 2 0 0 1 2-2h12a2 2 0 0 1 2 2v2" />
-              </svg>
+              <Download className="w-[18px] h-[18px]" strokeWidth={1.8} aria-hidden="true" />
               <span className="max-[430px]:text-xs">{t('topbar.save')}</span>
             </button>
             <button
@@ -192,19 +160,7 @@ export default function TopBar() {
               onClick={() => window.print()}
               className={`${buttonSecondary} min-h-11`}
             >
-              <svg
-                width="18"
-                height="18"
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="currentColor"
-                strokeWidth="1.8"
-                aria-hidden="true"
-              >
-                <path d="M7 8V3h10v5" />
-                <path d="M7 17H5a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2" />
-                <path d="M7 14h10v7H7z" />
-              </svg>
+              <Printer className="w-[18px] h-[18px]" strokeWidth={1.8} aria-hidden="true" />
               <span className="max-[430px]:text-xs">{t('topbar.print')}</span>
             </button>
             <button
@@ -214,18 +170,7 @@ export default function TopBar() {
               aria-busy={pdfBusy}
               className={`${buttonPrimary} min-h-11`}
             >
-              <svg
-                width="18"
-                height="18"
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="currentColor"
-                strokeWidth="1.8"
-                aria-hidden="true"
-              >
-                <path d="M14 3H6a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V9z" />
-                <path d="M14 3v6h6" />
-              </svg>
+              <FileText className="w-[18px] h-[18px]" strokeWidth={1.8} aria-hidden="true" />
               <span className="max-[430px]:text-xs">
                 {pdfBusy ? t('topbar.pdfBusy') : t('topbar.pdf')}
               </span>
@@ -236,17 +181,7 @@ export default function TopBar() {
               title={t('topbar.reset')}
               className={`${buttonSecondary} min-h-11 hover:border-red-300 hover:bg-red-50 hover:text-red-700`}
             >
-              <svg
-                width="18"
-                height="18"
-                viewBox="0 0 24 24"
-                fill="none"
-                stroke="currentColor"
-                strokeWidth="1.8"
-                aria-hidden="true"
-              >
-                <path d="M3 6h18M8 6V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6M10 11v6M14 11v6" />
-              </svg>
+              <Trash2 className="w-[18px] h-[18px]" strokeWidth={1.8} aria-hidden="true" />
               <span className="max-[430px]:text-xs">{t('topbar.reset')}</span>
             </button>
           </>

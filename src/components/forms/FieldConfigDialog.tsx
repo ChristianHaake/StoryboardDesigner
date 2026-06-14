@@ -4,6 +4,7 @@ import { useStoryboardStore } from '../../store/useStoryboardStore';
 import { MAX_CUSTOM_FIELDS, MAX_CUSTOM_FIELD_LABEL_LENGTH } from '../../utils/customFields';
 import { buttonPrimary, buttonSecondary } from './fieldStyles';
 import type { CustomFieldDefinition, CustomFieldType, MetaData } from '../../types';
+import { Trash2, X } from 'lucide-react';
 
 const dialogInputClass =
   'min-h-11 w-full rounded-lg border border-slate-300 bg-slate-50 px-3 text-sm outline-none focus:border-blue-500 focus:bg-white focus:ring-3 focus:ring-blue-100';
@@ -69,17 +70,7 @@ function FieldDefinitionRow({
           title={t('fieldConfig.deleteField', { label: definition.label })}
           className="inline-flex size-11 items-center justify-center rounded-lg text-slate-500 hover:bg-red-50 hover:text-red-700"
         >
-          <svg
-            width="18"
-            height="18"
-            viewBox="0 0 24 24"
-            fill="none"
-            stroke="currentColor"
-            strokeWidth="1.8"
-            aria-hidden="true"
-          >
-            <path d="M4 7h16M9 7V4h6v3M7 7l1 13h8l1-13M10 11v5M14 11v5" />
-          </svg>
+          <Trash2 className="w-[18px] h-[18px]" strokeWidth={1.8} aria-hidden="true" />
         </button>
       </div>
       {isSelect && (
@@ -194,7 +185,7 @@ export default function FieldConfigDialog({ open, onClose }: FieldConfigDialogPr
     <dialog
       ref={dialogRef}
       aria-labelledby="field-config-title"
-      className="m-auto max-h-[min(90vh,760px)] w-[min(92vw,640px)] overflow-hidden rounded-2xl border border-slate-200 bg-white p-0 text-slate-900 shadow-2xl backdrop:bg-slate-950/50"
+      className="m-auto max-h-[min(90vh,760px)] w-[min(92vw,640px)] overflow-hidden rounded-xl border border-slate-200 bg-white p-0 text-slate-900 shadow-2xl backdrop:bg-slate-950/50"
       onCancel={(event) => {
         event.preventDefault();
         closeDialog();
@@ -218,17 +209,7 @@ export default function FieldConfigDialog({ open, onClose }: FieldConfigDialogPr
             title={t('fieldConfig.close')}
             className="inline-flex size-11 shrink-0 items-center justify-center rounded-lg text-slate-500 hover:bg-slate-100 hover:text-slate-900"
           >
-            <svg
-              width="20"
-              height="20"
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              strokeWidth="2"
-              aria-hidden="true"
-            >
-              <path d="M6 6l12 12M18 6 6 18" />
-            </svg>
+            <X className="w-5 h-5" strokeWidth={2} aria-hidden="true" />
           </button>
         </header>
 

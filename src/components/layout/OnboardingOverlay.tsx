@@ -46,7 +46,7 @@ export default function OnboardingOverlay() {
     <dialog
       ref={dialogRef}
       aria-labelledby="onboarding-title"
-      className="m-auto w-[min(92vw,460px)] rounded-2xl border border-slate-200 bg-white p-0 text-slate-900 shadow-2xl backdrop:bg-slate-950/50"
+      className="m-auto w-[min(92vw,460px)] rounded-xl border border-slate-200 bg-white p-0 text-slate-900 shadow-2xl backdrop:bg-slate-950/50"
       onCancel={(event) => {
         event.preventDefault();
         dismiss();

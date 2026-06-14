@@ -10,6 +10,7 @@ import {
   type FontScale,
   type Theme,
 } from '../../theme';
+import { Moon, Contrast, Sun } from 'lucide-react';
 
 const THEME_LABEL: Record<Theme, string> = {
   light: 'display.themeLight',
@@ -59,20 +60,11 @@ export default function DisplaySettings() {
         className="inline-flex size-10 items-center justify-center rounded-lg text-slate-600 transition-colors hover:bg-slate-100 hover:text-slate-900"
       >
         {theme === 'dark' ? (
-          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" aria-hidden="true">
-            <path d="M21 12.8A9 9 0 1 1 11.2 3a7 7 0 0 0 9.8 9.8Z" />
-          </svg>
+          <Moon className="w-[18px] h-[18px]" strokeWidth={1.8} aria-hidden="true" />
         ) : theme === 'contrast' ? (
-          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" aria-hidden="true">
-            <circle cx="12" cy="12" r="9" />
-            <path d="M12 3v18Z" fill="currentColor" />
-            <path d="M12 3a9 9 0 0 1 0 18Z" fill="currentColor" />
-          </svg>
+          <Contrast className="w-[18px] h-[18px]" strokeWidth={1.8} aria-hidden="true" />
         ) : (
-          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" aria-hidden="true">
-            <circle cx="12" cy="12" r="4.5" />
-            <path d="M12 2v2M12 20v2M2 12h2M20 12h2M5 5l1.4 1.4M17.6 17.6 19 19M19 5l-1.4 1.4M6.4 17.6 5 19" />
-          </svg>
+          <Sun className="w-[18px] h-[18px]" strokeWidth={1.8} aria-hidden="true" />
         )}
       </button>
       <button

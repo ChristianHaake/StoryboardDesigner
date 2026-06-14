@@ -10,6 +10,7 @@ import AutoResizeTextarea from '../forms/AutoResizeTextarea';
 import CommentThread from './CommentThread';
 import { inputClass, labelClass } from '../forms/fieldStyles';
 import { MAX_SCENES } from '../../utils/projectCodec';
+import { GripVertical, Copy, Trash2, X } from 'lucide-react';
 
 const EMPTY_FIELD_DEFINITIONS: NonNullable<
   ReturnType<typeof useStoryboardStore.getState>['fieldDefinitions']
@@ -84,14 +85,7 @@ function SceneCard({ scene }: SceneCardProps) {
             title={t('scene.move', { n })}
             className="inline-flex size-11 cursor-grab touch-none items-center justify-center rounded-lg text-slate-500 transition-colors hover:bg-slate-100 hover:text-slate-800 active:cursor-grabbing"
           >
-            <svg width="18" height="18" viewBox="0 0 16 16" fill="currentColor" aria-hidden="true">
-              <circle cx="5" cy="3" r="1.5" />
-              <circle cx="11" cy="3" r="1.5" />
-              <circle cx="5" cy="8" r="1.5" />
-              <circle cx="11" cy="8" r="1.5" />
-              <circle cx="5" cy="13" r="1.5" />
-              <circle cx="11" cy="13" r="1.5" />
-            </svg>
+            <GripVertical className="w-[18px] h-[18px]" strokeWidth={1.5} aria-hidden="true" />
           </button>
           <div className="flex items-center gap-1 opacity-0 transition-opacity group-focus-within:opacity-100 group-hover:opacity-100 max-sm:opacity-100 pointer-coarse:opacity-100">
             <button
@@ -102,18 +96,7 @@ function SceneCard({ scene }: SceneCardProps) {
               title={t('scene.duplicate', { n })}
               className="inline-flex size-11 items-center justify-center rounded-lg text-slate-500 transition-colors hover:bg-slate-100 hover:text-slate-800 disabled:cursor-not-allowed disabled:opacity-40"
             >
-              <svg
-                width="18"
-                height="18"
-                viewBox="0 0 16 16"
-                fill="none"
-                stroke="currentColor"
-                strokeWidth="1.5"
-                aria-hidden="true"
-              >
-                <rect x="5" y="5" width="9" height="9" rx="1" />
-                <path d="M11 5V3a1 1 0 0 0-1-1H3a1 1 0 0 0-1 1v7a1 1 0 0 0 1 1h2" />
-              </svg>
+              <Copy className="w-[18px] h-[18px]" strokeWidth={1.5} aria-hidden="true" />
             </button>
             <button
               type="button"
@@ -122,17 +105,7 @@ function SceneCard({ scene }: SceneCardProps) {
               title={t('scene.delete', { n })}
               className="inline-flex size-11 items-center justify-center rounded-lg text-slate-500 transition-colors hover:bg-red-50 hover:text-red-700"
             >
-              <svg
-                width="18"
-                height="18"
-                viewBox="0 0 16 16"
-                fill="none"
-                stroke="currentColor"
-                strokeWidth="1.5"
-                aria-hidden="true"
-              >
-                <path d="M2 4h12M5.5 4V2.5a1 1 0 0 1 1-1h3a1 1 0 0 1 1 1V4M6 7v5M10 7v5M3.5 4l.7 9.3a1 1 0 0 0 1 .7h5.6a1 1 0 0 0 1-.7L12.5 4" />
-              </svg>
+              <Trash2 className="w-[18px] h-[18px]" strokeWidth={1.5} aria-hidden="true" />
             </button>
           </div>
         </div>
@@ -162,17 +135,7 @@ function SceneCard({ scene }: SceneCardProps) {
                 title={t('scene.imageRemove', { n })}
                 className="absolute top-2 right-2 inline-flex size-11 items-center justify-center rounded-lg bg-white/95 text-slate-700 shadow-md transition-colors hover:bg-red-50 hover:text-red-700 print:hidden"
               >
-                <svg
-                  width="16"
-                  height="16"
-                  viewBox="0 0 16 16"
-                  fill="none"
-                  stroke="currentColor"
-                  strokeWidth="2"
-                  aria-hidden="true"
-                >
-                  <path d="M3 3l10 10M13 3L3 13" />
-                </svg>
+                <X className="w-4 h-4" strokeWidth={2} aria-hidden="true" />
               </button>
             </>
           ) : (
