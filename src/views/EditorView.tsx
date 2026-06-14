@@ -293,6 +293,7 @@ export default function EditorView() {
                       {formatType === 'custom' && <LayoutTemplate className="h-8 w-8 text-slate-400" strokeWidth={1.5} />}
                       <p className="text-sm">
                         {t(
+                          // eslint-disable-next-line @typescript-eslint/no-explicit-any
                           `editor.emptyState${formatType.charAt(0).toUpperCase() + formatType.slice(1)}` as any,
                           t('editor.emptyStateCustom')
                         )}

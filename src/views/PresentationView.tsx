@@ -17,6 +17,7 @@ export default function PresentationView() {
   useEffect(() => {
     // Reset if scenes somehow get deleted while in this view
     if (currentIndex >= totalScenes && totalScenes > 0) {
+      // eslint-disable-next-line react-hooks/set-state-in-effect
       setCurrentIndex(totalScenes - 1);
     }
   }, [totalScenes, currentIndex]);
@@ -51,6 +52,7 @@ export default function PresentationView() {
     };
     window.addEventListener('keydown', handleKeyDown);
     return () => window.removeEventListener('keydown', handleKeyDown);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [currentIndex, totalScenes]); // Re-bind on index change so handlers have fresh state
 
   if (totalScenes === 0) {
