@@ -109,7 +109,8 @@ const fr: Translations = {
     fontXlarge: 'Très grande',
   },
   brand: {
-    tagline: 'Atelier de formats numériques',
+    name: 'StoryboardDesigner',
+    tagline: 'Atelier pour les formats numériques',
     localPill: 'Le contenu reste local',
     eduNotice:
       'Cette application fonctionne entièrement dans ton navigateur — les textes et les images restent sur ton appareil.',
