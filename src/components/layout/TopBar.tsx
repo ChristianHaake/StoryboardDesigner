@@ -27,17 +27,26 @@ export default function TopBar() {
   const canUndo = useStoryboardStore((s) => s.canUndo);
   const canRedo = useStoryboardStore((s) => s.canRedo);
 
+  const [saveBusy, setSaveBusy] = useState(false);
+
   async function handleExport() {
+    if (saveBusy) return;
     const state = useStoryboardStore.getState();
+    setSaveBusy(true);
     try {
       await exportProject(selectProject(state), state.images);
+      state.setSuccessMessage(t('topbar.saveSuccess', 'Projekt gespeichert'));
+      state.clearErrorMessage();
     } catch (err: unknown) {
       console.warn('Export fehlgeschlagen:', err);
       state.setErrorMessage(t('topbar.exportFailed'));
+    } finally {
+      setSaveBusy(false);
     }
   }
 
   async function handlePdf() {
+    if (pdfBusy) return;
     const state = useStoryboardStore.getState();
     const element = document.getElementById('storyboard-document');
     if (!element) return;
@@ -47,6 +56,7 @@ export default function TopBar() {
     setPdfBusy(true);
     try {
       await exportElementToPdf(element, `${name}.pdf`, 'article');
+      state.setSuccessMessage(t('topbar.pdfSuccess', 'PDF erfolgreich erstellt'));
       state.clearErrorMessage();
     } catch (err: unknown) {
       console.warn('PDF-Export fehlgeschlagen:', err);
@@ -57,10 +67,12 @@ export default function TopBar() {
   }
 
   function handleReset() {
+    const state = useStoryboardStore.getState();
     // Irreversibel: aktuelles Projekt UND Autosave löschen. Daher Bestätigung.
-    if (!window.confirm(t('topbar.confirmReset'))) return;
-    useStoryboardStore.getState().resetProject();
+    if (state.hasContent && !window.confirm(t('topbar.confirmReset'))) return;
+    state.resetProject();
     void clearAutosave();
+    state.setSuccessMessage(t('topbar.resetSuccess', 'Projekt zurückgesetzt'));
   }
 
   async function handleImportFile(event: ChangeEvent<HTMLInputElement>) {
@@ -74,6 +86,7 @@ export default function TopBar() {
     try {
       const { project, images } = await importProject(file);
       useStoryboardStore.getState().loadProject(project, images, true);
+      useStoryboardStore.getState().setSuccessMessage(t('topbar.loadSuccess', 'Projekt erfolgreich geladen'));
       state.clearErrorMessage();
     } catch (err: unknown) {
       state.setErrorMessage(err instanceof ImportError ? err.message : t('topbar.importFailed'));
@@ -147,11 +160,13 @@ export default function TopBar() {
                 </button>
                 <button
                   type="button"
+                  disabled={saveBusy}
+                  aria-busy={saveBusy}
                   onClick={() => {
                     if (fileMenuRef.current) fileMenuRef.current.open = false;
                     void handleExport();
                   }}
-                  className="flex w-full items-center gap-2.5 rounded-lg px-3 py-2.5 text-sm font-medium text-slate-700 transition-colors hover:bg-slate-100 hover:text-slate-900"
+                  className="flex w-full items-center gap-2.5 rounded-lg px-3 py-2.5 text-sm font-medium text-slate-700 transition-colors hover:bg-slate-100 hover:text-slate-900 disabled:opacity-50 disabled:cursor-not-allowed"
                 >
                   <Download className="w-[18px] h-[18px]" strokeWidth={1.8} />
                   {t('topbar.save')}

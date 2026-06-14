@@ -75,6 +75,8 @@ interface StoryboardState {
   lastDeleted: { scene: Scene; index: number; image: Blob | null } | null;
   /** Nutzer-Fehlermeldung (z. B. Import fehlgeschlagen) für den Notification-Stack. */
   errorMessage: string | null;
+  /** Erfolgsmeldung (z. B. Export erfolgreich) für den Notification-Stack. */
+  successMessage: string | null;
   /** Feedback-Modus (Lehrkraft-Sicht): blendet die Kommentar-UI je Szene ein.
    *  Reine Ansichtseinstellung, nicht Teil des Projekts/Autosaves. */
   feedbackMode: boolean;
@@ -115,6 +117,8 @@ interface StoryboardState {
   clearLastDeleted: () => void;
   setErrorMessage: (message: string) => void;
   clearErrorMessage: () => void;
+  setSuccessMessage: (message: string) => void;
+  clearSuccessMessage: () => void;
   moveScene: (activeId: string, overId: string) => void;
   resetProject: () => void;
   loadProject: (
@@ -135,6 +139,7 @@ export const useStoryboardStore = create<StoryboardState>((set) => ({
   hasContent: false,
   lastDeleted: null,
   errorMessage: null,
+  successMessage: null,
   feedbackMode: false,
   saveStatus: 'idle',
   canUndo: false,
@@ -479,8 +484,10 @@ export const useStoryboardStore = create<StoryboardState>((set) => ({
 
   // Kein touched: true — Meldungen sind kein Nutzerinhalt.
   setErrorMessage: (message) => set({ errorMessage: message }),
-
   clearErrorMessage: () => set({ errorMessage: null }),
+
+  setSuccessMessage: (message) => set({ successMessage: message }),
+  clearSuccessMessage: () => set({ successMessage: null }),
 
   moveScene: (activeId, overId) =>
     set((state) => {
