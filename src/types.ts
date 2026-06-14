@@ -34,6 +34,8 @@ export interface Scene {
   altText?: string; // ab v1.4: barrierefreie Bildbeschreibung (Alt-Text)
   customFields?: Record<string, string>; // ab v1.1
   comments?: SceneComment[]; // ab v1.4
+  imageFit?: 'cover' | 'contain'; // ab v1.5: Bildausrichtung
+  duration?: number; // ab v1.5: Dauer in Sekunden (für Präsentationsmodus)
 }
 
 // Ab v1.1: projektweite Definition dynamischer Felder (Konfigurations-Modal).

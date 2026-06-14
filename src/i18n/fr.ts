@@ -179,6 +179,10 @@ const fr: Translations = {
     configureFields: 'Configurer les champs',
     addScene: '+ Ajouter une scène',
     maxScenes: 'Maximum {{max}} scènes',
+    emptyDesc: 'Ajoutez des scènes pour commencer la présentation.',
+    exit: 'Quitter la présentation',
+    play: 'Jouer',
+    pause: 'Pause',
   },
   format: {
     choose: 'Choisir le format',
@@ -225,6 +229,11 @@ const fr: Translations = {
     notesPlaceholder: 'Caméra, mouvement, notes …',
     customPlaceholder: 'Saisir {{label}}',
     selectPlaceholder: '— sélectionner —',
+    duration: 'Durée en secondes',
+    fitCover: 'Remplir',
+    fitContain: 'Ajuster',
+    heightWarning:
+      'Remarque : Cette scène est très longue et pourrait être divisée sur deux pages lors de l’impression PDF.',
   },
   dnd: {
     instructions:

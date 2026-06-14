@@ -87,7 +87,7 @@ describe('zipHandler', () => {
     });
 
     const imported = await importProject(new Blob([archive]));
-    expect(imported.project.version).toBe('1.4');
+    expect(imported.project.version).toBe('1.5');
     expect(imported.project.fieldDefinitions).toEqual(data.fieldDefinitions);
     expect(imported.project.scenes[0]?.customFields).toEqual({ 'custom:light': 'Warm' });
   });

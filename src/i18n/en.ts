@@ -178,6 +178,10 @@ const en: Translations = {
     configureFields: 'Configure fields',
     addScene: '+ Add scene',
     maxScenes: 'Maximum {{max}} scenes',
+    emptyDesc: 'Add scenes to start the presentation.',
+    exit: 'Exit presentation',
+    play: 'Play',
+    pause: 'Pause',
   },
   format: {
     choose: 'Choose a format',
@@ -224,6 +228,11 @@ const en: Translations = {
     notesPlaceholder: 'Camera, movement, notes …',
     customPlaceholder: 'Enter {{label}}',
     selectPlaceholder: '— select —',
+    duration: 'Duration in seconds',
+    fitCover: 'Fill',
+    fitContain: 'Fit',
+    heightWarning:
+      'Note: This scene is very long and might be split across two pages when printing to PDF.',
   },
   dnd: {
     instructions:

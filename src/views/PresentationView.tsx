@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { useStoryboardStore } from '../store/useStoryboardStore';
-import { ChevronLeft, ChevronRight, X, LayoutTemplate } from 'lucide-react';
+import { ChevronLeft, ChevronRight, X, LayoutTemplate, Play, Pause } from 'lucide-react';
 
 export default function PresentationView() {
   const { t } = useTranslation();
@@ -10,9 +10,25 @@ export default function PresentationView() {
   const scenes = useStoryboardStore((s) => s.scenes);
   const imageUrls = useStoryboardStore((s) => s.imageUrls);
   const [currentIndex, setCurrentIndex] = useState(0);
+  const [isPlaying, setIsPlaying] = useState(false);
 
   const totalScenes = scenes.length;
   const currentScene = scenes[currentIndex];
+
+  useEffect(() => {
+    let timer: number;
+    if (isPlaying && currentScene) {
+      const durationMs = (currentScene.duration || 3) * 1000;
+      timer = window.setTimeout(() => {
+        if (currentIndex < totalScenes - 1) {
+          setCurrentIndex((prev) => prev + 1);
+        } else {
+          setIsPlaying(false); // Stop at end
+        }
+      }, durationMs);
+    }
+    return () => clearTimeout(timer);
+  }, [isPlaying, currentIndex, currentScene, totalScenes]);
 
   useEffect(() => {
     // Reset if scenes somehow get deleted while in this view
@@ -23,12 +39,14 @@ export default function PresentationView() {
   }, [totalScenes, currentIndex]);
 
   const handleNext = () => {
+    setIsPlaying(false);
     if (currentIndex < totalScenes - 1) {
       setCurrentIndex((prev) => prev + 1);
     }
   };
 
   const handlePrev = () => {
+    setIsPlaying(false);
     if (currentIndex > 0) {
       setCurrentIndex((prev) => prev - 1);
     }
@@ -86,14 +104,32 @@ export default function PresentationView() {
         <div className="rounded-full bg-slate-900/60 px-3 py-1 text-sm font-medium tabular-nums text-slate-300 backdrop-blur-sm">
           {currentIndex + 1} / {totalScenes}
         </div>
-        <button
-          onClick={handleExit}
-          className="inline-flex h-10 w-10 items-center justify-center rounded-full bg-slate-900/60 text-slate-300 backdrop-blur-sm transition-colors hover:bg-slate-800 hover:text-white"
-          title={t('presentation.exit', 'Präsentation beenden')}
-          aria-label={t('presentation.exit', 'Präsentation beenden')}
-        >
-          <X className="h-5 w-5" />
-        </button>
+
+        <div className="flex gap-4">
+          <button
+            type="button"
+            onClick={() => setIsPlaying(!isPlaying)}
+            className="flex h-10 w-10 items-center justify-center rounded-full bg-slate-900/60 text-slate-300 backdrop-blur-sm transition-colors hover:bg-slate-800 hover:text-white"
+            aria-label={
+              isPlaying ? t('presentation.pause', 'Pause') : t('presentation.play', 'Play')
+            }
+            title={isPlaying ? t('presentation.pause', 'Pause') : t('presentation.play', 'Play')}
+          >
+            {isPlaying ? (
+              <Pause className="h-5 w-5" strokeWidth={2} />
+            ) : (
+              <Play className="h-5 w-5 ml-1" strokeWidth={2} />
+            )}
+          </button>
+          <button
+            onClick={handleExit}
+            className="inline-flex h-10 w-10 items-center justify-center rounded-full bg-slate-900/60 text-slate-300 backdrop-blur-sm transition-colors hover:bg-slate-800 hover:text-white"
+            title={t('presentation.exit', 'Präsentation beenden')}
+            aria-label={t('presentation.exit', 'Präsentation beenden')}
+          >
+            <X className="h-5 w-5" />
+          </button>
+        </div>
       </div>
 
       {/* Main Content Area */}

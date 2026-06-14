@@ -171,6 +171,10 @@ const de = {
     configureFields: 'Felder konfigurieren',
     addScene: '+ Szene hinzufügen',
     maxScenes: 'Maximal {{max}} Szenen',
+    emptyDesc: 'Fügen Sie Szenen hinzu, um die Präsentation zu starten.',
+    exit: 'Präsentation beenden',
+    play: 'Abspielen',
+    pause: 'Pausieren',
   },
   format: {
     choose: 'Format auswählen',
@@ -217,6 +221,11 @@ const de = {
     notesPlaceholder: 'Kamera, Bewegung, Hinweise …',
     customPlaceholder: '{{label}} eingeben',
     selectPlaceholder: '— auswählen —',
+    duration: 'Dauer in Sekunden',
+    fitCover: 'Füllen',
+    fitContain: 'Einpassen',
+    heightWarning:
+      'Hinweis: Diese Szene ist sehr lang und könnte beim PDF-Druck auf zwei Seiten aufgeteilt werden.',
   },
   dnd: {
     instructions:

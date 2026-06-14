@@ -1,4 +1,4 @@
-import { memo, useState } from 'react';
+import { memo, useState, useRef, useEffect } from 'react';
 import type { ChangeEvent } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useSortable } from '@dnd-kit/sortable';
@@ -40,6 +40,19 @@ function SceneCard({ scene }: SceneCardProps) {
   const feedbackMode = useStoryboardStore((s) => s.feedbackMode);
 
   const [imageError, setImageError] = useState(false);
+  const [isTooTall, setIsTooTall] = useState(false);
+  const cardRef = useRef<HTMLElement | null>(null);
+
+  useEffect(() => {
+    if (!cardRef.current) return;
+    const observer = new ResizeObserver((entries) => {
+      for (const entry of entries) {
+        setIsTooTall(entry.contentRect.height > 900);
+      }
+    });
+    observer.observe(cardRef.current);
+    return () => observer.disconnect();
+  }, []);
 
   const { attributes, listeners, setNodeRef, transform, transition, isDragging } = useSortable({
     id: scene.id,
@@ -61,7 +74,13 @@ function SceneCard({ scene }: SceneCardProps) {
 
   return (
     <article
-      ref={setNodeRef}
+      ref={(node) => {
+        setNodeRef(node);
+        if (node) {
+          // Sync with local ref for ResizeObserver
+          cardRef.current = node;
+        }
+      }}
       id={`scene-${scene.id}`}
       tabIndex={-1}
       style={{ transform: CSS.Transform.toString(transform), transition }}
@@ -78,6 +97,20 @@ function SceneCard({ scene }: SceneCardProps) {
             {n}
           </span>
           {t('scene.title', { n })}
+          <div className="ml-2 flex items-center gap-1 opacity-0 transition-opacity focus-within:opacity-100 group-hover:opacity-100 max-sm:opacity-100 pointer-coarse:opacity-100 print:hidden">
+            <input
+              type="number"
+              min="1"
+              max="3600"
+              value={scene.duration ?? 3}
+              onChange={(e) =>
+                updateScene(scene.id, { duration: parseInt(e.target.value, 10) || 3 })
+              }
+              className="w-12 h-6 rounded border border-slate-200 bg-slate-50 px-1 text-center text-xs font-normal tabular-nums text-slate-700 focus:border-blue-400 focus:outline-none focus:ring-1 focus:ring-blue-400"
+              title={t('scene.duration', 'Dauer in Sekunden')}
+            />
+            <span className="text-xs font-normal normal-case text-slate-500">s</span>
+          </div>
         </h3>
         <div className="flex items-center gap-1 print:hidden">
           <button
@@ -158,9 +191,28 @@ function SceneCard({ scene }: SceneCardProps) {
                     <img
                       src={imageUrl}
                       alt={scene.altText?.trim() ? scene.altText : t('scene.imageAlt', { n })}
-                      className="aspect-square w-full object-cover max-sm:aspect-[4/3] print:aspect-square print:rounded-none"
+                      className={`aspect-square w-full max-sm:aspect-[4/3] print:aspect-square print:rounded-none ${
+                        scene.imageFit === 'contain'
+                          ? 'object-contain bg-slate-900'
+                          : 'object-cover'
+                      }`}
                     />
                   </label>
+                  <div className="absolute bottom-2 left-2 flex gap-1 print:hidden opacity-0 transition-opacity group-hover:opacity-100 focus-within:opacity-100">
+                    <button
+                      type="button"
+                      onClick={() =>
+                        updateScene(scene.id, {
+                          imageFit: scene.imageFit === 'contain' ? 'cover' : 'contain',
+                        })
+                      }
+                      className="inline-flex h-7 items-center justify-center rounded bg-slate-900/70 px-2 text-[10px] font-medium text-white backdrop-blur-md transition-colors hover:bg-slate-900"
+                    >
+                      {scene.imageFit === 'contain'
+                        ? t('scene.fitCover', 'Füllen')
+                        : t('scene.fitContain', 'Einpassen')}
+                    </button>
+                  </div>
                   <button
                     type="button"
                     onClick={() => removeSceneImage(scene.id)}
@@ -312,6 +364,15 @@ function SceneCard({ scene }: SceneCardProps) {
             />
           )}
         </>
+      )}
+
+      {isTooTall && !isCollapsed && (
+        <div className="mt-4 rounded-md border border-amber-200 bg-amber-50 p-3 text-sm text-amber-800 print:hidden">
+          {t(
+            'scene.heightWarning',
+            'Hinweis: Diese Szene ist sehr lang und könnte beim PDF-Druck auf zwei Seiten aufgeteilt werden.',
+          )}
+        </div>
       )}
     </article>
   );
