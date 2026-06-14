@@ -83,6 +83,7 @@ interface StoryboardState {
   /** Autosave-Status für den sichtbaren Speicherhinweis (#6a). Reine UI-State,
    *  nicht Teil des Projekts/Autosaves. */
   saveStatus: 'idle' | 'saving' | 'saved' | 'error';
+  collapsedScenes: Record<string, boolean>;
   /** Undo/Redo-Verfügbarkeit (#6b). Wird vom History-Manager gespeist. */
   canUndo: boolean;
   canRedo: boolean;
@@ -93,6 +94,8 @@ interface StoryboardState {
   updateCustomField: (sceneId: string, fieldKey: string, value: string) => void;
   toggleFeedbackMode: () => void;
   setSaveStatus: (status: StoryboardState['saveStatus']) => void;
+  toggleSceneCollapse: (id: string, force?: boolean) => void;
+  collapseAllScenes: (collapse: boolean) => void;
   setHistoryFlags: (canUndo: boolean, canRedo: boolean) => void;
   restoreContent: (snapshot: {
     metaData: MetaData;
@@ -142,6 +145,7 @@ export const useStoryboardStore = create<StoryboardState>((set) => ({
   successMessage: null,
   feedbackMode: false,
   saveStatus: 'idle',
+  collapsedScenes: {},
   canUndo: false,
   canRedo: false,
 
@@ -202,6 +206,25 @@ export const useStoryboardStore = create<StoryboardState>((set) => ({
 
   // Kein touched: true — Speicherstatus ist kein Nutzerinhalt.
   setSaveStatus: (saveStatus) => set({ saveStatus }),
+
+  toggleSceneCollapse: (id, force) =>
+    set((state) => ({
+      collapsedScenes: {
+        ...state.collapsedScenes,
+        [id]: force !== undefined ? force : !state.collapsedScenes[id],
+      },
+    })),
+
+  collapseAllScenes: (collapse) =>
+    set((state) => {
+      const newCollapsed: Record<string, boolean> = {};
+      if (collapse) {
+        state.scenes.forEach((scene) => {
+          newCollapsed[scene.id] = true;
+        });
+      }
+      return { collapsedScenes: newCollapsed };
+    }),
 
   // Kein touched: true — reine UI-Flags aus dem History-Manager.
   setHistoryFlags: (canUndo, canRedo) => set({ canUndo, canRedo }),

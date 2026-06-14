@@ -10,7 +10,7 @@ import AutoResizeTextarea from '../forms/AutoResizeTextarea';
 import CommentThread from './CommentThread';
 import { inputClass, labelClass } from '../forms/fieldStyles';
 import { MAX_SCENES } from '../../utils/projectCodec';
-import { GripVertical, Copy, Trash2, X } from 'lucide-react';
+import { GripVertical, Copy, Trash2, X, ChevronUp, ChevronDown } from 'lucide-react';
 
 const EMPTY_FIELD_DEFINITIONS: NonNullable<
   ReturnType<typeof useStoryboardStore.getState>['fieldDefinitions']
@@ -25,8 +25,10 @@ function SceneCard({ scene }: SceneCardProps) {
   const { t } = useTranslation();
   const n = scene.orderIndex + 1;
   const imageUrl = useStoryboardStore((s) => s.imageUrls[scene.id] ?? null);
-  const fieldDefinitions = useStoryboardStore((s) => s.fieldDefinitions ?? EMPTY_FIELD_DEFINITIONS);
-  const updateScene = useStoryboardStore((s) => s.updateScene);
+  const fieldDefinitions = useStoryboardStore((state) => state.fieldDefinitions ?? EMPTY_FIELD_DEFINITIONS);
+  const isCollapsed = useStoryboardStore((state) => state.collapsedScenes[scene.id] ?? false);
+  const toggleSceneCollapse = useStoryboardStore((state) => state.toggleSceneCollapse);
+  const updateScene = useStoryboardStore((state) => state.updateScene);
   const updateCustomField = useStoryboardStore((s) => s.updateCustomField);
   const duplicateScene = useStoryboardStore((s) => s.duplicateScene);
   const deleteScene = useStoryboardStore((s) => s.deleteScene);
@@ -106,11 +108,27 @@ function SceneCard({ scene }: SceneCardProps) {
             >
               <Trash2 className="w-[18px] h-[18px]" strokeWidth={1.5} aria-hidden="true" />
             </button>
+            <button
+              type="button"
+              onClick={() => toggleSceneCollapse(scene.id)}
+              aria-expanded={!isCollapsed}
+              aria-label={isCollapsed ? t('editor.expandAll', 'Ausklappen') : t('editor.collapseAll', 'Einklappen')}
+              title={isCollapsed ? t('editor.expandAll', 'Ausklappen') : t('editor.collapseAll', 'Einklappen')}
+              className="inline-flex size-11 items-center justify-center rounded-lg text-slate-500 transition-colors hover:bg-slate-100 hover:text-slate-800"
+            >
+              {isCollapsed ? (
+                <ChevronDown className="w-[18px] h-[18px]" strokeWidth={1.5} aria-hidden="true" />
+              ) : (
+                <ChevronUp className="w-[18px] h-[18px]" strokeWidth={1.5} aria-hidden="true" />
+              )}
+            </button>
           </div>
         </div>
       </div>
 
-      <div className="flex gap-5 max-sm:flex-col max-sm:gap-4">
+      {!isCollapsed && (
+        <>
+          <div className="flex gap-5 max-sm:flex-col max-sm:gap-4">
         {/* Medien-Feld */}
         <div className={`relative w-48 shrink-0 max-sm:w-full ${imageUrl ? '' : 'print:hidden'}`}>
           <div className="mb-1.5 flex items-center justify-between">
@@ -273,6 +291,8 @@ function SceneCard({ scene }: SceneCardProps) {
           sceneNumber={n}
           comments={scene.comments ?? EMPTY_COMMENTS}
         />
+      )}
+      </>
       )}
     </article>
   );
