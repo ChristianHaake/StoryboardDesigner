@@ -62,7 +62,7 @@ function SceneCard({ scene }: SceneCardProps) {
       id={`scene-${scene.id}`}
       tabIndex={-1}
       style={{ transform: CSS.Transform.toString(transform), transition }}
-      className={`group relative scroll-mt-24 break-inside-avoid rounded-xl border border-slate-200 bg-white p-4 shadow-sm transition-[border-color,box-shadow] hover:border-slate-300 hover:shadow-md focus-visible:border-blue-400 sm:p-5 print:rounded-none print:border-slate-300 print:p-3 print:shadow-none ${
+      className={`group relative scroll-mt-24 break-inside-avoid rounded-xl border border-slate-200/80 bg-white p-5 shadow-sm transition-[border-color,box-shadow] hover:border-slate-300 hover:shadow-md focus-visible:border-blue-400 sm:p-6 print:rounded-none print:border-slate-300 print:p-3 print:shadow-none ${
         isDragging ? 'z-10 border-blue-300 bg-white opacity-95 shadow-xl' : ''
       }`}
     >
