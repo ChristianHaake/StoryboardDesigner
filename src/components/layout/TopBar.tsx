@@ -10,7 +10,6 @@ import { exportElementToPdf } from '../../utils/pdfExport';
 import LanguageToggle from './LanguageToggle';
 import DisplaySettings from './DisplaySettings';
 import BrandLogo from './BrandLogo';
-import StatusPill from './StatusPill';
 import SaveIndicator from './SaveIndicator';
 import { buttonPrimary, buttonSecondary } from '../forms/fieldStyles';
 import {
@@ -114,13 +113,13 @@ export default function TopBar() {
         controlsArea={
           <>
             <SaveIndicator />
-            <StatusPill label={t('brand.localPill')} className="max-sm:hidden" />
             <Link
               to="/hilfe"
-              className="inline-flex min-h-10 items-center gap-1.5 rounded-lg px-2.5 text-sm font-semibold text-slate-600 transition-colors hover:bg-slate-100 hover:text-slate-900 max-[420px]:hidden"
+              className="inline-flex min-h-10 items-center gap-1.5 rounded-lg px-2.5 text-sm font-semibold text-slate-600 transition-colors hover:bg-slate-100 hover:text-slate-900"
+              title={t('brand.forEducators')}
             >
               <GraduationCap className="w-[18px] h-[18px]" strokeWidth={1.8} aria-hidden="true" />
-              <span className="max-sm:hidden">{t('brand.forEducators')}</span>
+              <span className="max-lg:hidden">{t('brand.forEducators')}</span>
             </Link>
             <button
               type="button"
@@ -134,7 +133,7 @@ export default function TopBar() {
               }`}
             >
               <MessageSquare className="w-[18px] h-[18px]" strokeWidth={1.8} aria-hidden="true" />
-              <span className="max-sm:hidden">{t('feedback.toggle')}</span>
+              <span className="max-lg:hidden">{t('feedback.toggle')}</span>
             </button>
             <DisplaySettings />
             <LanguageToggle />
@@ -142,7 +141,7 @@ export default function TopBar() {
         }
         actionsAriaLabel={t('topbar.actions')}
         actionsArea={
-          <div className="flex w-full items-center justify-between gap-2 max-sm:col-span-2">
+          <div className="flex w-full items-center gap-2 max-sm:col-span-2">
             {/* File Menu */}
             <details
               ref={fileMenuRef}
@@ -203,7 +202,7 @@ export default function TopBar() {
             </details>
 
             {/* History Controls */}
-            <div className="flex gap-2">
+            <div className="flex gap-2 mr-auto">
               <button
                 type="button"
                 onClick={historyUndo}
