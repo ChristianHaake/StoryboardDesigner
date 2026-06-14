@@ -28,6 +28,8 @@ import {
 } from './utils/history';
 import hilfeDe from './content/hilfe.md?raw';
 import hilfeEn from './content/hilfe.en.md?raw';
+import ueberDe from './content/ueber.md?raw';
+import ueberEn from './content/ueber.en.md?raw';
 import datenschutzText from './content/datenschutz.md?raw';
 import impressumText from './content/impressum.md?raw';
 
@@ -35,6 +37,7 @@ export default function App() {
   const { t, i18n } = useTranslation();
   const language = i18n.resolvedLanguage ?? i18n.language;
   const hilfeText = language === 'en' ? hilfeEn : hilfeDe;
+  const ueberText = language === 'en' ? ueberEn : ueberDe;
 
   // Dokument-Sprache und Titel an die UI-Sprache koppeln.
   useEffect(() => {
@@ -150,6 +153,7 @@ export default function App() {
               }
             />
             <Route path="/hilfe" element={<MarkdownView source={hilfeText} />} />
+            <Route path="/ueber" element={<MarkdownView source={ueberText} />} />
             <Route
               path="/datenschutz"
               element={<MarkdownView source={datenschutzText} germanOnly />}

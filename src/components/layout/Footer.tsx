@@ -15,12 +15,23 @@ export default function Footer() {
           <Link to="/hilfe" className="font-medium hover:text-slate-950 hover:underline">
             {t('footer.help')}
           </Link>
+          <Link to="/ueber" className="font-medium hover:text-slate-950 hover:underline">
+            {t('footer.about')}
+          </Link>
           <Link to="/datenschutz" className="font-medium hover:text-slate-950 hover:underline">
             {t('footer.privacy')}
           </Link>
           <Link to="/impressum" className="font-medium hover:text-slate-950 hover:underline">
             {t('footer.imprint')}
           </Link>
+          <a
+            href="https://github.com/ChristianHaake/StoryboardDesigner"
+            target="_blank"
+            rel="noreferrer"
+            className="font-medium hover:text-slate-950 hover:underline"
+          >
+            {t('footer.repository')}
+          </a>
         </nav>
         <p className="text-xs text-slate-500 max-sm:w-full">{t('footer.localNote')}</p>
       </div>

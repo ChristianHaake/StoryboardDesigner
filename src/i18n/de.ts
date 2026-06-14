@@ -276,8 +276,10 @@ const de = {
   footer: {
     nav: 'Rechtliches und Hilfe',
     help: 'Hilfe',
+    about: 'Über',
     privacy: 'Datenschutz',
     imprint: 'Impressum',
+    repository: 'Quellcode',
     localNote: 'StoryboardDesigner · Inhalte bleiben auf deinem Gerät',
   },
   fields: {

@@ -283,8 +283,10 @@ const es: Translations = {
   footer: {
     nav: 'Aspectos legales y ayuda',
     help: 'Ayuda',
+    about: 'Acerca de',
     privacy: 'Privacidad',
     imprint: 'Aviso legal',
+    repository: 'Código fuente',
     localNote: 'StoryboardDesigner · El contenido permanece en tu dispositivo',
   },
   fields: {

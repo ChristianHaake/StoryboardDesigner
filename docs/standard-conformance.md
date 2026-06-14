@@ -60,8 +60,6 @@ Review date: n/a
 
 ## Known gaps & documented limitations
 
-- Footer lacks an "Über" route; template ships `content/ueber.md`. Add an Über
-  page if the standard requires it.
 - **Alt text in PDF export.** Scenes carry a per-image `altText` (editor field,
   drives `<img alt>`, persisted in `.storyboard`). The PDF export rasterizes the
   DOM (`html-to-image` → PNG → jsPDF), so alt text cannot be embedded as text in
