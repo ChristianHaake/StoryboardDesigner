@@ -16,6 +16,7 @@ npm-debug.log*
 .vscode/
 .idea/
 .DS_Store
+.claude/skills
 
 # Wrangler
 .wrangler/
