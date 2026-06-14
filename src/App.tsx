@@ -11,6 +11,7 @@ import EditorView from './views/EditorView';
 
 // Lazy: react-markdown bleibt aus dem Editor-Bundle (Hilfe-Seiten selten besucht).
 const MarkdownView = lazy(() => import('./views/MarkdownView'));
+const PresentationView = lazy(() => import('./views/PresentationView'));
 import { useStoryboardStore, selectProject } from './store/useStoryboardStore';
 import {
   hasPendingAutosave,
@@ -152,6 +153,7 @@ export default function App() {
                 </>
               }
             />
+            <Route path="/play" element={<PresentationView />} />
             <Route path="/hilfe" element={<MarkdownView source={hilfeText} />} />
             <Route path="/ueber" element={<MarkdownView source={ueberText} />} />
             <Route

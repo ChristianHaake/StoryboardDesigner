@@ -35,9 +35,20 @@ function FieldDefinitionRow({
   }
 
   return (
-    <div className="rounded-xl border border-slate-200 p-2">
+    <div className="rounded-xl border border-slate-200 p-3">
+      <div className="mb-1.5 flex items-center justify-between">
+        <label htmlFor={`field-${definition.key}`} className="text-xs font-semibold text-slate-700">
+          {t('fieldConfig.rowLabelText', 'Feld konfigurieren')}
+        </label>
+        {isSelect && (
+          <span className="rounded-md bg-blue-50 px-2 py-0.5 text-xs font-semibold text-blue-700">
+            {t('fieldConfig.typeSelect')}
+          </span>
+        )}
+      </div>
       <div className="flex items-center gap-2 max-sm:flex-wrap">
         <input
+          id={`field-${definition.key}`}
           type="text"
           value={label}
           maxLength={MAX_CUSTOM_FIELD_LABEL_LENGTH}
@@ -49,13 +60,8 @@ function FieldDefinitionRow({
               save();
             }
           }}
-          className="min-h-11 min-w-0 flex-1 rounded-lg border border-transparent bg-slate-50 px-3 text-sm outline-none focus:border-blue-500 focus:bg-white focus:ring-3 focus:ring-blue-100 max-sm:w-full max-sm:flex-none"
+          className="min-h-11 min-w-0 flex-1 rounded-lg border border-slate-300 bg-white px-3 text-sm outline-none focus:border-blue-500 focus:ring-3 focus:ring-blue-100 max-sm:w-full max-sm:flex-none"
         />
-        {isSelect && (
-          <span className="rounded-md bg-blue-50 px-2 py-1 text-xs font-semibold text-blue-700">
-            {t('fieldConfig.typeSelect')}
-          </span>
-        )}
         <button
           type="button"
           onClick={save}
@@ -74,14 +80,19 @@ function FieldDefinitionRow({
         </button>
       </div>
       {isSelect && (
-        <textarea
-          value={optionsText}
-          onChange={(event) => setOptionsText(event.target.value)}
-          rows={3}
-          aria-label={t('fieldConfig.optionsLabel', { label: definition.label })}
-          placeholder={t('fieldConfig.optionsPlaceholder')}
-          className={`${dialogInputClass} mt-2 resize-y py-2 leading-6`}
-        />
+        <div className="mt-3">
+          <label htmlFor={`options-${definition.key}`} className="mb-1.5 block text-xs font-semibold text-slate-700">
+            {t('fieldConfig.optionsAdd', 'Optionen (eine pro Zeile)')}
+          </label>
+          <textarea
+            id={`options-${definition.key}`}
+            value={optionsText}
+            onChange={(event) => setOptionsText(event.target.value)}
+            rows={3}
+            placeholder={t('fieldConfig.optionsPlaceholder')}
+            className={`${dialogInputClass} resize-y py-2 leading-6`}
+          />
+        </div>
       )}
     </div>
   );
@@ -139,6 +150,7 @@ export default function FieldConfigDialog({ open, onClose }: FieldConfigDialogPr
     const error = addCustomField(newLabel, newType, options);
     if (error) {
       setMessage(error);
+      addInputRef.current?.focus();
       return;
     }
     setNewLabel('');
@@ -225,60 +237,82 @@ export default function FieldConfigDialog({ open, onClose }: FieldConfigDialogPr
                 </p>
               </div>
             </div>
-            <div className="mt-3 space-y-2">
-              <div className="flex gap-2 max-sm:flex-col">
-                <input
-                  ref={addInputRef}
-                  type="text"
-                  value={newLabel}
-                  maxLength={MAX_CUSTOM_FIELD_LABEL_LENGTH}
-                  placeholder={t('fieldConfig.newPlaceholder')}
-                  aria-label={t('fieldConfig.newLabel')}
-                  onChange={(event) => {
-                    setNewLabel(event.target.value);
-                    setMessage(null);
-                  }}
-                  onKeyDown={(event) => {
-                    if (event.key === 'Enter' && newType === 'text') {
-                      event.preventDefault();
-                      handleAdd();
-                    }
-                  }}
-                  className={`${dialogInputClass} flex-1`}
-                />
-                <select
-                  value={newType}
-                  aria-label={t('fieldConfig.typeLabel')}
-                  onChange={(event) => {
-                    setNewType(event.target.value as CustomFieldType);
-                    setMessage(null);
-                  }}
-                  className={`${dialogInputClass} appearance-none sm:w-40`}
-                >
-                  <option value="text">{t('fieldConfig.typeText')}</option>
-                  <option value="select">{t('fieldConfig.typeSelect')}</option>
-                </select>
+            <div className="mt-4 space-y-3">
+              <div className="flex items-end gap-3 max-sm:flex-col max-sm:items-stretch">
+                <div className="flex-1">
+                  <label htmlFor="newFieldName" className="mb-1.5 block text-xs font-semibold text-slate-700">
+                    {t('fieldConfig.newLabel', 'Feldname')}
+                  </label>
+                  <input
+                    id="newFieldName"
+                    ref={addInputRef}
+                    type="text"
+                    value={newLabel}
+                    maxLength={MAX_CUSTOM_FIELD_LABEL_LENGTH}
+                    placeholder={t('fieldConfig.newPlaceholder')}
+                    aria-invalid={message && message !== t('fieldConfig.added') && message !== t('fieldConfig.deleted') && message !== t('fieldConfig.renamed') && !message.includes('preset') ? 'true' : undefined}
+                    aria-describedby={message ? 'field-config-message' : undefined}
+                    onChange={(event) => {
+                      setNewLabel(event.target.value);
+                      setMessage(null);
+                    }}
+                    onKeyDown={(event) => {
+                      if (event.key === 'Enter' && newType === 'text') {
+                        event.preventDefault();
+                        handleAdd();
+                      }
+                    }}
+                    className={`${dialogInputClass} w-full ${message && message !== t('fieldConfig.added') && message !== t('fieldConfig.deleted') && message !== t('fieldConfig.renamed') && !message.includes('preset') ? 'border-red-500 focus:border-red-500 focus:ring-red-100' : ''}`}
+                  />
+                  {message && message !== t('fieldConfig.added') && message !== t('fieldConfig.deleted') && message !== t('fieldConfig.renamed') && !message.includes('preset') && (
+                    <p id="field-config-message" role="alert" className="mt-1.5 text-xs font-medium text-red-600">
+                      {message}
+                    </p>
+                  )}
+                </div>
+                <div className="sm:w-40">
+                  <label htmlFor="newFieldType" className="mb-1.5 block text-xs font-semibold text-slate-700">
+                    {t('fieldConfig.typeLabel', 'Feldtyp')}
+                  </label>
+                  <select
+                    id="newFieldType"
+                    value={newType}
+                    onChange={(event) => {
+                      setNewType(event.target.value as CustomFieldType);
+                      setMessage(null);
+                    }}
+                    className={`${dialogInputClass} w-full appearance-none`}
+                  >
+                    <option value="text">{t('fieldConfig.typeText')}</option>
+                    <option value="select">{t('fieldConfig.typeSelect')}</option>
+                  </select>
+                </div>
                 <button
                   type="button"
                   onClick={handleAdd}
                   disabled={definitions.length >= MAX_CUSTOM_FIELDS}
-                  className={`${buttonPrimary} min-h-11`}
+                  className={`${buttonPrimary} min-h-11 shrink-0`}
                 >
                   {t('fieldConfig.add')}
                 </button>
               </div>
               {newType === 'select' && (
-                <textarea
-                  value={newOptions}
-                  onChange={(event) => {
-                    setNewOptions(event.target.value);
-                    setMessage(null);
-                  }}
-                  rows={3}
-                  aria-label={t('fieldConfig.optionsAdd')}
-                  placeholder={t('fieldConfig.optionsPlaceholder')}
-                  className={`${dialogInputClass} resize-y py-2 leading-6`}
-                />
+                <div>
+                  <label htmlFor="newFieldOptions" className="mb-1.5 block text-xs font-semibold text-slate-700">
+                    {t('fieldConfig.optionsAdd', 'Optionen (eine pro Zeile)')}
+                  </label>
+                  <textarea
+                    id="newFieldOptions"
+                    value={newOptions}
+                    onChange={(event) => {
+                      setNewOptions(event.target.value);
+                      setMessage(null);
+                    }}
+                    rows={3}
+                    placeholder={t('fieldConfig.optionsPlaceholder')}
+                    className={`${dialogInputClass} w-full resize-y py-2 leading-6`}
+                  />
+                </div>
               )}
             </div>
           </section>

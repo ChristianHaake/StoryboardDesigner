@@ -1,4 +1,4 @@
-import { memo, useRef, useState } from 'react';
+import { memo, useState } from 'react';
 import type { ChangeEvent } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useSortable } from '@dnd-kit/sortable';
@@ -35,7 +35,6 @@ function SceneCard({ scene }: SceneCardProps) {
   const sceneLimitReached = useStoryboardStore((s) => s.scenes.length >= MAX_SCENES);
   const feedbackMode = useStoryboardStore((s) => s.feedbackMode);
 
-  const fileInputRef = useRef<HTMLInputElement>(null);
   const [imageError, setImageError] = useState(false);
 
   const { attributes, listeners, setNodeRef, transform, transition, isDragging } = useSortable({
@@ -114,20 +113,24 @@ function SceneCard({ scene }: SceneCardProps) {
       <div className="flex gap-5 max-sm:flex-col max-sm:gap-4">
         {/* Medien-Feld */}
         <div className={`relative w-48 shrink-0 max-sm:w-full ${imageUrl ? '' : 'print:hidden'}`}>
+          <div className="mb-1.5 flex items-center justify-between">
+            <span className="text-sm font-medium text-slate-700 print:text-xs">
+              {t('scene.imageLabel', 'Szenenbild')}
+            </span>
+          </div>
           {imageUrl ? (
-            <>
-              <button
-                type="button"
-                onClick={() => fileInputRef.current?.click()}
+            <div className="relative group">
+              <label
+                htmlFor={`image-upload-${scene.id}`}
                 aria-label={t('scene.imageReplace', { n })}
-                className="block w-full overflow-hidden rounded-lg"
+                className="block w-full cursor-pointer overflow-hidden rounded-lg focus-within:ring-2 focus-within:ring-blue-500 focus-within:ring-offset-2"
               >
                 <img
                   src={imageUrl}
                   alt={scene.altText?.trim() ? scene.altText : t('scene.imageAlt', { n })}
                   className="aspect-square w-full object-cover max-sm:aspect-[4/3] print:aspect-square print:rounded-none"
                 />
-              </button>
+              </label>
               <button
                 type="button"
                 onClick={() => removeSceneImage(scene.id)}
@@ -137,23 +140,29 @@ function SceneCard({ scene }: SceneCardProps) {
               >
                 <X className="w-4 h-4" strokeWidth={2} aria-hidden="true" />
               </button>
-            </>
+            </div>
           ) : (
-            <button
-              type="button"
-              onClick={() => fileInputRef.current?.click()}
-              className="flex aspect-square w-full items-center justify-center rounded-lg border border-dashed border-slate-300 bg-slate-50 text-center text-sm font-medium text-slate-500 transition-colors hover:border-blue-400 hover:bg-blue-50 hover:text-blue-700 max-sm:aspect-[4/3] print:aspect-square print:border-slate-300"
+            <label
+              htmlFor={`image-upload-${scene.id}`}
+              className="flex flex-col aspect-square w-full cursor-pointer items-center justify-center rounded-lg border border-dashed border-slate-300 bg-slate-50 p-4 text-center text-sm font-medium text-slate-500 transition-colors hover:border-blue-400 hover:bg-blue-50 hover:text-blue-700 focus-within:border-blue-400 focus-within:ring-2 focus-within:ring-blue-500 focus-within:ring-offset-2 max-sm:aspect-[4/3] print:aspect-square print:border-slate-300"
             >
               <span className="print:hidden">
-                {imageError ? t('scene.imageError') : t('scene.imageAdd')}
+                {imageError ? (
+                  <span className="text-red-600">{t('scene.imageError')}</span>
+                ) : (
+                  <>
+                    <span className="mb-1 block font-semibold text-slate-700">{t('scene.imageAdd', 'Bild hinzufügen')}</span>
+                    <span className="text-xs font-normal text-slate-500">{t('scene.imageInstruction', 'Klicken oder Datei ziehen')}</span>
+                  </>
+                )}
               </span>
-            </button>
+            </label>
           )}
           <input
-            ref={fileInputRef}
+            id={`image-upload-${scene.id}`}
             type="file"
             accept="image/*"
-            className="hidden"
+            className="sr-only"
             onChange={handleFileChange}
           />
           {imageUrl && (

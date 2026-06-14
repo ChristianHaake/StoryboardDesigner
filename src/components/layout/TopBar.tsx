@@ -13,13 +13,14 @@ import BrandLogo from './BrandLogo';
 import StatusPill from './StatusPill';
 import SaveIndicator from './SaveIndicator';
 import { buttonPrimary, buttonSecondary } from '../forms/fieldStyles';
-import { GraduationCap, MessageSquare, Undo, Redo, Upload, Download, Printer, FileText, Trash2 } from 'lucide-react';
+import { GraduationCap, MessageSquare, Undo, Redo, Upload, Download, Printer, FileText, Trash2, Folder, Play } from 'lucide-react';
 
 import { SharedTopBar } from '@haak3/ui';
 
 export default function TopBar() {
   const { t } = useTranslation();
   const fileInputRef = useRef<HTMLInputElement>(null);
+  const fileMenuRef = useRef<HTMLDetailsElement>(null);
   const [pdfBusy, setPdfBusy] = useState(false);
   const feedbackMode = useStoryboardStore((s) => s.feedbackMode);
   const toggleFeedbackMode = useStoryboardStore((s) => s.toggleFeedbackMode);
@@ -114,18 +115,73 @@ export default function TopBar() {
         }
         actionsAriaLabel={t('topbar.actions')}
         actionsArea={
-          <>
-            <div className="flex gap-2 max-sm:col-span-2">
+          <div className="flex w-full items-center justify-between gap-2 max-sm:col-span-2">
+            {/* File Menu */}
+            <details
+              ref={fileMenuRef}
+              className="relative group [&>summary::-webkit-details-marker]:hidden"
+            >
+              <summary className={`${buttonSecondary} min-h-11 cursor-pointer list-none select-none`}>
+                <Folder className="w-[18px] h-[18px]" strokeWidth={1.8} aria-hidden="true" />
+                <span className="max-sm:hidden">{t('topbar.file', 'Datei')}</span>
+              </summary>
+              {/* Overlay to close details when clicking outside */}
+              <div
+                className="fixed inset-0 z-40 hidden cursor-default group-open:block"
+                onClick={() => {
+                  if (fileMenuRef.current) fileMenuRef.current.open = false;
+                }}
+                aria-hidden="true"
+              />
+              <div className="absolute left-0 top-full mt-1.5 w-52 rounded-xl border border-slate-200 bg-white p-1.5 shadow-xl z-50">
+                <button
+                  type="button"
+                  onClick={() => {
+                    if (fileMenuRef.current) fileMenuRef.current.open = false;
+                    fileInputRef.current?.click();
+                  }}
+                  className="flex w-full items-center gap-2.5 rounded-lg px-3 py-2.5 text-sm font-medium text-slate-700 transition-colors hover:bg-slate-100 hover:text-slate-900"
+                >
+                  <Upload className="w-[18px] h-[18px]" strokeWidth={1.8} />
+                  {t('topbar.load')}
+                </button>
+                <button
+                  type="button"
+                  onClick={() => {
+                    if (fileMenuRef.current) fileMenuRef.current.open = false;
+                    void handleExport();
+                  }}
+                  className="flex w-full items-center gap-2.5 rounded-lg px-3 py-2.5 text-sm font-medium text-slate-700 transition-colors hover:bg-slate-100 hover:text-slate-900"
+                >
+                  <Download className="w-[18px] h-[18px]" strokeWidth={1.8} />
+                  {t('topbar.save')}
+                </button>
+                <div className="my-1.5 h-px bg-slate-100" />
+                <button
+                  type="button"
+                  onClick={() => {
+                    if (fileMenuRef.current) fileMenuRef.current.open = false;
+                    handleReset();
+                  }}
+                  className="flex w-full items-center gap-2.5 rounded-lg px-3 py-2.5 text-sm font-medium text-red-600 transition-colors hover:bg-red-50 hover:text-red-700"
+                >
+                  <Trash2 className="w-[18px] h-[18px]" strokeWidth={1.8} />
+                  {t('topbar.reset')}
+                </button>
+              </div>
+            </details>
+
+            {/* History Controls */}
+            <div className="flex gap-2">
               <button
                 type="button"
                 onClick={historyUndo}
                 disabled={!canUndo}
                 aria-label={t('topbar.undo')}
                 title={t('topbar.undo')}
-                className={`${buttonSecondary} min-h-11 flex-1`}
+                className={`${buttonSecondary} min-h-11 px-3`}
               >
                 <Undo className="w-[18px] h-[18px]" strokeWidth={1.8} aria-hidden="true" />
-                <span className="max-[430px]:text-xs">{t('topbar.undo')}</span>
               </button>
               <button
                 type="button"
@@ -133,58 +189,44 @@ export default function TopBar() {
                 disabled={!canRedo}
                 aria-label={t('topbar.redo')}
                 title={t('topbar.redo')}
-                className={`${buttonSecondary} min-h-11 flex-1`}
+                className={`${buttonSecondary} min-h-11 px-3`}
               >
                 <Redo className="w-[18px] h-[18px]" strokeWidth={1.8} aria-hidden="true" />
-                <span className="max-[430px]:text-xs">{t('topbar.redo')}</span>
               </button>
             </div>
-            <button
-              type="button"
-              onClick={() => fileInputRef.current?.click()}
-              className={`${buttonSecondary} min-h-11`}
-            >
-              <Upload className="w-[18px] h-[18px]" strokeWidth={1.8} aria-hidden="true" />
-              <span className="max-[430px]:text-xs">{t('topbar.load')}</span>
-            </button>
-            <button
-              type="button"
-              onClick={handleExport}
-              className={`${buttonSecondary} min-h-11`}
-            >
-              <Download className="w-[18px] h-[18px]" strokeWidth={1.8} aria-hidden="true" />
-              <span className="max-[430px]:text-xs">{t('topbar.save')}</span>
-            </button>
-            <button
-              type="button"
-              onClick={() => window.print()}
-              className={`${buttonSecondary} min-h-11`}
-            >
-              <Printer className="w-[18px] h-[18px]" strokeWidth={1.8} aria-hidden="true" />
-              <span className="max-[430px]:text-xs">{t('topbar.print')}</span>
-            </button>
-            <button
-              type="button"
-              onClick={handlePdf}
-              disabled={pdfBusy}
-              aria-busy={pdfBusy}
-              className={`${buttonPrimary} min-h-11`}
-            >
-              <FileText className="w-[18px] h-[18px]" strokeWidth={1.8} aria-hidden="true" />
-              <span className="max-[430px]:text-xs">
-                {pdfBusy ? t('topbar.pdfBusy') : t('topbar.pdf')}
-              </span>
-            </button>
-            <button
-              type="button"
-              onClick={handleReset}
-              title={t('topbar.reset')}
-              className={`${buttonSecondary} min-h-11 hover:border-red-300 hover:bg-red-50 hover:text-red-700`}
-            >
-              <Trash2 className="w-[18px] h-[18px]" strokeWidth={1.8} aria-hidden="true" />
-              <span className="max-[430px]:text-xs">{t('topbar.reset')}</span>
-            </button>
-          </>
+
+            {/* Export / Print */}
+            <div className="flex gap-2">
+              <Link
+                to="/play"
+                className={`${buttonSecondary} min-h-11 flex items-center justify-center max-sm:px-3`}
+                title={t('topbar.present', 'Präsentieren')}
+              >
+                <Play className="w-[18px] h-[18px]" strokeWidth={1.8} aria-hidden="true" />
+                <span className="max-sm:hidden">{t('topbar.present', 'Präsentieren')}</span>
+              </Link>
+              <button
+                type="button"
+                onClick={() => window.print()}
+                className={`${buttonSecondary} min-h-11 max-sm:px-3`}
+                title={t('topbar.print')}
+              >
+                <Printer className="w-[18px] h-[18px]" strokeWidth={1.8} aria-hidden="true" />
+                <span className="max-sm:hidden">{t('topbar.print')}</span>
+              </button>
+              <button
+                type="button"
+                onClick={handlePdf}
+                disabled={pdfBusy}
+                aria-busy={pdfBusy}
+                className={`${buttonPrimary} min-h-11 max-sm:px-3`}
+                title={t('topbar.pdf')}
+              >
+                <FileText className="w-[18px] h-[18px]" strokeWidth={1.8} aria-hidden="true" />
+                <span className="max-sm:hidden">{pdfBusy ? t('topbar.pdfBusy') : t('topbar.pdf')}</span>
+              </button>
+            </div>
+          </div>
         }
       />
       <input
