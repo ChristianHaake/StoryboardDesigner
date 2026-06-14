@@ -59,8 +59,12 @@ export default function PresentationView() {
     return (
       <div className="flex min-h-screen w-full flex-col items-center justify-center bg-slate-900 text-slate-100">
         <LayoutTemplate className="mb-4 h-16 w-16 text-slate-600" strokeWidth={1} />
-        <h2 className="mb-2 text-xl font-medium">{t('presentation.emptyTitle', 'Storyboard ist leer')}</h2>
-        <p className="mb-8 text-slate-400">{t('presentation.emptyDesc', 'Fügen Sie Szenen hinzu, um die Präsentation zu starten.')}</p>
+        <h2 className="mb-2 text-xl font-medium">
+          {t('presentation.emptyTitle', 'Storyboard ist leer')}
+        </h2>
+        <p className="mb-8 text-slate-400">
+          {t('presentation.emptyDesc', 'Fügen Sie Szenen hinzu, um die Präsentation zu starten.')}
+        </p>
         <button
           onClick={handleExit}
           className="rounded-lg bg-slate-800 px-6 py-2.5 font-medium transition-colors hover:bg-slate-700"
@@ -122,15 +126,13 @@ export default function PresentationView() {
                 </p>
               </div>
             )}
-            
+
             {currentScene.audioText && (
               <div>
                 <h3 className="mb-1 text-xs font-semibold tracking-wider text-slate-500 uppercase">
                   {t('scene.audio', 'Ton/Text')}
                 </h3>
-                <p className="text-xl leading-relaxed text-slate-100">
-                  {currentScene.audioText}
-                </p>
+                <p className="text-xl leading-relaxed text-slate-100">{currentScene.audioText}</p>
               </div>
             )}
 
@@ -144,18 +146,19 @@ export default function PresentationView() {
                 </p>
               </div>
             )}
-            
+
             {/* Custom Fields */}
-            {currentScene.customFields && Object.entries(currentScene.customFields).map(([key, value]) => {
-              if (!value) return null;
-              // We could look up the label from fieldDefinitions, but for simplicity we'll just display the value
-              // In a real presentation, usually only visual/audio/notes are needed, but we'll show custom fields as a bonus
-              return (
-                <div key={key}>
-                  <p className="text-lg leading-relaxed text-slate-300">{value}</p>
-                </div>
-              );
-            })}
+            {currentScene.customFields &&
+              Object.entries(currentScene.customFields).map(([key, value]) => {
+                if (!value) return null;
+                // We could look up the label from fieldDefinitions, but for simplicity we'll just display the value
+                // In a real presentation, usually only visual/audio/notes are needed, but we'll show custom fields as a bonus
+                return (
+                  <div key={key}>
+                    <p className="text-lg leading-relaxed text-slate-300">{value}</p>
+                  </div>
+                );
+              })}
           </div>
         </div>
       </div>

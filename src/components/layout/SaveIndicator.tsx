@@ -23,7 +23,11 @@ export default function SaveIndicator({ className = '' }: { className?: string }
       } ${className}`}
     >
       {saving ? (
-        <Loader2 className="w-3.5 h-3.5 motion-safe:animate-spin" strokeWidth={2.4} aria-hidden="true" />
+        <Loader2
+          className="w-3.5 h-3.5 motion-safe:animate-spin"
+          strokeWidth={2.4}
+          aria-hidden="true"
+        />
       ) : error ? (
         <AlertCircle className="w-3.5 h-3.5" strokeWidth={2.4} aria-hidden="true" />
       ) : (

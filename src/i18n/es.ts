@@ -27,7 +27,8 @@ const es: Translations = {
   templates: {
     pickHeading: 'Empezar con un ejemplo',
     pickHint: 'Carga una plantilla con campos preconfigurados y contenido de ejemplo.',
-    confirmReplace: '¿Cargar la plantilla? El proyecto actual se sustituirá por el contenido de ejemplo.',
+    confirmReplace:
+      '¿Cargar la plantilla? El proyecto actual se sustituirá por el contenido de ejemplo.',
 
     filmName: 'Ejemplo: vídeo explicativo',
     filmSubject: 'Tema de ejemplo',
@@ -85,11 +86,14 @@ const es: Translations = {
   onboarding: {
     kicker: 'Primeros pasos',
     step1Title: 'Elegir un formato',
-    step1Body: 'Elige arriba un formato: vídeo, fotonovela o discurso. Los campos adecuados se añaden automáticamente.',
+    step1Body:
+      'Elige arriba un formato: vídeo, fotonovela o discurso. Los campos adecuados se añaden automáticamente.',
     step2Title: 'Crear escenas',
-    step2Body: 'Añade escenas y describe imagen, sonido y notas. Con arrastrar y soltar o la navegación de escenas no pierdes la visión de conjunto.',
+    step2Body:
+      'Añade escenas y describe imagen, sonido y notas. Con arrastrar y soltar o la navegación de escenas no pierdes la visión de conjunto.',
     step3Title: 'Personalizar y guardar',
-    step3Body: 'En «Configurar campos» añades tus propios campos. Guarda como archivo .storyboard o exporta un PDF.',
+    step3Body:
+      'En «Configurar campos» añades tus propios campos. Guarda como archivo .storyboard o exporta un PDF.',
     skip: 'Omitir',
     back: 'Atrás',
     next: 'Siguiente',
@@ -234,7 +238,8 @@ const es: Translations = {
   },
   fieldConfig: {
     title: 'Configurar campos',
-    description: 'Los campos adicionales se añaden a cada escena del storyboard (por ejemplo, para el tamaño del plano).',
+    description:
+      'Los campos adicionales se añaden a cada escena del storyboard (por ejemplo, para el tamaño del plano).',
     close: 'Cerrar diálogo',
     addHeading: 'Añadir campo',
     usage: '{{count}} de {{max}} campos utilizados',
@@ -258,8 +263,7 @@ const es: Translations = {
     rowLabel: 'Nombre del campo {{label}}',
     saveRow: 'Guardar',
     deleteField: 'Eliminar el campo {{label}}',
-    confirmDelete:
-      '¿Eliminar el campo «{{label}}»? Su contenido se quitará de todas las escenas.',
+    confirmDelete: '¿Eliminar el campo «{{label}}»? Su contenido se quitará de todas las escenas.',
     added: 'Campo añadido.',
     renamed: 'Nombre del campo guardado.',
     deleted: 'Campo y su contenido eliminados.',

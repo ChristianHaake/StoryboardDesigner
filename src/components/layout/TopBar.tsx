@@ -13,7 +13,19 @@ import BrandLogo from './BrandLogo';
 import StatusPill from './StatusPill';
 import SaveIndicator from './SaveIndicator';
 import { buttonPrimary, buttonSecondary } from '../forms/fieldStyles';
-import { GraduationCap, MessageSquare, Undo, Redo, Upload, Download, Printer, FileText, Trash2, Folder, Play } from 'lucide-react';
+import {
+  GraduationCap,
+  MessageSquare,
+  Undo,
+  Redo,
+  Upload,
+  Download,
+  Printer,
+  FileText,
+  Trash2,
+  Folder,
+  Play,
+} from 'lucide-react';
 
 import { SharedTopBar } from '@haak3/ui';
 
@@ -86,7 +98,9 @@ export default function TopBar() {
     try {
       const { project, images } = await importProject(file);
       useStoryboardStore.getState().loadProject(project, images, true);
-      useStoryboardStore.getState().setSuccessMessage(t('topbar.loadSuccess', 'Projekt erfolgreich geladen'));
+      useStoryboardStore
+        .getState()
+        .setSuccessMessage(t('topbar.loadSuccess', 'Projekt erfolgreich geladen'));
       state.clearErrorMessage();
     } catch (err: unknown) {
       state.setErrorMessage(err instanceof ImportError ? err.message : t('topbar.importFailed'));
@@ -134,7 +148,9 @@ export default function TopBar() {
               ref={fileMenuRef}
               className="relative group [&>summary::-webkit-details-marker]:hidden"
             >
-              <summary className={`${buttonSecondary} min-h-11 cursor-pointer list-none select-none`}>
+              <summary
+                className={`${buttonSecondary} min-h-11 cursor-pointer list-none select-none`}
+              >
                 <Folder className="w-[18px] h-[18px]" strokeWidth={1.8} aria-hidden="true" />
                 <span className="max-sm:hidden">{t('topbar.file', 'Datei')}</span>
               </summary>
@@ -238,7 +254,9 @@ export default function TopBar() {
                 title={t('topbar.pdf')}
               >
                 <FileText className="w-[18px] h-[18px]" strokeWidth={1.8} aria-hidden="true" />
-                <span className="max-sm:hidden">{pdfBusy ? t('topbar.pdfBusy') : t('topbar.pdf')}</span>
+                <span className="max-sm:hidden">
+                  {pdfBusy ? t('topbar.pdfBusy') : t('topbar.pdf')}
+                </span>
               </button>
             </div>
           </div>

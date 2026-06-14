@@ -60,7 +60,9 @@ export default function CommentThread({ sceneId, sceneNumber, comments }: Commen
                   className="size-5 accent-blue-600"
                 />
               </label>
-              <span className={`min-w-0 flex-1 break-words ${comment.done ? 'text-slate-400 line-through' : ''}`}>
+              <span
+                className={`min-w-0 flex-1 break-words ${comment.done ? 'text-slate-400 line-through' : ''}`}
+              >
                 {comment.text}
               </span>
               <button

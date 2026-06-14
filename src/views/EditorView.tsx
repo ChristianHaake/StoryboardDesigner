@@ -92,7 +92,7 @@ export default function EditorView() {
   }, []);
 
   const hasPrePlanningContent = Boolean(
-    prePlanning.logline || prePlanning.objective || prePlanning.roles || prePlanning.resources
+    prePlanning.logline || prePlanning.objective || prePlanning.roles || prePlanning.resources,
   );
 
   return (
@@ -287,15 +287,23 @@ export default function EditorView() {
                 {scenes.length === 0 && (
                   <>
                     <div className="flex flex-col items-center justify-center gap-3 rounded-xl border border-dashed border-slate-300 bg-slate-50 px-4 py-12 text-center text-slate-500 print:hidden">
-                      {formatType === 'film' && <Film className="h-8 w-8 text-slate-400" strokeWidth={1.5} />}
-                      {formatType === 'fotostory' && <Camera className="h-8 w-8 text-slate-400" strokeWidth={1.5} />}
-                      {formatType === 'rede' && <Mic className="h-8 w-8 text-slate-400" strokeWidth={1.5} />}
-                      {formatType === 'custom' && <LayoutTemplate className="h-8 w-8 text-slate-400" strokeWidth={1.5} />}
+                      {formatType === 'film' && (
+                        <Film className="h-8 w-8 text-slate-400" strokeWidth={1.5} />
+                      )}
+                      {formatType === 'fotostory' && (
+                        <Camera className="h-8 w-8 text-slate-400" strokeWidth={1.5} />
+                      )}
+                      {formatType === 'rede' && (
+                        <Mic className="h-8 w-8 text-slate-400" strokeWidth={1.5} />
+                      )}
+                      {formatType === 'custom' && (
+                        <LayoutTemplate className="h-8 w-8 text-slate-400" strokeWidth={1.5} />
+                      )}
                       <p className="text-sm">
                         {t(
                           // eslint-disable-next-line @typescript-eslint/no-explicit-any
                           `editor.emptyState${formatType.charAt(0).toUpperCase() + formatType.slice(1)}` as any,
-                          t('editor.emptyStateCustom')
+                          t('editor.emptyStateCustom'),
                         )}
                       </p>
                     </div>

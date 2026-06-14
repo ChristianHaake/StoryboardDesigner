@@ -24,10 +24,7 @@ export default function MarkdownView({ source, germanOnly = false }: MarkdownVie
           {t('markdown.backToEditor')}
         </Link>
         {showGermanOnlyNote && (
-          <p
-            role="note"
-            className="mt-4 rounded-lg bg-amber-50 px-4 py-3 text-sm text-amber-900"
-          >
+          <p role="note" className="mt-4 rounded-lg bg-amber-50 px-4 py-3 text-sm text-amber-900">
             {t('markdown.germanOnly')}
           </p>
         )}

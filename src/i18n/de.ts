@@ -77,11 +77,14 @@ const de = {
   onboarding: {
     kicker: 'Erste Schritte',
     step1Title: 'Format wählen',
-    step1Body: 'Wähle oben ein Format — Film, Fotostory oder Rede. Passende Felder werden automatisch ergänzt.',
+    step1Body:
+      'Wähle oben ein Format — Film, Fotostory oder Rede. Passende Felder werden automatisch ergänzt.',
     step2Title: 'Szenen aufbauen',
-    step2Body: 'Füge Szenen hinzu und beschreibe Bild, Ton und Notizen. Per Drag-and-Drop oder Szenen-Navigation behältst du den Überblick.',
+    step2Body:
+      'Füge Szenen hinzu und beschreibe Bild, Ton und Notizen. Per Drag-and-Drop oder Szenen-Navigation behältst du den Überblick.',
     step3Title: 'Anpassen & sichern',
-    step3Body: 'Über „Felder konfigurieren" ergänzt du eigene Felder. Speichere als .storyboard-Datei oder exportiere ein PDF.',
+    step3Body:
+      'Über „Felder konfigurieren" ergänzt du eigene Felder. Speichere als .storyboard-Datei oder exportiere ein PDF.',
     skip: 'Überspringen',
     back: 'Zurück',
     next: 'Weiter',
@@ -130,8 +133,7 @@ const de = {
     pdfBusy: 'Erstelle …',
     pdfFailed: 'PDF konnte nicht erstellt werden.',
     pdfFallbackName: 'Storyboard',
-    confirmReplace:
-      'Aktuelles Projekt ersetzen? Es wird durch die geladene Datei überschrieben.',
+    confirmReplace: 'Aktuelles Projekt ersetzen? Es wird durch die geladene Datei überschrieben.',
     undo: 'Rückgängig',
     redo: 'Wiederholen',
     reset: 'Zurücksetzen',
@@ -227,7 +229,8 @@ const de = {
   },
   fieldConfig: {
     title: 'Felder konfigurieren',
-    description: 'Benutzerdefinierte Felder werden jeder Szene im Storyboard hinzugefügt (z.B. für Einstellungsgrößen oder Kameraführung).',
+    description:
+      'Benutzerdefinierte Felder werden jeder Szene im Storyboard hinzugefügt (z.B. für Einstellungsgrößen oder Kameraführung).',
     close: 'Dialog schließen',
     addHeading: 'Eigenes Feld hinzufügen',
     usage: '{{count}} von {{max}} Feldern verwendet',

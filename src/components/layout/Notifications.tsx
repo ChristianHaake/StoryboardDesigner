@@ -13,7 +13,7 @@ export default function Notifications() {
   const lastDeleted = useStoryboardStore((s) => s.lastDeleted);
   const undoDelete = useStoryboardStore((s) => s.undoDelete);
   const clearLastDeleted = useStoryboardStore((s) => s.clearLastDeleted);
-  
+
   const errorMessage = useStoryboardStore((s) => s.errorMessage);
   const clearErrorMessage = useStoryboardStore((s) => s.clearErrorMessage);
 

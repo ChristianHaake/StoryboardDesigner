@@ -25,7 +25,9 @@ function SceneCard({ scene }: SceneCardProps) {
   const { t } = useTranslation();
   const n = scene.orderIndex + 1;
   const imageUrl = useStoryboardStore((s) => s.imageUrls[scene.id] ?? null);
-  const fieldDefinitions = useStoryboardStore((state) => state.fieldDefinitions ?? EMPTY_FIELD_DEFINITIONS);
+  const fieldDefinitions = useStoryboardStore(
+    (state) => state.fieldDefinitions ?? EMPTY_FIELD_DEFINITIONS,
+  );
   const isCollapsed = useStoryboardStore((state) => state.collapsedScenes[scene.id] ?? false);
   const toggleSceneCollapse = useStoryboardStore((state) => state.toggleSceneCollapse);
   const updateScene = useStoryboardStore((state) => state.updateScene);
@@ -112,8 +114,16 @@ function SceneCard({ scene }: SceneCardProps) {
               type="button"
               onClick={() => toggleSceneCollapse(scene.id)}
               aria-expanded={!isCollapsed}
-              aria-label={isCollapsed ? t('editor.expandAll', 'Ausklappen') : t('editor.collapseAll', 'Einklappen')}
-              title={isCollapsed ? t('editor.expandAll', 'Ausklappen') : t('editor.collapseAll', 'Einklappen')}
+              aria-label={
+                isCollapsed
+                  ? t('editor.expandAll', 'Ausklappen')
+                  : t('editor.collapseAll', 'Einklappen')
+              }
+              title={
+                isCollapsed
+                  ? t('editor.expandAll', 'Ausklappen')
+                  : t('editor.collapseAll', 'Einklappen')
+              }
               className="inline-flex size-11 items-center justify-center rounded-lg text-slate-500 transition-colors hover:bg-slate-100 hover:text-slate-800"
             >
               {isCollapsed ? (
@@ -129,170 +139,179 @@ function SceneCard({ scene }: SceneCardProps) {
       {!isCollapsed && (
         <>
           <div className="flex gap-5 max-sm:flex-col max-sm:gap-4">
-        {/* Medien-Feld */}
-        <div className={`relative w-48 shrink-0 max-sm:w-full ${imageUrl ? '' : 'print:hidden'}`}>
-          <div className="mb-1.5 flex items-center justify-between">
-            <span className="text-sm font-medium text-slate-700 print:text-xs">
-              {t('scene.imageLabel', 'Szenenbild')}
-            </span>
-          </div>
-          {imageUrl ? (
-            <div className="relative group">
-              <label
-                htmlFor={`image-upload-${scene.id}`}
-                aria-label={t('scene.imageReplace', { n })}
-                className="block w-full cursor-pointer overflow-hidden rounded-lg focus-within:ring-2 focus-within:ring-blue-500 focus-within:ring-offset-2"
-              >
-                <img
-                  src={imageUrl}
-                  alt={scene.altText?.trim() ? scene.altText : t('scene.imageAlt', { n })}
-                  className="aspect-square w-full object-cover max-sm:aspect-[4/3] print:aspect-square print:rounded-none"
-                />
-              </label>
-              <button
-                type="button"
-                onClick={() => removeSceneImage(scene.id)}
-                aria-label={t('scene.imageRemove', { n })}
-                title={t('scene.imageRemove', { n })}
-                className="absolute top-2 right-2 inline-flex size-11 items-center justify-center rounded-lg bg-white/95 text-slate-700 shadow-md transition-colors hover:bg-red-50 hover:text-red-700 print:hidden"
-              >
-                <X className="w-4 h-4" strokeWidth={2} aria-hidden="true" />
-              </button>
-            </div>
-          ) : (
-            <label
-              htmlFor={`image-upload-${scene.id}`}
-              className="flex flex-col aspect-square w-full cursor-pointer items-center justify-center rounded-lg border border-dashed border-slate-300 bg-slate-50 p-4 text-center text-sm font-medium text-slate-500 transition-colors hover:border-blue-400 hover:bg-blue-50 hover:text-blue-700 focus-within:border-blue-400 focus-within:ring-2 focus-within:ring-blue-500 focus-within:ring-offset-2 max-sm:aspect-[4/3] print:aspect-square print:border-slate-300"
+            {/* Medien-Feld */}
+            <div
+              className={`relative w-48 shrink-0 max-sm:w-full ${imageUrl ? '' : 'print:hidden'}`}
             >
-              <span className="print:hidden">
-                {imageError ? (
-                  <span className="text-red-600">{t('scene.imageError')}</span>
-                ) : (
-                  <>
-                    <span className="mb-1 block font-semibold text-slate-700">{t('scene.imageAdd', 'Bild hinzufügen')}</span>
-                    <span className="text-xs font-normal text-slate-500">{t('scene.imageInstruction', 'Klicken oder Datei ziehen')}</span>
-                  </>
-                )}
-              </span>
-            </label>
-          )}
-          <input
-            id={`image-upload-${scene.id}`}
-            type="file"
-            accept="image/*"
-            className="sr-only"
-            onChange={handleFileChange}
-          />
-          {imageUrl && (
-            <div className="mt-2 print:hidden">
-              <label className={labelClass} htmlFor={`alt-${scene.id}`}>
-                {t('scene.altLabel')}
-              </label>
-              <AutoResizeTextarea
-                id={`alt-${scene.id}`}
-                placeholder={t('scene.altPlaceholder')}
-                value={scene.altText ?? ''}
-                onChange={(e) => updateScene(scene.id, { altText: e.target.value })}
-              />
-            </div>
-          )}
-        </div>
-
-        <div className="min-w-0 flex-1 space-y-3.5">
-          <div>
-            <label className={labelClass} htmlFor={`visual-${scene.id}`}>
-              {t('scene.visual')}
-            </label>
-            <AutoResizeTextarea
-              id={`visual-${scene.id}`}
-              placeholder={t('scene.visualPlaceholder')}
-              value={scene.visualDescription}
-              onChange={(e) => updateScene(scene.id, { visualDescription: e.target.value })}
-            />
-          </div>
-          <div>
-            <label className={labelClass} htmlFor={`audio-${scene.id}`}>
-              {t('scene.audio')}
-            </label>
-            <AutoResizeTextarea
-              id={`audio-${scene.id}`}
-              placeholder={t('scene.audioPlaceholder')}
-              value={scene.audioText}
-              onChange={(e) => updateScene(scene.id, { audioText: e.target.value })}
-            />
-          </div>
-          <div>
-            <label className={labelClass} htmlFor={`notes-${scene.id}`}>
-              {t('scene.notes')}
-            </label>
-            <AutoResizeTextarea
-              id={`notes-${scene.id}`}
-              placeholder={t('scene.notesPlaceholder')}
-              value={scene.directorNotes}
-              onChange={(e) => updateScene(scene.id, { directorNotes: e.target.value })}
-            />
-          </div>
-          {fieldDefinitions.map((definition) => {
-            const value = scene.customFields?.[definition.key] ?? '';
-            const fieldId = `custom-${definition.key}-${scene.id}`;
-            const isSelect = definition.type === 'select' && definition.options;
-            // Altwert, der nicht (mehr) in den Optionen liegt, bleibt wählbar.
-            const options =
-              isSelect && value && !definition.options!.includes(value)
-                ? [value, ...definition.options!]
-                : definition.options ?? [];
-            return (
-              <div key={definition.key} className={value ? '' : 'print:hidden'}>
-                <label className={labelClass} htmlFor={fieldId}>
-                  {definition.label}
-                </label>
-                {isSelect ? (
-                  <select
-                    id={fieldId}
-                    className={`${inputClass} appearance-none`}
-                    value={value}
-                    aria-describedby={definition.description ? `${fieldId}-desc` : undefined}
-                    onChange={(event) =>
-                      updateCustomField(scene.id, definition.key, event.target.value)
-                    }
-                  >
-                    <option value="">{t('scene.selectPlaceholder')}</option>
-                    {options.map((option) => (
-                      <option key={option} value={option}>
-                        {option}
-                      </option>
-                    ))}
-                  </select>
-                ) : (
-                  <AutoResizeTextarea
-                    id={fieldId}
-                    placeholder={t('scene.customPlaceholder', { label: definition.label })}
-                    aria-describedby={definition.description ? `${fieldId}-desc` : undefined}
-                    value={value}
-                    onChange={(event) =>
-                      updateCustomField(scene.id, definition.key, event.target.value)
-                    }
-                  />
-                )}
-                {definition.description && (
-                  <p className="mt-1.5 text-xs text-slate-500 print:hidden" id={`${fieldId}-desc`}>
-                    {definition.description}
-                  </p>
-                )}
+              <div className="mb-1.5 flex items-center justify-between">
+                <span className="text-sm font-medium text-slate-700 print:text-xs">
+                  {t('scene.imageLabel', 'Szenenbild')}
+                </span>
               </div>
-            );
-          })}
-        </div>
-      </div>
+              {imageUrl ? (
+                <div className="relative group">
+                  <label
+                    htmlFor={`image-upload-${scene.id}`}
+                    aria-label={t('scene.imageReplace', { n })}
+                    className="block w-full cursor-pointer overflow-hidden rounded-lg focus-within:ring-2 focus-within:ring-blue-500 focus-within:ring-offset-2"
+                  >
+                    <img
+                      src={imageUrl}
+                      alt={scene.altText?.trim() ? scene.altText : t('scene.imageAlt', { n })}
+                      className="aspect-square w-full object-cover max-sm:aspect-[4/3] print:aspect-square print:rounded-none"
+                    />
+                  </label>
+                  <button
+                    type="button"
+                    onClick={() => removeSceneImage(scene.id)}
+                    aria-label={t('scene.imageRemove', { n })}
+                    title={t('scene.imageRemove', { n })}
+                    className="absolute top-2 right-2 inline-flex size-11 items-center justify-center rounded-lg bg-white/95 text-slate-700 shadow-md transition-colors hover:bg-red-50 hover:text-red-700 print:hidden"
+                  >
+                    <X className="w-4 h-4" strokeWidth={2} aria-hidden="true" />
+                  </button>
+                </div>
+              ) : (
+                <label
+                  htmlFor={`image-upload-${scene.id}`}
+                  className="flex flex-col aspect-square w-full cursor-pointer items-center justify-center rounded-lg border border-dashed border-slate-300 bg-slate-50 p-4 text-center text-sm font-medium text-slate-500 transition-colors hover:border-blue-400 hover:bg-blue-50 hover:text-blue-700 focus-within:border-blue-400 focus-within:ring-2 focus-within:ring-blue-500 focus-within:ring-offset-2 max-sm:aspect-[4/3] print:aspect-square print:border-slate-300"
+                >
+                  <span className="print:hidden">
+                    {imageError ? (
+                      <span className="text-red-600">{t('scene.imageError')}</span>
+                    ) : (
+                      <>
+                        <span className="mb-1 block font-semibold text-slate-700">
+                          {t('scene.imageAdd', 'Bild hinzufügen')}
+                        </span>
+                        <span className="text-xs font-normal text-slate-500">
+                          {t('scene.imageInstruction', 'Klicken oder Datei ziehen')}
+                        </span>
+                      </>
+                    )}
+                  </span>
+                </label>
+              )}
+              <input
+                id={`image-upload-${scene.id}`}
+                type="file"
+                accept="image/*"
+                className="sr-only"
+                onChange={handleFileChange}
+              />
+              {imageUrl && (
+                <div className="mt-2 print:hidden">
+                  <label className={labelClass} htmlFor={`alt-${scene.id}`}>
+                    {t('scene.altLabel')}
+                  </label>
+                  <AutoResizeTextarea
+                    id={`alt-${scene.id}`}
+                    placeholder={t('scene.altPlaceholder')}
+                    value={scene.altText ?? ''}
+                    onChange={(e) => updateScene(scene.id, { altText: e.target.value })}
+                  />
+                </div>
+              )}
+            </div>
 
-      {feedbackMode && (
-        <CommentThread
-          sceneId={scene.id}
-          sceneNumber={n}
-          comments={scene.comments ?? EMPTY_COMMENTS}
-        />
-      )}
-      </>
+            <div className="min-w-0 flex-1 space-y-3.5">
+              <div>
+                <label className={labelClass} htmlFor={`visual-${scene.id}`}>
+                  {t('scene.visual')}
+                </label>
+                <AutoResizeTextarea
+                  id={`visual-${scene.id}`}
+                  placeholder={t('scene.visualPlaceholder')}
+                  value={scene.visualDescription}
+                  onChange={(e) => updateScene(scene.id, { visualDescription: e.target.value })}
+                />
+              </div>
+              <div>
+                <label className={labelClass} htmlFor={`audio-${scene.id}`}>
+                  {t('scene.audio')}
+                </label>
+                <AutoResizeTextarea
+                  id={`audio-${scene.id}`}
+                  placeholder={t('scene.audioPlaceholder')}
+                  value={scene.audioText}
+                  onChange={(e) => updateScene(scene.id, { audioText: e.target.value })}
+                />
+              </div>
+              <div>
+                <label className={labelClass} htmlFor={`notes-${scene.id}`}>
+                  {t('scene.notes')}
+                </label>
+                <AutoResizeTextarea
+                  id={`notes-${scene.id}`}
+                  placeholder={t('scene.notesPlaceholder')}
+                  value={scene.directorNotes}
+                  onChange={(e) => updateScene(scene.id, { directorNotes: e.target.value })}
+                />
+              </div>
+              {fieldDefinitions.map((definition) => {
+                const value = scene.customFields?.[definition.key] ?? '';
+                const fieldId = `custom-${definition.key}-${scene.id}`;
+                const isSelect = definition.type === 'select' && definition.options;
+                // Altwert, der nicht (mehr) in den Optionen liegt, bleibt wählbar.
+                const options =
+                  isSelect && value && !definition.options!.includes(value)
+                    ? [value, ...definition.options!]
+                    : (definition.options ?? []);
+                return (
+                  <div key={definition.key} className={value ? '' : 'print:hidden'}>
+                    <label className={labelClass} htmlFor={fieldId}>
+                      {definition.label}
+                    </label>
+                    {isSelect ? (
+                      <select
+                        id={fieldId}
+                        className={`${inputClass} appearance-none`}
+                        value={value}
+                        aria-describedby={definition.description ? `${fieldId}-desc` : undefined}
+                        onChange={(event) =>
+                          updateCustomField(scene.id, definition.key, event.target.value)
+                        }
+                      >
+                        <option value="">{t('scene.selectPlaceholder')}</option>
+                        {options.map((option) => (
+                          <option key={option} value={option}>
+                            {option}
+                          </option>
+                        ))}
+                      </select>
+                    ) : (
+                      <AutoResizeTextarea
+                        id={fieldId}
+                        placeholder={t('scene.customPlaceholder', { label: definition.label })}
+                        aria-describedby={definition.description ? `${fieldId}-desc` : undefined}
+                        value={value}
+                        onChange={(event) =>
+                          updateCustomField(scene.id, definition.key, event.target.value)
+                        }
+                      />
+                    )}
+                    {definition.description && (
+                      <p
+                        className="mt-1.5 text-xs text-slate-500 print:hidden"
+                        id={`${fieldId}-desc`}
+                      >
+                        {definition.description}
+                      </p>
+                    )}
+                  </div>
+                );
+              })}
+            </div>
+          </div>
+
+          {feedbackMode && (
+            <CommentThread
+              sceneId={scene.id}
+              sceneNumber={n}
+              comments={scene.comments ?? EMPTY_COMMENTS}
+            />
+          )}
+        </>
       )}
     </article>
   );

@@ -48,7 +48,7 @@ export async function exportProject(
   if (dataJsonBytes.byteLength > MAX_DATA_JSON_BYTES) {
     throw new Error(i18n.t('errors.exportDataTooLarge'));
   }
-  
+
   entries['data.json'] = [dataJsonBytes, { level: 6 }];
   for (const scene of scenes) {
     if (scene.imageFileName && images[scene.id]) {
@@ -100,10 +100,7 @@ function readCentralDirectory(bytes: Uint8Array): CentralEntry[] {
   const entries: CentralEntry[] = [];
   let offset = centralOffset;
   for (let index = 0; index < entryCount; index++) {
-    if (
-      offset + 46 > bytes.length ||
-      view.getUint32(offset, true) !== 0x02014b50
-    ) {
+    if (offset + 46 > bytes.length || view.getUint32(offset, true) !== 0x02014b50) {
       throw new ImportError(i18n.t('errors.notStoryboard'));
     }
     const flags = view.getUint16(offset + 8, true);
@@ -114,11 +111,7 @@ function readCentralDirectory(bytes: Uint8Array): CentralEntry[] {
     const extraLength = view.getUint16(offset + 30, true);
     const commentLength = view.getUint16(offset + 32, true);
     const nextOffset = offset + 46 + nameLength + extraLength + commentLength;
-    if (
-      nextOffset > bytes.length ||
-      (flags & 1) !== 0 ||
-      (method !== 0 && method !== 8)
-    ) {
+    if (nextOffset > bytes.length || (flags & 1) !== 0 || (method !== 0 && method !== 8)) {
       throw new ImportError(i18n.t('errors.notStoryboard'));
     }
     const name = decoder.decode(bytes.subarray(offset + 46, offset + 46 + nameLength));

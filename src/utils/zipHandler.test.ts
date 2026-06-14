@@ -56,12 +56,12 @@ describe('zipHandler', () => {
       audioText: '',
       directorNotes: '',
     }));
-    
+
     const archive = zipSync({
       'data.json': strToU8(JSON.stringify(data)),
       'images/shared.jpg': new Uint8Array([1, 2, 3]),
     });
-    
+
     const imported = await importProject(new Blob([archive]));
     expect(imported.images['scene-1']).toBe(imported.images['scene-2']);
     expect(imported.images['scene-1']?.size).toBe(3);
@@ -81,7 +81,7 @@ describe('zipHandler', () => {
         customFields: { 'custom:light': 'Warm' },
       },
     ];
-    
+
     const archive = zipSync({
       'data.json': strToU8(JSON.stringify(data)),
     });
@@ -104,11 +104,14 @@ describe('zipHandler', () => {
         directorNotes: '',
       },
     ];
-    
-    const archive = zipSync({
-      'data.json': strToU8(JSON.stringify(data)),
-      'images/large.jpg': new Uint8Array(10 * 1024 * 1024 + 1),
-    }, { level: 0 }); // level 0 for speed in tests when using large files
+
+    const archive = zipSync(
+      {
+        'data.json': strToU8(JSON.stringify(data)),
+        'images/large.jpg': new Uint8Array(10 * 1024 * 1024 + 1),
+      },
+      { level: 0 },
+    ); // level 0 for speed in tests when using large files
 
     await expect(importProject(new Blob([archive]))).rejects.toThrow(
       'Bilder überschreiten das erlaubte Limit',

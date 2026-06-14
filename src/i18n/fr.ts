@@ -85,11 +85,14 @@ const fr: Translations = {
   onboarding: {
     kicker: 'Premiers pas',
     step1Title: 'Choisir un format',
-    step1Body: 'Choisis un format en haut — film, roman-photo ou discours. Les champs adaptés sont ajoutés automatiquement.',
+    step1Body:
+      'Choisis un format en haut — film, roman-photo ou discours. Les champs adaptés sont ajoutés automatiquement.',
     step2Title: 'Construire les scènes',
-    step2Body: 'Ajoute des scènes et décris l’image, le son et les notes. Le glisser-déposer ou la navigation des scènes t’aide à garder une vue d’ensemble.',
+    step2Body:
+      'Ajoute des scènes et décris l’image, le son et les notes. Le glisser-déposer ou la navigation des scènes t’aide à garder une vue d’ensemble.',
     step3Title: 'Personnaliser et sauvegarder',
-    step3Body: 'Avec « Configurer les champs », tu ajoutes tes propres champs. Enregistre un fichier .storyboard ou exporte un PDF.',
+    step3Body:
+      'Avec « Configurer les champs », tu ajoutes tes propres champs. Enregistre un fichier .storyboard ou exporte un PDF.',
     skip: 'Ignorer',
     back: 'Retour',
     next: 'Suivant',
@@ -157,10 +160,10 @@ const fr: Translations = {
     subjectPlaceholder: 'p. ex. le cycle de l’eau',
     format: 'Format',
     date: 'Date',
-    emptyStateFilm: "Aucun plan pour le moment. Créez votre premier plan pour commencer.",
-    emptyStateFotostory: "Aucune photo pour le moment. Créez votre première photo pour commencer.",
-    emptyStateRede: "Aucune section pour le moment. Créez votre première section pour commencer.",
-    emptyStateCustom: "Aucune scène pour le moment. Créez votre première scène pour commencer.",
+    emptyStateFilm: 'Aucun plan pour le moment. Créez votre premier plan pour commencer.',
+    emptyStateFotostory: 'Aucune photo pour le moment. Créez votre première photo pour commencer.',
+    emptyStateRede: 'Aucune section pour le moment. Créez votre première section pour commencer.',
+    emptyStateCustom: 'Aucune scène pour le moment. Créez votre première scène pour commencer.',
     collapseAll: 'Tout réduire',
     expandAll: 'Tout développer',
     planning: 'Planification',
@@ -234,7 +237,8 @@ const fr: Translations = {
   },
   fieldConfig: {
     title: 'Configurer les champs',
-    description: 'Des champs supplémentaires sont ajoutés à chaque scène du storyboard (par exemple pour la taille du plan).',
+    description:
+      'Des champs supplémentaires sont ajoutés à chaque scène du storyboard (par exemple pour la taille du plan).',
     close: 'Fermer la boîte de dialogue',
     addHeading: 'Ajouter un champ',
     usage: '{{count}} sur {{max}} champs utilisés',

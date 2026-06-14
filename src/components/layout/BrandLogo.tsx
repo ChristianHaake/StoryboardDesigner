@@ -7,7 +7,11 @@ interface LocalBrandLogoProps {
   inverted?: boolean;
 }
 
-export default function BrandLogo({ showTagline = true, className = '', inverted = false }: LocalBrandLogoProps) {
+export default function BrandLogo({
+  showTagline = true,
+  className = '',
+  inverted = false,
+}: LocalBrandLogoProps) {
   const { t } = useTranslation();
   return (
     <SharedBrandLogo

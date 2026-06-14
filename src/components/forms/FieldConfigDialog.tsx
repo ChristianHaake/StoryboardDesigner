@@ -101,7 +101,10 @@ function FieldDefinitionRow({
       </div>
       {isSelect && (
         <div className="mt-3">
-          <label htmlFor={`options-${definition.key}`} className="mb-1.5 block text-xs font-semibold text-slate-700">
+          <label
+            htmlFor={`options-${definition.key}`}
+            className="mb-1.5 block text-xs font-semibold text-slate-700"
+          >
             {t('fieldConfig.optionsAdd', 'Optionen (eine pro Zeile)')}
           </label>
           <textarea
@@ -212,9 +215,7 @@ export default function FieldConfigDialog({ open, onClose }: FieldConfigDialogPr
   function handleApplyPreset() {
     const added = applyCurrentFormatPreset();
     setMessage(
-      added > 0
-        ? t('fieldConfig.presetAdded', { count: added })
-        : t('fieldConfig.presetComplete'),
+      added > 0 ? t('fieldConfig.presetAdded', { count: added }) : t('fieldConfig.presetComplete'),
     );
   }
 
@@ -267,7 +268,10 @@ export default function FieldConfigDialog({ open, onClose }: FieldConfigDialogPr
             <div className="mt-4 space-y-3">
               <div className="flex items-end gap-3 max-sm:flex-col max-sm:items-stretch">
                 <div className="flex-1">
-                  <label htmlFor="newFieldName" className="mb-1.5 block text-xs font-semibold text-slate-700">
+                  <label
+                    htmlFor="newFieldName"
+                    className="mb-1.5 block text-xs font-semibold text-slate-700"
+                  >
                     {t('fieldConfig.newLabel', 'Feldname')}
                   </label>
                   <input
@@ -277,7 +281,15 @@ export default function FieldConfigDialog({ open, onClose }: FieldConfigDialogPr
                     value={newLabel}
                     maxLength={MAX_CUSTOM_FIELD_LABEL_LENGTH}
                     placeholder={t('fieldConfig.newPlaceholder')}
-                    aria-invalid={message && message !== t('fieldConfig.added') && message !== t('fieldConfig.deleted') && message !== t('fieldConfig.renamed') && !message.includes('preset') ? 'true' : undefined}
+                    aria-invalid={
+                      message &&
+                      message !== t('fieldConfig.added') &&
+                      message !== t('fieldConfig.deleted') &&
+                      message !== t('fieldConfig.renamed') &&
+                      !message.includes('preset')
+                        ? 'true'
+                        : undefined
+                    }
                     aria-describedby={message ? 'field-config-message' : undefined}
                     onChange={(event) => {
                       setNewLabel(event.target.value);
@@ -291,14 +303,25 @@ export default function FieldConfigDialog({ open, onClose }: FieldConfigDialogPr
                     }}
                     className={`${dialogInputClass} w-full ${message && message !== t('fieldConfig.added') && message !== t('fieldConfig.deleted') && message !== t('fieldConfig.renamed') && !message.includes('preset') ? 'border-red-500 focus:border-red-500 focus:ring-red-100' : ''}`}
                   />
-                  {message && message !== t('fieldConfig.added') && message !== t('fieldConfig.deleted') && message !== t('fieldConfig.renamed') && !message.includes('preset') && (
-                    <p id="field-config-message" role="alert" className="mt-1.5 text-xs font-medium text-red-600">
-                      {message}
-                    </p>
-                  )}
+                  {message &&
+                    message !== t('fieldConfig.added') &&
+                    message !== t('fieldConfig.deleted') &&
+                    message !== t('fieldConfig.renamed') &&
+                    !message.includes('preset') && (
+                      <p
+                        id="field-config-message"
+                        role="alert"
+                        className="mt-1.5 text-xs font-medium text-red-600"
+                      >
+                        {message}
+                      </p>
+                    )}
                 </div>
                 <div className="flex-1">
-                  <label htmlFor="newFieldDesc" className="mb-1.5 block text-xs font-semibold text-slate-700">
+                  <label
+                    htmlFor="newFieldDesc"
+                    className="mb-1.5 block text-xs font-semibold text-slate-700"
+                  >
                     {t('fieldConfig.newDescLabel', 'Hilfstext (optional)')}
                   </label>
                   <input
@@ -318,7 +341,10 @@ export default function FieldConfigDialog({ open, onClose }: FieldConfigDialogPr
                   />
                 </div>
                 <div className="sm:w-40">
-                  <label htmlFor="newFieldType" className="mb-1.5 block text-xs font-semibold text-slate-700">
+                  <label
+                    htmlFor="newFieldType"
+                    className="mb-1.5 block text-xs font-semibold text-slate-700"
+                  >
                     {t('fieldConfig.typeLabel', 'Feldtyp')}
                   </label>
                   <select
@@ -345,7 +371,10 @@ export default function FieldConfigDialog({ open, onClose }: FieldConfigDialogPr
               </div>
               {newType === 'select' && (
                 <div>
-                  <label htmlFor="newFieldOptions" className="mb-1.5 block text-xs font-semibold text-slate-700">
+                  <label
+                    htmlFor="newFieldOptions"
+                    className="mb-1.5 block text-xs font-semibold text-slate-700"
+                  >
                     {t('fieldConfig.optionsAdd', 'Optionen (eine pro Zeile)')}
                   </label>
                   <textarea

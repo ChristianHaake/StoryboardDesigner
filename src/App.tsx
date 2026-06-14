@@ -51,7 +51,9 @@ export default function App() {
 
     // Undo/Redo-Verdrahtung (#6b): aktuellen Inhalt liefern, Schnappschuss
     // zurückspielen, Verfügbarkeits-Flags in den Store schreiben.
-    const toSnapshot = (state: ReturnType<typeof useStoryboardStore.getState>): ContentSnapshot => ({
+    const toSnapshot = (
+      state: ReturnType<typeof useStoryboardStore.getState>,
+    ): ContentSnapshot => ({
       metaData: state.metaData,
       prePlanning: state.prePlanning,
       fieldDefinitions: state.fieldDefinitions,
@@ -60,7 +62,8 @@ export default function App() {
     setHistoryHooks({
       getCurrent: () => toSnapshot(useStoryboardStore.getState()),
       restore: (snapshot) => useStoryboardStore.getState().restoreContent(snapshot),
-      onFlags: (canUndo, canRedo) => useStoryboardStore.getState().setHistoryFlags(canUndo, canRedo),
+      onFlags: (canUndo, canRedo) =>
+        useStoryboardStore.getState().setHistoryFlags(canUndo, canRedo),
     });
 
     // Autosave nur wiederherstellen, solange noch nichts eingegeben wurde —
@@ -160,10 +163,7 @@ export default function App() {
               path="/datenschutz"
               element={<MarkdownView source={datenschutzText} germanOnly />}
             />
-            <Route
-              path="/impressum"
-              element={<MarkdownView source={impressumText} germanOnly />}
-            />
+            <Route path="/impressum" element={<MarkdownView source={impressumText} germanOnly />} />
             <Route path="*" element={<Navigate to="/" replace />} />
           </Routes>
         </Suspense>

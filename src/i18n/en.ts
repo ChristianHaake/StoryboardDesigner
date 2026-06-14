@@ -85,11 +85,14 @@ const en: Translations = {
   onboarding: {
     kicker: 'Getting started',
     step1Title: 'Choose a format',
-    step1Body: 'Pick a format at the top — film, photo story or speech. Matching fields are added automatically.',
+    step1Body:
+      'Pick a format at the top — film, photo story or speech. Matching fields are added automatically.',
     step2Title: 'Build your scenes',
-    step2Body: 'Add scenes and describe image, audio and notes. Use drag-and-drop or the scene navigator to stay organized.',
+    step2Body:
+      'Add scenes and describe image, audio and notes. Use drag-and-drop or the scene navigator to stay organized.',
     step3Title: 'Customize & save',
-    step3Body: 'Use “Configure fields” to add your own fields. Save a .storyboard file or export a PDF.',
+    step3Body:
+      'Use “Configure fields” to add your own fields. Save a .storyboard file or export a PDF.',
     skip: 'Skip',
     back: 'Back',
     next: 'Next',
@@ -108,8 +111,7 @@ const en: Translations = {
   brand: {
     tagline: 'Workshop for digital formats',
     localPill: 'Content stays local',
-    eduNotice:
-      'This app runs entirely in your browser — your text and images stay on your device.',
+    eduNotice: 'This app runs entirely in your browser — your text and images stay on your device.',
     eduNoticeLink: 'Privacy',
     forEducators: 'For educators',
   },
@@ -234,7 +236,8 @@ const en: Translations = {
   },
   fieldConfig: {
     title: 'Configure fields',
-    description: 'Custom fields are added to every scene in the storyboard (e.g. for shot sizes or camera movements).',
+    description:
+      'Custom fields are added to every scene in the storyboard (e.g. for shot sizes or camera movements).',
     close: 'Close dialog',
     addHeading: 'Add custom field',
     usage: '{{count}} of {{max}} fields used',
@@ -258,8 +261,7 @@ const en: Translations = {
     rowLabel: 'Field name {{label}}',
     saveRow: 'Save',
     deleteField: 'Delete field {{label}}',
-    confirmDelete:
-      'Delete field “{{label}}”? Its contents will be removed from all scenes.',
+    confirmDelete: 'Delete field “{{label}}”? Its contents will be removed from all scenes.',
     added: 'Field added.',
     renamed: 'Field name saved.',
     deleted: 'Field and its contents deleted.',
