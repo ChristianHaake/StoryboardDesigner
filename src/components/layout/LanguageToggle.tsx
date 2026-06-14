@@ -24,7 +24,7 @@ export default function LanguageToggle({ className = '' }: LanguageToggleProps) 
             type="button"
             onClick={() => void i18n.changeLanguage(lng)}
             aria-pressed={active}
-            aria-label={t(lng === 'de' ? 'language.switchToDe' : 'language.switchToEn')}
+            aria-label={t(`language.switchTo${lng.charAt(0).toUpperCase()}${lng.slice(1)}`)}
             className={`min-h-9 min-w-9 rounded-md px-2.5 text-sm font-semibold transition-colors ${
               active ? 'bg-blue-600 text-white shadow-sm' : 'text-slate-600 hover:bg-white'
             }`}

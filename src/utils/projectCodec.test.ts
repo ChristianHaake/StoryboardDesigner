@@ -71,6 +71,37 @@ describe('decodeProject', () => {
     expect(decoded.fieldDefinitions?.[2]).toEqual({ key: 'free', label: 'Frei' });
   });
 
+  it('preserves alt text and drops empty alt text', () => {
+    const decoded = decodeProject(
+      project({
+        version: '1.4',
+        scenes: [
+          {
+            id: 'scene-1',
+            orderIndex: 0,
+            imageFileName: 'img-1.jpg',
+            visualDescription: '',
+            audioText: '',
+            directorNotes: '',
+            altText: 'Nahaufnahme einer Pflanze',
+          },
+          {
+            id: 'scene-2',
+            orderIndex: 1,
+            imageFileName: null,
+            visualDescription: '',
+            audioText: '',
+            directorNotes: '',
+            altText: '',
+          },
+        ],
+      }),
+    );
+
+    expect(decoded.scenes[0]?.altText).toBe('Nahaufnahme einer Pflanze');
+    expect(decoded.scenes[1]).not.toHaveProperty('altText');
+  });
+
   it('preserves and normalizes scene comments', () => {
     const decoded = decodeProject(
       project({

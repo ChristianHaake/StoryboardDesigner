@@ -21,6 +21,7 @@ import { inputClass, labelClass } from '../components/forms/fieldStyles';
 import { MAX_SCENES } from '../utils/projectCodec';
 import FieldConfigDialog from '../components/forms/FieldConfigDialog';
 import SceneNavigator from '../components/layout/SceneNavigator';
+import TemplatePicker from '../components/layout/TemplatePicker';
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 
@@ -221,9 +222,12 @@ export default function EditorView() {
             >
               <div className="mt-4 space-y-3">
                 {scenes.length === 0 && (
-                  <p className="rounded-xl border border-dashed border-slate-300 bg-slate-50 px-4 py-8 text-center text-sm text-slate-500 print:hidden">
-                    {t('editor.emptyState')}
-                  </p>
+                  <>
+                    <p className="rounded-xl border border-dashed border-slate-300 bg-slate-50 px-4 py-8 text-center text-sm text-slate-500 print:hidden">
+                      {t('editor.emptyState')}
+                    </p>
+                    <TemplatePicker />
+                  </>
                 )}
                 {scenes.map((scene) => (
                   <SceneCard key={scene.id} scene={scene} />

@@ -40,6 +40,11 @@ Review date: n/a
 
 ## App-specific decisions
 
+- **Undo/Redo** covers project content (metaData, prePlanning, fieldDefinitions,
+  scenes) via a snapshot stack (`utils/history.ts`). Images are intentionally
+  excluded — image add/remove has its own flow and the per-scene delete keeps
+  its own undo snackbar. Keyboard shortcuts defer to native text undo while a
+  form field is focused.
 - Planning and design docs are kept under `docs/planning/`.
 - PDF export uses native `window.print()` with print CSS, not a server.
 - State persists via `idb-keyval` / IndexedDB (autosave) plus `.storyboard`
@@ -53,7 +58,13 @@ Review date: n/a
   in `:root`. Theme + font scale persist in `localStorage` and apply pre-paint
   via a boot script (no flash).
 
-## Known gaps
+## Known gaps & documented limitations
 
 - Footer lacks an "Über" route; template ships `content/ueber.md`. Add an Über
   page if the standard requires it.
+- **Alt text in PDF export.** Scenes carry a per-image `altText` (editor field,
+  drives `<img alt>`, persisted in `.storyboard`). The PDF export rasterizes the
+  DOM (`html-to-image` → PNG → jsPDF), so alt text cannot be embedded as text in
+  the PDF. The accessible alternatives are the live app (screen readers read
+  `<img alt>`) and the `.storyboard` file. A tagged-PDF or HTML export path would
+  be required to carry alt text into the export itself.

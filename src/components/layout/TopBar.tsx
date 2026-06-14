@@ -5,6 +5,7 @@ import { Link } from 'react-router-dom';
 import { selectProject, useStoryboardStore } from '../../store/useStoryboardStore';
 import { exportProject, importProject, ImportError } from '../../utils/zipHandler';
 import { clearAutosave } from '../../utils/persistence';
+import { redo as historyRedo, undo as historyUndo } from '../../utils/history';
 import { exportElementToPdf } from '../../utils/pdfExport';
 import LanguageToggle from './LanguageToggle';
 import DisplaySettings from './DisplaySettings';
@@ -22,6 +23,8 @@ export default function TopBar() {
   const [pdfBusy, setPdfBusy] = useState(false);
   const feedbackMode = useStoryboardStore((s) => s.feedbackMode);
   const toggleFeedbackMode = useStoryboardStore((s) => s.toggleFeedbackMode);
+  const canUndo = useStoryboardStore((s) => s.canUndo);
+  const canRedo = useStoryboardStore((s) => s.canRedo);
 
   useEffect(() => {
     const onScroll = () => setCollapsed(window.scrollY > 80);
@@ -131,6 +134,36 @@ export default function TopBar() {
           aria-label={t('topbar.actions')}
           className="mx-auto flex max-w-screen-lg items-center gap-2 px-4 py-2 max-sm:grid max-sm:grid-cols-2"
         >
+          <div className="flex gap-2 max-sm:col-span-2">
+            <button
+              type="button"
+              onClick={historyUndo}
+              disabled={!canUndo}
+              aria-label={t('topbar.undo')}
+              title={t('topbar.undo')}
+              className={`${buttonSecondary} min-h-11 flex-1`}
+            >
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" aria-hidden="true">
+                <path d="M9 14 4 9l5-5" />
+                <path d="M4 9h11a5 5 0 0 1 0 10h-1" />
+              </svg>
+              <span className="max-[430px]:text-xs">{t('topbar.undo')}</span>
+            </button>
+            <button
+              type="button"
+              onClick={historyRedo}
+              disabled={!canRedo}
+              aria-label={t('topbar.redo')}
+              title={t('topbar.redo')}
+              className={`${buttonSecondary} min-h-11 flex-1`}
+            >
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.8" aria-hidden="true">
+                <path d="m15 14 5-5-5-5" />
+                <path d="M20 9H9a5 5 0 0 0 0 10h1" />
+              </svg>
+              <span className="max-[430px]:text-xs">{t('topbar.redo')}</span>
+            </button>
+          </div>
           <button
             type="button"
             onClick={() => fileInputRef.current?.click()}

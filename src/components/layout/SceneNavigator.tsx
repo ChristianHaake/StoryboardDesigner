@@ -9,6 +9,13 @@ export default function SceneNavigator() {
 
   if (scenes.length < 2) return null;
 
+  // Gamification (#10): eine Szene gilt als befüllt, sobald Bildbeschreibung,
+  // Ton oder Notiz Inhalt hat.
+  const done = scenes.filter(
+    (s) => s.visualDescription.trim() || s.audioText.trim() || s.directorNotes.trim(),
+  ).length;
+  const percent = Math.round((done / scenes.length) * 100);
+
   function jump(id: string) {
     const el = document.getElementById(`scene-${id}`);
     if (!el) return;
@@ -40,6 +47,24 @@ export default function SceneNavigator() {
           </li>
         ))}
       </ul>
+      <div
+        role="progressbar"
+        aria-valuemin={0}
+        aria-valuemax={scenes.length}
+        aria-valuenow={done}
+        aria-label={t('navigator.progressLabel')}
+        className="ml-auto flex items-center gap-2"
+      >
+        <span className="text-xs text-slate-500 tabular-nums">
+          {t('navigator.progress', { done, total: scenes.length })}
+        </span>
+        <span className="h-1.5 w-24 overflow-hidden rounded-full bg-slate-200">
+          <span
+            className="block h-full rounded-full bg-blue-600 transition-all"
+            style={{ width: `${percent}%` }}
+          />
+        </span>
+      </div>
     </nav>
   );
 }

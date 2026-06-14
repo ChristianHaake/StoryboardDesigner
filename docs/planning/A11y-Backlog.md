@@ -43,21 +43,30 @@ Semantic-Token-Migration und schließt damit die größte Design-MUST-Lücke mit
 - [x] **#9a Onboarding-Overlay** ✅ (2026-06-14)
   - `OnboardingOverlay`: 3-Schritt-`<dialog>` (Fokus-Trap/Escape/Restore nativ),
     `localStorage`-Flag `onboardingSeen` → einmalig beim ersten Besuch.
-- [ ] **#10 Beispielvorlagen mit Inhalten** 🟡 (Format-Presets ✅)
-  - Auswählbare Starter mit Beispiel-Szenen je Format.
-- [ ] **#10 Gamification** ❌ (optional)
-  - Fortschrittsbalken/Badges bei abgeschlossenen Szenen.
+- [x] **#10 Beispielvorlagen mit Inhalten** ✅ (2026-06-14)
+  - `templates.ts` + `TemplatePicker` (im Leerzustand): Starter je Format mit
+    Preset-Feldern + lokalisierten Beispiel-Szenen. Select-Felder bleiben leer
+    (sprachabhängige Optionen). `loadProject`, Confirm bei vorhandenem Inhalt.
+- [x] **#10 Gamification** ✅ (2026-06-14)
+  - Fortschrittsbalken im `SceneNavigator` (`role=progressbar`): befüllte Szenen
+    / gesamt.
 
 ### P3 — Größer / konzeptionell
 
-- [ ] **#4 Alt-Text pro Bild + accessible Export** ❌
-  - `Scene.altText` im Datenmodell + Eingabefeld bei Bild-Upload.
-  - PDF-Pipeline ist Raster (html-to-image → PNG) → trägt **keinen** Alt-Text.
-    Optionen: tagged PDF, HTML-Export-Pfad, oder Limitation dokumentieren.
-- [ ] **#6b Generelles Undo/Redo** ❌ (nur Szene-Löschen-Undo vorhanden)
-  - History-Stack über Editor-Aktionen; Redo-Pfad.
-- [ ] **#11 Weitere Sprachen** 🟡 (Infra DE/EN bereit)
-  - Sprachpakete ergänzen; `SUPPORTED_LANGUAGES` erweitern.
+- [x] **#4 Alt-Text pro Bild** ✅ (2026-06-14)
+  - `Scene.altText` im Datenmodell + Codec-Round-Trip (Test), Eingabefeld bei
+    vorhandenem Bild, treibt `<img alt>`. PDF-Raster trägt keinen Alt-Text →
+    Limitation in `standard-conformance.md` dokumentiert (Editor/`.storyboard`
+    sind die barrierefreien Pfade).
+- [x] **#6b Generelles Undo/Redo** ✅ (2026-06-14)
+  - `history.ts`-Manager (Snapshots von metaData/prePlanning/fieldDefinitions/
+    scenes, Limit 50, Text-Burst-Coalescing). Buttons in TopBar (Flags
+    `canUndo`/`canRedo`) + Shortcuts Ctrl/Cmd+Z / +Shift+Z / Ctrl+Y; in
+    Textfeldern hat natives Undo Vorrang. Bilder nicht Teil der History.
+- [x] **#11 Weitere Sprachen** ✅ (2026-06-14)
+  - Spanisch (`es.ts`) + Französisch (`fr.ts`), `SUPPORTED_LANGUAGES`
+    `['de','en','es','fr']`, `LanguageToggle` 4 Sprachen, Browser-Default über
+    `LanguageDetector` (navigator). Paritäts-Test deckt jetzt ES/FR ab.
 
 ## Bereits erfüllt
 

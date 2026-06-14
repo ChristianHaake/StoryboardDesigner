@@ -151,7 +151,7 @@ function SceneCard({ scene }: SceneCardProps) {
               >
                 <img
                   src={imageUrl}
-                  alt={t('scene.imageAlt', { n })}
+                  alt={scene.altText?.trim() ? scene.altText : t('scene.imageAlt', { n })}
                   className="aspect-square w-full object-cover max-sm:aspect-[4/3] print:aspect-square print:rounded-none"
                 />
               </button>
@@ -193,6 +193,19 @@ function SceneCard({ scene }: SceneCardProps) {
             className="hidden"
             onChange={handleFileChange}
           />
+          {imageUrl && (
+            <div className="mt-2 print:hidden">
+              <label className={labelClass} htmlFor={`alt-${scene.id}`}>
+                {t('scene.altLabel')}
+              </label>
+              <AutoResizeTextarea
+                id={`alt-${scene.id}`}
+                placeholder={t('scene.altPlaceholder')}
+                value={scene.altText ?? ''}
+                onChange={(e) => updateScene(scene.id, { altText: e.target.value })}
+              />
+            </div>
+          )}
         </div>
 
         <div className="min-w-0 flex-1 space-y-3.5">

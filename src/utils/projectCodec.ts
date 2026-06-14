@@ -126,6 +126,7 @@ export function decodeProject(raw: unknown): StoryboardProject {
       typeof scene.id === 'string' && scene.id && !seenIds.has(scene.id) ? scene.id : generateId();
     seenIds.add(id);
     const comments = validateComments(scene.comments);
+    const altText = str(scene.altText);
     return {
       id,
       orderIndex: typeof scene.orderIndex === 'number' ? scene.orderIndex : index,
@@ -133,6 +134,7 @@ export function decodeProject(raw: unknown): StoryboardProject {
       visualDescription: str(scene.visualDescription),
       audioText: str(scene.audioText),
       directorNotes: str(scene.directorNotes),
+      ...(altText ? { altText } : {}),
       ...(customFields && Object.keys(customFields).length > 0 ? { customFields } : {}),
       ...(comments ? { comments } : {}),
     };

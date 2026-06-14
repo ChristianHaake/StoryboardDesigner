@@ -3,8 +3,10 @@ import { initReactI18next } from 'react-i18next';
 import LanguageDetector from 'i18next-browser-languagedetector';
 import de from './de';
 import en from './en';
+import es from './es';
+import fr from './fr';
 
-export const SUPPORTED_LANGUAGES = ['de', 'en'] as const;
+export const SUPPORTED_LANGUAGES = ['de', 'en', 'es', 'fr'] as const;
 export type Language = (typeof SUPPORTED_LANGUAGES)[number];
 
 // Synchroner Init (Ressourcen inline, kein Backend) — t() ist sofort verfügbar,
@@ -16,10 +18,13 @@ i18n
     resources: {
       de: { translation: de },
       en: { translation: en },
+      es: { translation: es },
+      fr: { translation: fr },
     },
     fallbackLng: 'de',
     supportedLngs: SUPPORTED_LANGUAGES,
-    // 'de-DE' o. ä. auf 'de' reduzieren, damit Detector nur unsere zwei Sprachen liefert.
+    // 'de-DE' / 'es-MX' o. ä. auf die Basissprache reduzieren — Browser-Default
+    // (navigator) liefert so eine unserer vier Sprachen.
     load: 'languageOnly',
     detection: {
       order: ['localStorage', 'navigator'],

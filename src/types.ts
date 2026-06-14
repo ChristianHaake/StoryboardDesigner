@@ -31,6 +31,7 @@ export interface Scene {
   visualDescription: string;
   audioText: string;
   directorNotes: string;
+  altText?: string; // ab v1.4: barrierefreie Bildbeschreibung (Alt-Text)
   customFields?: Record<string, string>; // ab v1.1
   comments?: SceneComment[]; // ab v1.4
 }

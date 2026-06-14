@@ -81,6 +81,9 @@ interface StoryboardState {
   /** Autosave-Status für den sichtbaren Speicherhinweis (#6a). Reine UI-State,
    *  nicht Teil des Projekts/Autosaves. */
   saveStatus: 'idle' | 'saving' | 'saved' | 'error';
+  /** Undo/Redo-Verfügbarkeit (#6b). Wird vom History-Manager gespeist. */
+  canUndo: boolean;
+  canRedo: boolean;
   updateMetaData: (patch: Partial<MetaData>) => void;
   setFormatType: (formatType: MetaData['formatType']) => number;
   updatePrePlanning: (patch: Partial<PrePlanning>) => void;
@@ -88,6 +91,13 @@ interface StoryboardState {
   updateCustomField: (sceneId: string, fieldKey: string, value: string) => void;
   toggleFeedbackMode: () => void;
   setSaveStatus: (status: StoryboardState['saveStatus']) => void;
+  setHistoryFlags: (canUndo: boolean, canRedo: boolean) => void;
+  restoreContent: (snapshot: {
+    metaData: MetaData;
+    prePlanning: PrePlanning;
+    fieldDefinitions?: CustomFieldDefinition[];
+    scenes: Scene[];
+  }) => void;
   addComment: (sceneId: string, text: string) => void;
   toggleCommentDone: (sceneId: string, commentId: string) => void;
   deleteComment: (sceneId: string, commentId: string) => void;
@@ -127,6 +137,8 @@ export const useStoryboardStore = create<StoryboardState>((set) => ({
   errorMessage: null,
   feedbackMode: false,
   saveStatus: 'idle',
+  canUndo: false,
+  canRedo: false,
 
   updateMetaData: (patch) =>
     set((state) => ({
@@ -185,6 +197,21 @@ export const useStoryboardStore = create<StoryboardState>((set) => ({
 
   // Kein touched: true — Speicherstatus ist kein Nutzerinhalt.
   setSaveStatus: (saveStatus) => set({ saveStatus }),
+
+  // Kein touched: true — reine UI-Flags aus dem History-Manager.
+  setHistoryFlags: (canUndo, canRedo) => set({ canUndo, canRedo }),
+
+  // Setzt Projektinhalt aus einem History-Schnappschuss (Undo/Redo, #6b).
+  // Bilder bleiben unverändert.
+  restoreContent: (snapshot) =>
+    set({
+      touched: true,
+      hasContent: true,
+      metaData: snapshot.metaData,
+      prePlanning: snapshot.prePlanning,
+      fieldDefinitions: snapshot.fieldDefinitions,
+      scenes: snapshot.scenes,
+    }),
 
   addComment: (sceneId, text) =>
     set((state) => {
