@@ -17,6 +17,7 @@ npm-debug.log*
 .idea/
 .DS_Store
 .claude/skills
+.agents/skills
 
 # Wrangler
 .wrangler/
