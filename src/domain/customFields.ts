@@ -1,4 +1,4 @@
-import type { CustomFieldDefinition, CustomFieldType, MetaData } from './types';
+import type { CustomFieldDefinition, CustomFieldType, MetaData, ProductType } from './types';
 import { generateId } from '../shared/utils/idGenerator';
 import i18n from '../shared/i18n';
 
@@ -17,10 +17,10 @@ interface PresetField {
 
 // Stabile Keys; Labels und Optionen werden zur Aufruf-Zeit übersetzt. Bereits in
 // eine .storyboard gespeicherte Werte bleiben unverändert (Projektinhalt).
-const FORMAT_FIELD_PRESETS: Record<MetaData['formatType'], PresetField[]> = {
-  film: [
+const FORMAT_FIELD_PRESETS: Partial<Record<ProductType, PresetField[]>> = {
+  shortFilm: [
     {
-      key: 'preset:film:shot-size',
+      key: 'preset:shortFilm:shot-size',
       labelKey: 'presets.filmShotSize',
       descriptionKey: 'presets.filmShotSizeDesc',
       type: 'select',
@@ -35,8 +35,8 @@ const FORMAT_FIELD_PRESETS: Record<MetaData['formatType'], PresetField[]> = {
         'presets.shotWorm',
       ],
     },
-    { key: 'preset:film:camera-movement', labelKey: 'presets.filmCameraMovement' },
-    { key: 'preset:film:caption', labelKey: 'presets.caption' },
+    { key: 'preset:shortFilm:camera-movement', labelKey: 'presets.filmCameraMovement' },
+    { key: 'preset:shortFilm:caption', labelKey: 'presets.caption' },
   ],
   fotostory: [
     { key: 'preset:fotostory:framing', labelKey: 'presets.fotostoryFraming' },
@@ -49,8 +49,9 @@ function normalizedLabel(label: string): string {
   return label.trim().toLocaleLowerCase('de');
 }
 
-export function getFormatPreset(formatType: MetaData['formatType']): CustomFieldDefinition[] {
-  return FORMAT_FIELD_PRESETS[formatType].map((definition) => {
+export function getFormatPreset(productType: ProductType): CustomFieldDefinition[] {
+  const presets = FORMAT_FIELD_PRESETS[productType] || [];
+  return presets.map((definition) => {
     const base: CustomFieldDefinition = {
       key: definition.key,
       label: i18n.t(definition.labelKey),
@@ -127,9 +128,9 @@ export function createCustomFieldDefinition(
 
 export function mergeFormatPreset(
   definitions: CustomFieldDefinition[],
-  formatType: MetaData['formatType'],
+  productType: MetaData['productType'],
 ): { definitions: CustomFieldDefinition[]; added: number } {
-  const preset = getFormatPreset(formatType);
+  const preset = getFormatPreset(productType);
   const knownKeys = new Set(definitions.map((definition) => definition.key));
   const knownLabels = new Set(definitions.map((definition) => normalizedLabel(definition.label)));
   const missing = preset.filter(

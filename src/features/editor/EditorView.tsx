@@ -16,12 +16,11 @@ import A4Page from '../../app/layout/A4Page';
 import AutoResizeTextarea from '../../shared/ui/AutoResizeTextarea';
 import SceneCard from './SceneCard';
 import { useStoryboardStore } from '../../app/store/useStoryboardStore';
-import type { MetaData } from '../../domain/types';
-import { inputClass, labelClass } from '../../shared/ui/fieldStyles';
+import { labelClass } from '../../shared/ui/fieldStyles';
 import { MAX_SCENES } from '../../domain/projectCodec';
 import FieldConfigDialog from '../../shared/ui/FieldConfigDialog';
 import SceneNavigator from './SceneNavigator';
-import TemplatePicker from './TemplatePicker';
+
 import { useState, useEffect, useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
 import { ChevronDown, ChevronUp, LayoutTemplate, Film, Camera } from 'lucide-react';
@@ -30,12 +29,9 @@ export default function EditorView() {
   const { t } = useTranslation();
   const [fieldDialogOpen, setFieldDialogOpen] = useState(false);
   const closeFieldDialog = useCallback(() => setFieldDialogOpen(false), []);
-  const metaData = useStoryboardStore((s) => s.metaData);
   const prePlanning = useStoryboardStore((s) => s.prePlanning);
   const scenes = useStoryboardStore((s) => s.scenes);
-  const updateMetaData = useStoryboardStore((s) => s.updateMetaData);
-  const setFormatType = useStoryboardStore((s) => s.setFormatType);
-  const formatType = useStoryboardStore((state) => state.metaData.formatType);
+  const productType = useStoryboardStore((state) => state.metaData.productType);
   const collapseAllScenes = useStoryboardStore((state) => state.collapseAllScenes);
   const isAllCollapsed = useStoryboardStore((state) => {
     if (scenes.length === 0) return false;
@@ -99,80 +95,22 @@ export default function EditorView() {
   return (
     <main>
       <A4Page id="storyboard-document">
-        {/* Metadaten */}
-        <header className="border-b border-slate-200 pb-8">
-          <p className="mb-4 text-xs font-bold tracking-[0.16em] text-blue-700 uppercase print:text-slate-700">
-            {t('editor.kicker')}
-          </p>
-          <label className={labelClass} htmlFor="projectName">
-            {t('editor.projectName')}
-          </label>
-          <input
-            id="projectName"
-            type="text"
-            placeholder={t('editor.projectNamePlaceholder')}
-            className={`${inputClass} text-xl font-bold tracking-tight sm:text-2xl print:text-2xl`}
-            value={metaData.projectName}
-            onChange={(e) => updateMetaData({ projectName: e.target.value })}
-          />
-          <div className="mt-6 grid grid-cols-2 gap-x-6 gap-y-4 max-sm:grid-cols-1">
-            <div className="col-span-2 max-sm:col-span-1">
-              <label className={labelClass} htmlFor="participants">
-                {t('editor.participants')}
-              </label>
-              <input
-                id="participants"
-                type="text"
-                placeholder={t('editor.participantsPlaceholder')}
-                className={inputClass}
-                value={metaData.participants}
-                onChange={(e) => updateMetaData({ participants: e.target.value })}
-              />
-            </div>
-            <div>
-              <label className={labelClass} htmlFor="subject">
-                {t('editor.subject')}
-              </label>
-              <input
-                id="subject"
-                type="text"
-                placeholder={t('editor.subjectPlaceholder')}
-                className={inputClass}
-                value={metaData.subject}
-                onChange={(e) => updateMetaData({ subject: e.target.value })}
-              />
-            </div>
-            <div>
-              <label className={labelClass} htmlFor="date">
-                {t('editor.date')}
-              </label>
-              <input
-                id="date"
-                type="date"
-                className={inputClass}
-                value={metaData.date}
-                onChange={(e) => updateMetaData({ date: e.target.value })}
-              />
-            </div>
-            <div className="hidden print:block col-span-2 max-sm:col-span-1">
-              <label className={labelClass} htmlFor="formatType">
-                {t('editor.format')}
-              </label>
-              <select
-                id="formatType"
-                className={`${inputClass} appearance-none`}
-                value={metaData.formatType}
-                onChange={(e) => setFormatType(e.target.value as MetaData['formatType'])}
-              >
-                <option value="film">{t('format.film')}</option>
-                <option value="fotostory">{t('format.fotostory')}</option>
-
-                <option value="custom">{t('format.custom')}</option>
-              </select>
-            </div>
-          </div>
-        </header>
-
+        {/* Wizard Navigation */}
+        <div className="mb-8 flex items-center justify-between print:hidden">
+          <button
+            onClick={() => useStoryboardStore.getState().setWizardStep('setup')}
+            className="flex items-center text-sm font-medium text-slate-500 hover:text-blue-600 transition-colors"
+          >
+            Zurück zu Einstellungen
+          </button>
+          
+          <button
+            onClick={() => useStoryboardStore.getState().setWizardStep('review')}
+            className="rounded-lg bg-blue-600 px-6 py-2 text-sm font-semibold text-white shadow-sm hover:bg-blue-500 transition-colors"
+          >
+            Prüfen & Abschließen
+          </button>
+        </div>
         {/* Pre-Planning */}
         <details className="group mt-8" open={hasPrePlanningContent || undefined}>
           <summary className="flex cursor-pointer items-center gap-3 list-none [&::-webkit-details-marker]:hidden print:hidden">
@@ -288,25 +226,24 @@ export default function EditorView() {
                 {scenes.length === 0 && (
                   <>
                     <div className="flex flex-col items-center justify-center gap-3 rounded-xl border border-dashed border-slate-300 bg-slate-50 px-4 py-12 text-center text-slate-500 print:hidden">
-                      {formatType === 'film' && (
+                      {productType === 'shortFilm' && (
                         <Film className="h-8 w-8 text-slate-400" strokeWidth={1.5} />
                       )}
-                      {formatType === 'fotostory' && (
+                      {productType === 'fotostory' && (
                         <Camera className="h-8 w-8 text-slate-400" strokeWidth={1.5} />
                       )}
 
-                      {formatType === 'custom' && (
+                      {productType === 'custom' && (
                         <LayoutTemplate className="h-8 w-8 text-slate-400" strokeWidth={1.5} />
                       )}
                       <p className="text-sm">
                         {t(
                           // eslint-disable-next-line @typescript-eslint/no-explicit-any
-                          `editor.emptyState${formatType.charAt(0).toUpperCase() + formatType.slice(1)}` as any,
+                          `editor.emptyState${productType.charAt(0).toUpperCase() + productType.slice(1)}` as any,
                           t('editor.emptyStateCustom'),
                         )}
                       </p>
                     </div>
-                    <TemplatePicker />
                   </>
                 )}
                 {scenes.map((scene) => (

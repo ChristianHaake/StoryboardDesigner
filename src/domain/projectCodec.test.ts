@@ -35,8 +35,8 @@ describe('decodeProject', () => {
             orderIndex: 0,
             imageFileName: null,
             visualDescription: '',
-            audioText: '',
-            directorNotes: '',
+            title: '', action: '', text: '', audio: { dialogue: '', soundEffects: '', music: '' }, camera: { shotSize: '', angle: '', movement: '' }, duration: 0, location: '', materials: [], roles: [], transition: '', sources: [], reflection: '',
+            
             customFields: { camera: 'Totale' },
           },
         ],
@@ -81,8 +81,8 @@ describe('decodeProject', () => {
             orderIndex: 0,
             imageFileName: 'img-1.jpg',
             visualDescription: '',
-            audioText: '',
-            directorNotes: '',
+            title: '', action: '', text: '', audio: { dialogue: '', soundEffects: '', music: '' }, camera: { shotSize: '', angle: '', movement: '' }, duration: 0, location: '', materials: [], roles: [], transition: '', sources: [], reflection: '',
+            
             altText: 'Nahaufnahme einer Pflanze',
           },
           {
@@ -90,8 +90,8 @@ describe('decodeProject', () => {
             orderIndex: 1,
             imageFileName: null,
             visualDescription: '',
-            audioText: '',
-            directorNotes: '',
+            title: '', action: '', text: '', audio: { dialogue: '', soundEffects: '', music: '' }, camera: { shotSize: '', angle: '', movement: '' }, duration: 0, location: '', materials: [], roles: [], transition: '', sources: [], reflection: '',
+            
             altText: '',
           },
         ],
@@ -112,8 +112,8 @@ describe('decodeProject', () => {
             orderIndex: 0,
             imageFileName: null,
             visualDescription: '',
-            audioText: '',
-            directorNotes: '',
+            title: '', action: '', text: '', audio: { dialogue: '', soundEffects: '', music: '' }, camera: { shotSize: '', angle: '', movement: '' }, duration: 0, location: '', materials: [], roles: [], transition: '', sources: [], reflection: '',
+            
             comments: [
               { id: 'c1', text: 'Gut!', done: true, createdAt: '2026-06-13T10:00:00Z' },
               { id: 'c2', text: '   ', done: false }, // leer → verworfen
@@ -147,8 +147,7 @@ describe('decodeProject', () => {
             orderIndex: 0,
             imageFileName: null,
             visualDescription: '',
-            audioText: '',
-            directorNotes: '',
+            title: '', action: '', text: '', audio: { dialogue: '', soundEffects: '', music: '' }, camera: { shotSize: '', angle: '', movement: '' }, location: '', materials: [], roles: [], transition: '', sources: [], reflection: '',
             imageFit: 'contain',
             duration: 10,
           },
@@ -157,8 +156,8 @@ describe('decodeProject', () => {
             orderIndex: 1,
             imageFileName: null,
             visualDescription: '',
-            audioText: '',
-            directorNotes: '',
+            title: '', action: '', text: '', audio: { dialogue: '', soundEffects: '', music: '' }, camera: { shotSize: '', angle: '', movement: '' }, location: '', materials: [], roles: [], transition: '', sources: [], reflection: '',
+            
             // missing v1.5 fields should fallback to defaults
           },
         ],
@@ -195,8 +194,8 @@ describe('decodeProject', () => {
       orderIndex: 0,
       imageFileName: null,
       visualDescription: '',
-      audioText: '',
-      directorNotes: '',
+      title: '', action: '', text: '', audio: { dialogue: '', soundEffects: '', music: '' }, camera: { shotSize: '', angle: '', movement: '' }, duration: 0, location: '', materials: [], roles: [], transition: '', sources: [], reflection: '',
+      
     };
     const decoded = decodeProject(project({ scenes: [scene, { ...scene, orderIndex: 1 }] }));
 
@@ -210,8 +209,8 @@ describe('decodeProject', () => {
       orderIndex: index,
       imageFileName: null,
       visualDescription: '',
-      audioText: '',
-      directorNotes: '',
+      title: '', action: '', text: '', audio: { dialogue: '', soundEffects: '', music: '' }, camera: { shotSize: '', angle: '', movement: '' }, duration: 0, location: '', materials: [], roles: [], transition: '', sources: [], reflection: '',
+      
     }));
 
     expect(() => decodeProject(project({ scenes }))).toThrow(

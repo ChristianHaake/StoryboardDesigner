@@ -11,9 +11,9 @@ function project(): StoryboardProject {
     metaData: {
       id: 'project-1',
       projectName: 'Test',
-      participants: '',
+      groupMembers: [], topic: '', complexity: 'standard',
       subject: '',
-      formatType: 'film',
+      productType: 'shortFilm',
       date: '2026-06-12',
     },
     prePlanning: { logline: '', objective: '', roles: '', resources: '' },
@@ -28,8 +28,8 @@ describe('zipHandler', () => {
       orderIndex: 0,
       imageFileName: null,
       visualDescription: '',
-      audioText: '',
-      directorNotes: '',
+      title: '', action: '', text: '', audio: { dialogue: '', soundEffects: '', music: '' }, camera: { shotSize: '', angle: '', movement: '' }, duration: 0, location: '', materials: [], roles: [], transition: '', sources: [], reflection: '',
+      
     };
     const data = project();
     data.scenes = [scene];
@@ -53,8 +53,8 @@ describe('zipHandler', () => {
       orderIndex,
       imageFileName: 'images/shared.jpg',
       visualDescription: '',
-      audioText: '',
-      directorNotes: '',
+      title: '', action: '', text: '', audio: { dialogue: '', soundEffects: '', music: '' }, camera: { shotSize: '', angle: '', movement: '' }, duration: 0, location: '', materials: [], roles: [], transition: '', sources: [], reflection: '',
+      
     }));
 
     const archive = zipSync({
@@ -76,8 +76,8 @@ describe('zipHandler', () => {
         orderIndex: 0,
         imageFileName: null,
         visualDescription: '',
-        audioText: '',
-        directorNotes: '',
+        title: '', action: '', text: '', audio: { dialogue: '', soundEffects: '', music: '' }, camera: { shotSize: '', angle: '', movement: '' }, duration: 0, location: '', materials: [], roles: [], transition: '', sources: [], reflection: '',
+        
         customFields: { 'custom:light': 'Warm' },
       },
     ];
@@ -100,8 +100,8 @@ describe('zipHandler', () => {
         orderIndex: 0,
         imageFileName: 'images/large.jpg',
         visualDescription: '',
-        audioText: '',
-        directorNotes: '',
+        title: '', action: '', text: '', audio: { dialogue: '', soundEffects: '', music: '' }, camera: { shotSize: '', angle: '', movement: '' }, duration: 0, location: '', materials: [], roles: [], transition: '', sources: [], reflection: '',
+        
       },
     ];
 

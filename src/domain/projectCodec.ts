@@ -50,7 +50,7 @@ function str(value: unknown, fallback = ''): string {
   return typeof value === 'string' ? value : fallback;
 }
 
-const FORMAT_TYPES: MetaData['formatType'][] = ['film', 'fotostory', 'custom'];
+const FORMAT_TYPES: MetaData['productType'][] = ['shortFilm', 'fotostory', 'custom'];
 
 function validateVersion(value: unknown): string {
   if (typeof value !== 'string') throw new ProjectValidationError(i18n.t('errors.versionMissing'));
@@ -106,8 +106,8 @@ export function decodeProject(raw: unknown): StoryboardProject {
   }
 
   const md = raw.metaData;
-  const formatType = FORMAT_TYPES.includes(md.formatType as MetaData['formatType'])
-    ? (md.formatType as MetaData['formatType'])
+  const productType = FORMAT_TYPES.includes(md.productType as MetaData['productType'])
+    ? (md.productType as MetaData['productType'])
     : 'custom';
   const pp = isRecord(raw.prePlanning) ? raw.prePlanning : {};
   const seenIds = new Set<string>();
@@ -128,18 +128,33 @@ export function decodeProject(raw: unknown): StoryboardProject {
     const comments = validateComments(scene.comments);
     const altText = str(scene.altText);
     const imageFit = scene.imageFit === 'contain' ? 'contain' : 'cover';
-    const parsedDuration = typeof scene.duration === 'number' ? scene.duration : 3;
-    const duration = Math.max(1, Math.min(3600, parsedDuration));
 
     return {
       id,
       orderIndex: typeof scene.orderIndex === 'number' ? scene.orderIndex : index,
       imageFileName: typeof scene.imageFileName === 'string' ? scene.imageFileName : null,
       visualDescription: str(scene.visualDescription),
-      audioText: str(scene.audioText),
-      directorNotes: str(scene.directorNotes),
+      action: str(scene.action || scene.directorNotes),
+      text: str(scene.text || scene.audioText),
+      audio: {
+        dialogue: str((scene.audio as any)?.dialogue),
+        soundEffects: str((scene.audio as any)?.soundEffects),
+        music: str((scene.audio as any)?.music),
+      },
+      camera: {
+        shotSize: str((scene.camera as any)?.shotSize),
+        angle: str((scene.camera as any)?.angle),
+        movement: str((scene.camera as any)?.movement),
+      },
+      title: str(scene.title),
+      location: str(scene.location),
+      duration: Math.max(1, Math.min(3600, typeof scene.duration === 'number' ? scene.duration : 3)),
+      materials: Array.isArray(scene.materials) ? scene.materials.map((x) => str(x)) : [],
+      roles: Array.isArray(scene.roles) ? scene.roles.map((x) => str(x)) : [],
+      transition: str(scene.transition),
+      sources: Array.isArray(scene.sources) ? scene.sources.map((x) => str(x)) : [],
+      reflection: str(scene.reflection),
       imageFit,
-      duration,
       ...(altText ? { altText } : {}),
       ...(customFields && Object.keys(customFields).length > 0 ? { customFields } : {}),
       ...(comments ? { comments } : {}),
@@ -152,9 +167,11 @@ export function decodeProject(raw: unknown): StoryboardProject {
     metaData: {
       id: str(md.id) || generateId(),
       projectName: str(md.projectName),
-      participants: str(md.participants),
+      groupMembers: Array.isArray(md.groupMembers) ? md.groupMembers.map((x) => str(x)) : typeof md.participants === 'string' ? [md.participants] : [],
+      topic: str(md.topic),
       subject: str(md.subject),
-      formatType,
+      productType,
+      complexity: typeof md.complexity === 'string' && ['simple', 'standard', 'advanced'].includes(md.complexity) ? md.complexity as any : 'standard',
       date: str(md.date),
     },
     prePlanning: {

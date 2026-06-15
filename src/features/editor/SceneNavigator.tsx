@@ -12,7 +12,7 @@ export default function SceneNavigator() {
   // Gamification (#10): eine Szene gilt als befüllt, sobald Bildbeschreibung,
   // Ton oder Notiz Inhalt hat.
   const done = scenes.filter(
-    (s) => s.visualDescription.trim() || s.audioText.trim() || s.directorNotes.trim(),
+    (s) => s.visualDescription.trim() || s.text.trim() || s.action.trim(),
   ).length;
   const percent = Math.round((done / scenes.length) * 100);
 
