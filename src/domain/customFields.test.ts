@@ -11,11 +11,11 @@ import {
 
 describe('customFields', () => {
   it('provides stable format presets with a select shot-size', () => {
-    const film = getFormatPreset('film');
+    const film = getFormatPreset('shortFilm');
     expect(film.map((definition) => definition.key)).toEqual([
-      'preset:film:shot-size',
-      'preset:film:camera-movement',
-      'preset:film:caption',
+      'preset:shortFilm:shot-size',
+      'preset:shortFilm:camera-movement',
+      'preset:shortFilm:caption',
     ]);
     const shotSize = film[0];
     expect(shotSize.type).toBe('select');
@@ -26,7 +26,7 @@ describe('customFields', () => {
 
   it('merges missing presets without duplicate keys or labels', () => {
     const existing = [{ key: 'custom:camera', label: 'Kameraeinstellung' }];
-    const merged = mergeFormatPreset(existing, 'film');
+    const merged = mergeFormatPreset(existing, 'shortFilm');
 
     // shot-size wird wegen Label-Dublette übersprungen; Bewegung + Bildunterschrift kommen dazu.
     expect(merged.added).toBe(2);
@@ -63,7 +63,7 @@ describe('customFields', () => {
       label: `Feld ${index}`,
     }));
 
-    expect(mergeFormatPreset(definitions, 'rede')).toEqual({
+    expect(mergeFormatPreset(definitions, 'shortFilm')).toEqual({
       definitions,
       added: 0,
     });

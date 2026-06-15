@@ -1,11 +1,16 @@
 // Zentrale Datenstrukturen der .storyboard-Datei (data.json), siehe Codingplan Abschnitt 2.
 
+export type Complexity = 'simple' | 'standard' | 'advanced';
+export type ProductType = 'shortFilm' | 'explainerVideo' | 'fotostory' | 'audioPlay' | 'podcast' | 'stopMotion' | 'comic' | 'socialMediaClip' | 'roleplay' | 'custom';
+
 export interface MetaData {
   id: string;
   projectName: string;
-  participants: string;
+  topic: string;
   subject: string;
-  formatType: 'film' | 'fotostory' | 'rede' | 'custom';
+  groupMembers: string[];
+  productType: ProductType;
+  complexity: Complexity;
   date: string;
 }
 
@@ -24,18 +29,39 @@ export interface SceneComment {
   createdAt: string; // ISO-Zeitstempel
 }
 
+export interface SceneAudio {
+  dialogue: string;
+  soundEffects: string;
+  music: string;
+}
+
+export interface SceneCamera {
+  shotSize: string;
+  angle: string;
+  movement: string;
+}
+
 export interface Scene {
   id: string;
   orderIndex: number;
-  imageFileName: string | null; // Referenz auf die Bilddatei im ZIP
+  imageFileName: string | null;
+  title: string;
   visualDescription: string;
-  audioText: string;
-  directorNotes: string;
-  altText?: string; // ab v1.4: barrierefreie Bildbeschreibung (Alt-Text)
-  customFields?: Record<string, string>; // ab v1.1
-  comments?: SceneComment[]; // ab v1.4
-  imageFit?: 'cover' | 'contain'; // ab v1.5: Bildausrichtung
-  duration?: number; // ab v1.5: Dauer in Sekunden (für Präsentationsmodus)
+  action: string;
+  text: string;
+  audio: SceneAudio;
+  camera: SceneCamera;
+  duration?: number;
+  location: string;
+  materials: string[];
+  roles: string[];
+  transition: string;
+  sources: string[];
+  reflection: string;
+  altText?: string;
+  customFields?: Record<string, string>;
+  comments?: SceneComment[];
+  imageFit?: 'cover' | 'contain';
 }
 
 // Ab v1.1: projektweite Definition dynamischer Felder (Konfigurations-Modal).

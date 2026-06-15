@@ -187,9 +187,15 @@ const fr: Translations = {
   },
   format: {
     choose: 'Choisir le format',
-    film: 'Film',
+    shortFilm: 'Court métrage',
+    explainerVideo: 'Vidéo explicative',
     fotostory: 'Roman-photo',
-    rede: 'Discours',
+    audioPlay: 'Pièce radiophonique',
+    podcast: 'Podcast',
+    stopMotion: 'Stop Motion',
+    comic: 'Bande dessinée',
+    socialMediaClip: 'Clip pour réseaux sociaux',
+    roleplay: 'Jeu de rôle/Théâtre',
     custom: 'Format personnalisé',
   },
   presets: {

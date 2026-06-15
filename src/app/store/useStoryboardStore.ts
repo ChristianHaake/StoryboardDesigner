@@ -21,14 +21,25 @@ import {
 } from '../../domain/customFields';
 import i18n from '../../shared/i18n';
 
+export type WizardStep = 'start' | 'setup' | 'editor' | 'review' | 'export';
+
 function createEmptyScene(orderIndex: number): Scene {
   return {
     id: generateId(),
     orderIndex,
     imageFileName: null,
+    title: '',
     visualDescription: '',
-    audioText: '',
-    directorNotes: '',
+    action: '',
+    text: '',
+    audio: { dialogue: '', soundEffects: '', music: '' },
+    camera: { shotSize: '', angle: '', movement: '' },
+    location: '',
+    materials: [],
+    roles: [],
+    transition: '',
+    sources: [],
+    reflection: '',
     // v1.5-Defaults gleich setzen, damit der In-Memory-Stand dem decodeProject-
     // Ergebnis entspricht (sonst erst nach Export→Reimport gesetzt).
     imageFit: 'cover',
@@ -40,9 +51,11 @@ function createInitialMetaData(): MetaData {
   return {
     id: generateId(),
     projectName: '',
-    participants: '',
+    groupMembers: [],
+    topic: '',
+    complexity: 'standard',
     subject: '',
-    formatType: 'film',
+    productType: 'shortFilm',
     // Kein Vorbelegen mit heute — Nutzer wählt das Projektdatum selbst (#8).
     date: '',
   };
@@ -87,17 +100,23 @@ interface StoryboardState {
   /** Autosave-Status für den sichtbaren Speicherhinweis (#6a). Reine UI-State,
    *  nicht Teil des Projekts/Autosaves. */
   saveStatus: 'idle' | 'saving' | 'saved' | 'error';
+  /** Aktueller Schritt im Wizard-Flow */
+  activeStep: WizardStep;
+  /** Gibt an, ob das Projekt erfolgreich geladen/initialisiert wurde */
+  isReady: boolean;
   collapsedScenes: Record<string, boolean>;
   /** Undo/Redo-Verfügbarkeit (#6b). Wird vom History-Manager gespeist. */
   canUndo: boolean;
   canRedo: boolean;
   updateMetaData: (patch: Partial<MetaData>) => void;
-  setFormatType: (formatType: MetaData['formatType']) => number;
+  setFormatType: (productType: MetaData['productType']) => number;
   updatePrePlanning: (patch: Partial<PrePlanning>) => void;
   updateScene: (id: string, patch: Partial<Scene>) => void;
   updateCustomField: (sceneId: string, fieldKey: string, value: string) => void;
   toggleFeedbackMode: () => void;
   setSaveStatus: (status: StoryboardState['saveStatus']) => void;
+  setWizardStep: (step: WizardStep) => void;
+  clearProject: () => void;
   toggleSceneCollapse: (id: string, force?: boolean) => void;
   collapseAllScenes: (collapse: boolean) => void;
   setHistoryFlags: (canUndo: boolean, canRedo: boolean) => void;
@@ -143,7 +162,7 @@ interface StoryboardState {
 export const useStoryboardStore = create<StoryboardState>((set) => ({
   metaData: createInitialMetaData(),
   prePlanning: initialPrePlanning,
-  fieldDefinitions: getFormatPreset('film'),
+  fieldDefinitions: getFormatPreset('shortFilm'),
   scenes: [],
   images: {},
   imageUrls: {},
@@ -154,9 +173,13 @@ export const useStoryboardStore = create<StoryboardState>((set) => ({
   successMessage: null,
   feedbackMode: false,
   saveStatus: 'idle',
+  activeStep: 'start',
+  isReady: false,
   collapsedScenes: {},
   canUndo: false,
   canRedo: false,
+
+  setWizardStep: (step: WizardStep) => set({ activeStep: step }),
 
   updateMetaData: (patch) =>
     set((state) => ({
@@ -165,15 +188,15 @@ export const useStoryboardStore = create<StoryboardState>((set) => ({
       metaData: { ...state.metaData, ...patch },
     })),
 
-  setFormatType: (formatType) => {
+  setFormatType: (productType) => {
     let added = 0;
     set((state) => {
-      const merged = mergeFormatPreset(state.fieldDefinitions ?? [], formatType);
+      const merged = mergeFormatPreset(state.fieldDefinitions ?? [], productType);
       added = merged.added;
       return {
         touched: true,
         hasContent: true,
-        metaData: { ...state.metaData, formatType },
+        metaData: { ...state.metaData, productType },
         fieldDefinitions: merged.definitions.length > 0 ? merged.definitions : undefined,
       };
     });
@@ -400,7 +423,7 @@ export const useStoryboardStore = create<StoryboardState>((set) => ({
   applyCurrentFormatPreset: () => {
     let added = 0;
     set((state) => {
-      const merged = mergeFormatPreset(state.fieldDefinitions ?? [], state.metaData.formatType);
+      const merged = mergeFormatPreset(state.fieldDefinitions ?? [], state.metaData.productType);
       added = merged.added;
       if (added === 0) return state;
       return {
@@ -548,14 +571,33 @@ export const useStoryboardStore = create<StoryboardState>((set) => ({
       return {
         metaData: createInitialMetaData(),
         prePlanning: initialPrePlanning,
-        fieldDefinitions: getFormatPreset('film'),
+        fieldDefinitions: getFormatPreset('shortFilm'),
         scenes: [],
         images: {},
         imageUrls: {},
         touched: false,
         hasContent: false,
+        activeStep: 'start',
         lastDeleted: null,
         errorMessage: null,
+      };
+    }),
+
+  clearProject: () =>
+    set((state) => {
+      Object.values(state.imageUrls).forEach((url) => URL.revokeObjectURL(url));
+      return {
+        metaData: createInitialMetaData(),
+        prePlanning: initialPrePlanning,
+        fieldDefinitions: getFormatPreset('shortFilm'),
+        scenes: [],
+        images: {},
+        imageUrls: {},
+        touched: false,
+        hasContent: false,
+        activeStep: 'start',
+        isReady: false,
+        lastDeleted: null,
       };
     }),
 
@@ -575,6 +617,7 @@ export const useStoryboardStore = create<StoryboardState>((set) => ({
         imageUrls,
         touched: markTouched,
         hasContent: true,
+        activeStep: 'editor',
         lastDeleted: null,
       };
     }),

@@ -3,6 +3,7 @@ import { useTranslation } from 'react-i18next';
 import LanguageToggle from './LanguageToggle';
 import DisplaySettings from './DisplaySettings';
 import BrandLogo from './BrandLogo';
+import { Code2 } from 'lucide-react';
 
 export default function Footer() {
   const { t } = useTranslation();
@@ -32,10 +33,11 @@ export default function Footer() {
             href="https://github.com/ChristianHaake/Storyboard-Creator"
             target="_blank"
             rel="noreferrer"
-            className="inline-flex items-center text-sm font-medium text-slate-500 hover:text-slate-900 transition-colors"
+            className="inline-flex items-center justify-center size-10 rounded-full text-slate-400 hover:bg-slate-100 hover:text-slate-900 transition-colors"
             title={t('footer.repository')}
+            aria-label="Quellcode auf GitHub"
           >
-            <span>Quellcode (GitHub)</span>
+            <Code2 className="w-5 h-5" strokeWidth={1.5} />
           </a>
         </div>
       </div>

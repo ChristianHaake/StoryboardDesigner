@@ -15,9 +15,9 @@ function project(): StoryboardProject {
     metaData: {
       id: 'project-1',
       projectName: 'Test',
-      participants: '',
+      groupMembers: [], topic: '', complexity: 'standard',
       subject: '',
-      formatType: 'film',
+      productType: 'shortFilm',
       date: '2026-06-12',
     },
     prePlanning: { logline: '', objective: '', roles: '', resources: '' },
@@ -27,8 +27,8 @@ function project(): StoryboardProject {
         orderIndex: 0,
         imageFileName: null,
         visualDescription: '',
-        audioText: '',
-        directorNotes: '',
+        title: '', action: '', text: '', audio: { dialogue: '', soundEffects: '', music: '' }, camera: { shotSize: '', angle: '', movement: '' }, duration: 0, location: '', materials: [], roles: [], transition: '', sources: [], reflection: '',
+        
       },
     ],
   };

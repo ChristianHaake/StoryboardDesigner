@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { useStoryboardStore } from '../../app/store/useStoryboardStore';
-import { ChevronLeft, ChevronRight, X, LayoutTemplate, Play, Pause } from 'lucide-react';
+import { ChevronLeft, ChevronRight, X, LayoutTemplate, Play, Pause, MessageSquare, Video } from 'lucide-react';
 
 export default function PresentationView() {
   const { t } = useTranslation();
@@ -164,22 +164,17 @@ export default function PresentationView() {
               </div>
             )}
 
-            {currentScene.audioText && (
-              <div>
-                <h3 className="mb-1 text-xs font-semibold tracking-wider text-slate-500 uppercase">
-                  {t('scene.audio', 'Ton/Text')}
-                </h3>
-                <p className="text-xl leading-relaxed text-slate-100">{currentScene.audioText}</p>
+            {currentScene.text && (
+              <div className="flex items-start gap-3 rounded-lg bg-slate-800/50 p-4 border border-slate-700/50">
+                <MessageSquare className="mt-1 h-5 w-5 shrink-0 text-slate-400" />
+                <p className="text-xl leading-relaxed text-slate-100">{currentScene.text}</p>
               </div>
             )}
-
-            {currentScene.directorNotes && (
-              <div>
-                <h3 className="mb-1 text-xs font-semibold tracking-wider text-slate-500 uppercase">
-                  {t('scene.notes', 'Regie/Kamera')}
-                </h3>
-                <p className="text-lg leading-relaxed text-slate-300">
-                  {currentScene.directorNotes}
+            {currentScene.action && (
+              <div className="flex items-start gap-3 rounded-lg bg-slate-800/50 p-4 border border-slate-700/50">
+                <Video className="mt-1 h-5 w-5 shrink-0 text-slate-400" />
+                <p className="text-xl leading-relaxed text-slate-100 italic">
+                  {currentScene.action}
                 </p>
               </div>
             )}

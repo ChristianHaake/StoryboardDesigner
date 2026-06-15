@@ -3,7 +3,7 @@ import { useTranslation } from 'react-i18next';
 import { useStoryboardStore } from '../../app/store/useStoryboardStore';
 import { MAX_CUSTOM_FIELDS, MAX_CUSTOM_FIELD_LABEL_LENGTH } from '../../domain/customFields';
 import { buttonPrimary, buttonSecondary } from './fieldStyles';
-import type { CustomFieldDefinition, CustomFieldType, MetaData } from '../../domain/types';
+import type { CustomFieldDefinition, CustomFieldType, ProductType } from '../../domain/types';
 import { Trash2, X } from 'lucide-react';
 
 const dialogInputClass =
@@ -121,10 +121,9 @@ function FieldDefinitionRow({
   );
 }
 
-const FORMAT_KEYS: Record<MetaData['formatType'], string> = {
-  film: 'format.film',
+const FORMAT_KEYS: Partial<Record<ProductType, string>> = {
+  shortFilm: 'format.shortFilm',
   fotostory: 'format.fotostory',
-  rede: 'format.rede',
   custom: 'format.custom',
 };
 
@@ -135,7 +134,7 @@ export default function FieldConfigDialog({ open, onClose }: FieldConfigDialogPr
   const [newLabel, setNewLabel] = useState('');
   const [newDescription, setNewDescription] = useState('');
   const definitions = useStoryboardStore((state) => state.fieldDefinitions ?? EMPTY_DEFINITIONS);
-  const formatType = useStoryboardStore((state) => state.metaData.formatType);
+  const productType = useStoryboardStore((state) => state.metaData.productType);
   const addCustomField = useStoryboardStore((state) => state.addCustomField);
   const renameCustomField = useStoryboardStore((state) => state.renameCustomField);
   const updateCustomFieldOptions = useStoryboardStore((state) => state.updateCustomFieldOptions);
@@ -396,13 +395,13 @@ export default function FieldConfigDialog({ open, onClose }: FieldConfigDialogPr
                   {t('fieldConfig.presetHeading')}
                 </h3>
                 <p className="mt-1 text-xs text-slate-500">
-                  {t('fieldConfig.presetDescription', { format: t(FORMAT_KEYS[formatType]) })}
+                  {t('fieldConfig.presetDescription', { format: FORMAT_KEYS[productType] ? t(FORMAT_KEYS[productType]!) : t('format.custom') })}
                 </p>
               </div>
               <button
                 type="button"
                 onClick={handleApplyPreset}
-                disabled={formatType === 'custom' || definitions.length >= MAX_CUSTOM_FIELDS}
+                disabled={productType === 'custom' || definitions.length >= MAX_CUSTOM_FIELDS}
                 className={`${buttonSecondary} min-h-11 shrink-0`}
               >
                 {t('fieldConfig.apply')}

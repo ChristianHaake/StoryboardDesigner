@@ -7,9 +7,9 @@ beforeEach(() => {
     metaData: {
       id: 'project-1',
       projectName: '',
-      participants: '',
+      groupMembers: [], topic: '', complexity: 'standard',
       subject: '',
-      formatType: 'film',
+      productType: 'shortFilm',
       date: '2026-06-12',
     },
     prePlanning: { logline: '', objective: '', roles: '', resources: '' },
@@ -52,8 +52,8 @@ describe('useStoryboardStore', () => {
       orderIndex: 0,
       imageFileName: null,
       visualDescription: '',
-      audioText: '',
-      directorNotes: '',
+      title: '', action: '', text: '', audio: { dialogue: '', soundEffects: '', music: '' }, camera: { shotSize: '', angle: '', movement: '' }, duration: 0, location: '', materials: [], roles: [], transition: '', sources: [], reflection: '',
+      
     };
     useStoryboardStore.setState({
       scenes: Array.from({ length: MAX_SCENES }, (_, index) => ({
@@ -74,8 +74,8 @@ describe('useStoryboardStore', () => {
       orderIndex: 0,
       imageFileName: null,
       visualDescription: '',
-      audioText: '',
-      directorNotes: '',
+      title: '', action: '', text: '', audio: { dialogue: '', soundEffects: '', music: '' }, camera: { shotSize: '', angle: '', movement: '' }, duration: 0, location: '', materials: [], roles: [], transition: '', sources: [], reflection: '',
+      
     };
     useStoryboardStore.setState({
       scenes: Array.from({ length: MAX_SCENES }, (_, index) => ({
@@ -131,24 +131,24 @@ describe('useStoryboardStore', () => {
           orderIndex: 0,
           imageFileName: null,
           visualDescription: '',
-          audioText: '',
-          directorNotes: '',
+          title: '', action: '', text: '', audio: { dialogue: '', soundEffects: '', music: '' }, camera: { shotSize: '', angle: '', movement: '' }, duration: 0, location: '', materials: [], roles: [], transition: '', sources: [], reflection: '',
+          
           customFields: { 'custom:light': 'Warm' },
         },
       ],
     });
 
-    expect(useStoryboardStore.getState().setFormatType('rede')).toBe(3);
+    expect(useStoryboardStore.getState().setFormatType('shortFilm')).toBe(3);
     const state = useStoryboardStore.getState();
-    expect(state.metaData.formatType).toBe('rede');
+    expect(state.metaData.productType).toBe('shortFilm');
     expect(state.fieldDefinitions?.map((field) => field.label)).toEqual([
       'Licht',
-      'Kernaussage',
-      'Visualisierung',
+      'Kameraeinstellung',
+      'Kamerabewegung',
       'Bildunterschrift',
     ]);
     expect(state.scenes[0]?.customFields?.['custom:light']).toBe('Warm');
-    expect(useStoryboardStore.getState().setFormatType('rede')).toBe(0);
+    expect(useStoryboardStore.getState().setFormatType('shortFilm')).toBe(0);
   });
 
   it('validates adding and renaming custom fields', () => {
@@ -182,8 +182,8 @@ describe('useStoryboardStore', () => {
           orderIndex: 0,
           imageFileName: null,
           visualDescription: '',
-          audioText: '',
-          directorNotes: '',
+          title: '', action: '', text: '', audio: { dialogue: '', soundEffects: '', music: '' }, camera: { shotSize: '', angle: '', movement: '' }, duration: 0, location: '', materials: [], roles: [], transition: '', sources: [], reflection: '',
+          
           customFields: { 'custom:light': 'Warm', keep: 'Ja' },
         },
       ],

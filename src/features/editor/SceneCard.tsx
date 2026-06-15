@@ -18,17 +18,23 @@ const EMPTY_FIELD_DEFINITIONS: NonNullable<
 const EMPTY_COMMENTS: NonNullable<Scene['comments']> = [];
 
 interface SceneCardProps {
-  scene: Scene;
+  sceneId: string;
 }
 
-function SceneCard({ scene }: SceneCardProps) {
+function SceneCard({ sceneId }: SceneCardProps) {
   const { t } = useTranslation();
-  const n = scene.orderIndex + 1;
-  const imageUrl = useStoryboardStore((s) => s.imageUrls[scene.id] ?? null);
+  
+  const scene = useStoryboardStore((s) => s.scenes.find((x) => x.id === sceneId));
+  const orderIndex = useStoryboardStore((s) => s.scenes.findIndex((x) => x.id === sceneId));
+  const n = orderIndex + 1;
+
+  // We must return early if scene is deleted but component is still rendering
+  // to avoid crashes. However, hooks must be called unconditionally.
+  const imageUrl = useStoryboardStore((s) => s.imageUrls[sceneId] ?? null);
   const fieldDefinitions = useStoryboardStore(
     (state) => state.fieldDefinitions ?? EMPTY_FIELD_DEFINITIONS,
   );
-  const isCollapsed = useStoryboardStore((state) => state.collapsedScenes[scene.id] ?? false);
+  const isCollapsed = useStoryboardStore((state) => state.collapsedScenes[sceneId] ?? false);
   const toggleSceneCollapse = useStoryboardStore((state) => state.toggleSceneCollapse);
   const updateScene = useStoryboardStore((state) => state.updateScene);
   const updateCustomField = useStoryboardStore((s) => s.updateCustomField);
@@ -38,10 +44,21 @@ function SceneCard({ scene }: SceneCardProps) {
   const removeSceneImage = useStoryboardStore((s) => s.removeSceneImage);
   const sceneLimitReached = useStoryboardStore((s) => s.scenes.length >= MAX_SCENES);
   const feedbackMode = useStoryboardStore((s) => s.feedbackMode);
+  const complexity = useStoryboardStore((s) => s.metaData.complexity);
 
   const [imageError, setImageError] = useState(false);
   const [isTooTall, setIsTooTall] = useState(false);
   const cardRef = useRef<HTMLElement | null>(null);
+
+  const [localMaterials, setLocalMaterials] = useState(() => 
+    scene && Array.isArray(scene.materials) ? scene.materials.join(', ') : ''
+  );
+
+  useEffect(() => {
+    if (scene && Array.isArray(scene.materials)) {
+      setLocalMaterials(scene.materials.join(', '));
+    }
+  }, [scene?.materials]);
 
   useEffect(() => {
     if (!cardRef.current) return;
@@ -55,8 +72,10 @@ function SceneCard({ scene }: SceneCardProps) {
   }, []);
 
   const { attributes, listeners, setNodeRef, transform, transition, isDragging } = useSortable({
-    id: scene.id,
+    id: sceneId,
   });
+
+  if (!scene) return null;
 
   async function handleFileChange(event: ChangeEvent<HTMLInputElement>) {
     const file = event.target.files?.[0];
@@ -64,7 +83,7 @@ function SceneCard({ scene }: SceneCardProps) {
     event.target.value = '';
     if (!file) return;
     try {
-      setSceneImage(scene.id, await resizeImage(file));
+      setSceneImage(sceneId, await resizeImage(file));
       setImageError(false);
     } catch (error: unknown) {
       console.warn('Bild konnte nicht verarbeitet werden:', error);
@@ -267,39 +286,116 @@ function SceneCard({ scene }: SceneCardProps) {
             </div>
 
             <div className="min-w-0 flex-1 space-y-3.5">
+              {/* === IMMER SICHTBAR (SIMPLE) === */}
               <div>
-                <label className={labelClass} htmlFor={`visual-${scene.id}`}>
-                  {t('scene.visual')}
+                <label className={labelClass} htmlFor={`action-${scene.id}`}>
+                  Handlung / Bildbeschreibung
                 </label>
                 <AutoResizeTextarea
-                  id={`visual-${scene.id}`}
-                  placeholder={t('scene.visualPlaceholder')}
-                  value={scene.visualDescription}
-                  onChange={(e) => updateScene(scene.id, { visualDescription: e.target.value })}
+                  id={`action-${scene.id}`}
+                  placeholder="Was passiert im Bild?"
+                  value={scene.action}
+                  onChange={(e) => updateScene(scene.id, { action: e.target.value })}
                 />
               </div>
               <div>
-                <label className={labelClass} htmlFor={`audio-${scene.id}`}>
-                  {t('scene.audio')}
+                <label className={labelClass} htmlFor={`text-${scene.id}`}>
+                  Sprechtext / Voiceover
                 </label>
                 <AutoResizeTextarea
-                  id={`audio-${scene.id}`}
-                  placeholder={t('scene.audioPlaceholder')}
-                  value={scene.audioText}
-                  onChange={(e) => updateScene(scene.id, { audioText: e.target.value })}
+                  id={`text-${scene.id}`}
+                  placeholder="Was wird gesprochen?"
+                  value={scene.text}
+                  onChange={(e) => updateScene(scene.id, { text: e.target.value })}
                 />
               </div>
-              <div>
-                <label className={labelClass} htmlFor={`notes-${scene.id}`}>
-                  {t('scene.notes')}
-                </label>
-                <AutoResizeTextarea
-                  id={`notes-${scene.id}`}
-                  placeholder={t('scene.notesPlaceholder')}
-                  value={scene.directorNotes}
-                  onChange={(e) => updateScene(scene.id, { directorNotes: e.target.value })}
-                />
-              </div>
+
+              {/* === STANDARD & ADVANCED === */}
+              {(complexity === 'standard' || complexity === 'advanced') && (
+                <>
+                  <div className="grid grid-cols-2 gap-4">
+                    <div>
+                      <label className={labelClass} htmlFor={`dialogue-${scene.id}`}>
+                        Dialog
+                      </label>
+                      <AutoResizeTextarea
+                        id={`dialogue-${scene.id}`}
+                        placeholder="Wer spricht mit wem?"
+                        value={scene.audio?.dialogue ?? ''}
+                        onChange={(e) => updateScene(scene.id, { audio: { ...scene.audio, dialogue: e.target.value } })}
+                      />
+                    </div>
+                    <div>
+                      <label className={labelClass} htmlFor={`soundEffects-${scene.id}`}>
+                        Soundeffekte / Musik
+                      </label>
+                      <AutoResizeTextarea
+                        id={`soundEffects-${scene.id}`}
+                        placeholder="Geräusche oder Musik"
+                        value={scene.audio?.soundEffects ?? ''}
+                        onChange={(e) => updateScene(scene.id, { audio: { ...scene.audio, soundEffects: e.target.value } })}
+                      />
+                    </div>
+                  </div>
+                  <div>
+                    <label className={labelClass} htmlFor={`location-${scene.id}`}>
+                      Ort / Location
+                    </label>
+                    <AutoResizeTextarea
+                      id={`location-${scene.id}`}
+                      placeholder="Wo findet die Szene statt?"
+                      value={scene.location ?? ''}
+                      onChange={(e) => updateScene(scene.id, { location: e.target.value })}
+                    />
+                  </div>
+                </>
+              )}
+
+              {/* === ADVANCED ONLY === */}
+              {complexity === 'advanced' && (
+                <>
+                  <div className="grid grid-cols-2 gap-4">
+                    <div>
+                      <label className={labelClass} htmlFor={`camera-size-${scene.id}`}>
+                        Einstellungsgröße
+                      </label>
+                      <AutoResizeTextarea
+                        id={`camera-size-${scene.id}`}
+                        placeholder="z.B. Halbnah, Totale"
+                        value={scene.camera?.shotSize ?? ''}
+                        onChange={(e) => updateScene(scene.id, { camera: { ...scene.camera, shotSize: e.target.value } })}
+                      />
+                    </div>
+                    <div>
+                      <label className={labelClass} htmlFor={`camera-movement-${scene.id}`}>
+                        Kamerabewegung
+                      </label>
+                      <AutoResizeTextarea
+                        id={`camera-movement-${scene.id}`}
+                        placeholder="z.B. Schwenk, Statisch"
+                        value={scene.camera?.movement ?? ''}
+                        onChange={(e) => updateScene(scene.id, { camera: { ...scene.camera, movement: e.target.value } })}
+                      />
+                    </div>
+                  </div>
+                  <div>
+                    <label className={labelClass} htmlFor={`materials-${scene.id}`}>
+                      Requisiten / Material
+                    </label>
+                    <AutoResizeTextarea
+                      id={`materials-${scene.id}`}
+                      placeholder="Was wird für das Bild benötigt?"
+                      value={localMaterials}
+                      onChange={(e) => setLocalMaterials(e.target.value)}
+                      onBlur={() => updateScene(scene.id, { 
+                        materials: localMaterials.split(',').map(s => s.trim()).filter(Boolean) 
+                      })}
+                    />
+                  </div>
+                </>
+              )}
+
+              {/* Custom Fields (aus v1 für Legacy-Projekte/Vorlagen) */}
               {fieldDefinitions.map((definition) => {
                 const value = scene.customFields?.[definition.key] ?? '';
                 const fieldId = `custom-${definition.key}-${scene.id}`;

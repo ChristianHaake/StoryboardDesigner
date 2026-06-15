@@ -4,10 +4,8 @@ import { useTranslation } from 'react-i18next';
 import TopBar from './layout/TopBar';
 import Footer from './layout/Footer';
 import Notifications from './layout/Notifications';
-import HeroIntro from './layout/HeroIntro';
-import FormatTabs from '../features/editor/FormatTabs';
 import OnboardingOverlay from './layout/OnboardingOverlay';
-import EditorView from '../features/editor/EditorView';
+import WizardRouter from '../features/wizard/WizardRouter';
 
 // Lazy: react-markdown bleibt aus dem Editor-Bundle (Hilfe-Seiten selten besucht).
 const MarkdownView = lazy(() => import('../features/markdown/MarkdownView'));
@@ -149,9 +147,7 @@ export default function App() {
               element={
                 <>
                   <TopBar />
-                  <HeroIntro />
-                  <FormatTabs />
-                  <EditorView />
+                  <WizardRouter />
                   <Notifications />
                 </>
               }
