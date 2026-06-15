@@ -34,6 +34,8 @@ export default function TopBar() {
   const toggleFeedbackMode = useStoryboardStore((s) => s.toggleFeedbackMode);
   const canUndo = useStoryboardStore((s) => s.canUndo);
   const canRedo = useStoryboardStore((s) => s.canRedo);
+  const activeStep = useStoryboardStore((s) => s.activeStep);
+  const showActions = activeStep === 'editor' || activeStep === 'review' || activeStep === 'export';
 
   const [saveBusy, setSaveBusy] = useState(false);
 
@@ -128,8 +130,9 @@ export default function TopBar() {
         }
         actionsAriaLabel={t('topbar.actions')}
         actionsArea={
-          <div className="flex w-full items-center gap-2 max-sm:col-span-2">
-            {/* File Menu */}
+          showActions ? (
+            <div className="flex w-full items-center gap-2 max-sm:col-span-2">
+              {/* File Menu */}
             <details
               ref={fileMenuRef}
               className="relative group [&>summary::-webkit-details-marker]:hidden"
@@ -246,6 +249,7 @@ export default function TopBar() {
               </button>
             </div>
           </div>
+          ) : null
         }
       />
       <input
