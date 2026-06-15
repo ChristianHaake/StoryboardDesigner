@@ -82,6 +82,8 @@ export async function exportElementToPdf(
     img.src = dataUrl;
   });
 
+  if (image.width <= 0 || image.height <= 0) throw new Error('pdf-empty-render');
+
   const pdf = new jsPDF({ format: 'a4', orientation: 'portrait', unit: 'mm' });
   // Seitenhöhe in Bildpixeln, die einer vollen A4-Seite (gleiche Breite) entspricht.
   const pageHeightPx = Math.floor(image.width * (A4_HEIGHT_MM / A4_WIDTH_MM));

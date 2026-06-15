@@ -1,5 +1,9 @@
 const MAX_EDGE = 1600;
 const JPEG_QUALITY = 0.85;
+// Dekomprimierte Pixelgrenze: Datei-Byte-Limit (10 MB) schützt nicht vor
+// Decompression-Bombs — ein kleines PNG kann zu Gigapixel-Maßen dekodieren und
+// Canvas/RAM sprengen. 50 MP deckt jede echte Foto-Auflösung ab.
+const MAX_SOURCE_PIXELS = 50_000_000;
 
 /**
  * Verkleinert ein Bild clientseitig auf max. 1600 px Kantenlänge (JPEG).
@@ -9,6 +13,9 @@ const JPEG_QUALITY = 0.85;
 export async function resizeImage(file: Blob, maxEdge: number = MAX_EDGE): Promise<Blob> {
   const bitmap = await createImageBitmap(file);
   try {
+    if (bitmap.width * bitmap.height > MAX_SOURCE_PIXELS) {
+      throw new Error('Bild hat zu viele Pixel');
+    }
     const scale = Math.min(1, maxEdge / Math.max(bitmap.width, bitmap.height));
     const width = Math.max(1, Math.round(bitmap.width * scale));
     const height = Math.max(1, Math.round(bitmap.height * scale));

@@ -274,6 +274,7 @@ export const useStoryboardStore = create<StoryboardState>((set) => ({
   toggleCommentDone: (sceneId, commentId) =>
     set((state) => ({
       touched: true,
+      hasContent: true,
       scenes: state.scenes.map((scene) =>
         scene.id === sceneId
           ? {
@@ -289,6 +290,7 @@ export const useStoryboardStore = create<StoryboardState>((set) => ({
   deleteComment: (sceneId, commentId) =>
     set((state) => ({
       touched: true,
+      hasContent: true,
       scenes: state.scenes.map((scene) => {
         if (scene.id !== sceneId) return scene;
         const comments = (scene.comments ?? []).filter((comment) => comment.id !== commentId);
