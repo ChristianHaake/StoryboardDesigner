@@ -13,7 +13,7 @@ export default defineConfig({
       registerType: 'autoUpdate',
       includeAssets: ['favicon.ico', 'apple-touch-icon.png', 'pwa-192x192.png', 'pwa-512x512.png'],
       manifest: {
-        name: 'StoryboardDesigner',
+        name: 'Storyboard-Creator',
         short_name: 'Storyboard',
         description: 'Planen · Gestalten · Drucken',
         theme_color: '#f8fafc',

@@ -37,7 +37,7 @@ Diese Anwendung verwendet keine Analyse- oder Tracking-Dienste.
 
 ## 4. Lokale Verarbeitung und Speicherung
 
-Der StoryboardDesigner verarbeitet eingegebene Texte und ausgewählte Bilder lokal im Browser. Projektinhalte werden nicht an den Betreiber übertragen.
+Der Storyboard-Creator verarbeitet eingegebene Texte und ausgewählte Bilder lokal im Browser. Projektinhalte werden nicht an den Betreiber übertragen.
 
 Damit die Arbeit bei einem Neuladen der Seite nicht verloren geht, speichert die App das aktuelle Projekt einschließlich der Bilder automatisch in der lokalen Browserdatenbank IndexedDB. Diese Daten verbleiben auf dem verwendeten Gerät und können über die Browser-Einstellungen durch Löschen der Website-Daten entfernt werden.
 
