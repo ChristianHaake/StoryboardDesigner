@@ -1,7 +1,7 @@
 {
   // Cloudflare Workers: statische Auslieferung von dist/ ohne Worker-Script.
   // Muss dem Worker-Namen des verbundenen Cloudflare-Build-Projekts entsprechen.
-  "name": "storyboard-creator",
+  "name": "storyboarddesigner",
   "compatibility_date": "2025-01-01",
   "assets": {
     "directory": "./dist",
