@@ -27,8 +27,8 @@ describe('zipHandler', () => {
       id: 'scene-1',
       orderIndex: 0,
       imageFileName: null,
-      visualDescription: '',
-      title: '', action: '', text: '', audio: { dialogue: '', soundEffects: '', music: '' }, camera: { shotSize: '', angle: '', movement: '' }, duration: 0, location: '', materials: [], roles: [], transition: '', sources: [], reflection: '',
+      
+      title: '', action: '', text: '', audio: { dialogue: '', soundEffects: '', music: '' }, camera: { shotSize: '', angle: '', movement: '' },  location: '', materials: [],    
       
     };
     const data = project();
@@ -52,8 +52,8 @@ describe('zipHandler', () => {
       id,
       orderIndex,
       imageFileName: 'images/shared.jpg',
-      visualDescription: '',
-      title: '', action: '', text: '', audio: { dialogue: '', soundEffects: '', music: '' }, camera: { shotSize: '', angle: '', movement: '' }, duration: 0, location: '', materials: [], roles: [], transition: '', sources: [], reflection: '',
+      
+      title: '', action: '', text: '', audio: { dialogue: '', soundEffects: '', music: '' }, camera: { shotSize: '', angle: '', movement: '' },  location: '', materials: [],    
       
     }));
 
@@ -75,8 +75,8 @@ describe('zipHandler', () => {
         id: 'scene-1',
         orderIndex: 0,
         imageFileName: null,
-        visualDescription: '',
-        title: '', action: '', text: '', audio: { dialogue: '', soundEffects: '', music: '' }, camera: { shotSize: '', angle: '', movement: '' }, duration: 0, location: '', materials: [], roles: [], transition: '', sources: [], reflection: '',
+        
+        title: '', action: '', text: '', audio: { dialogue: '', soundEffects: '', music: '' }, camera: { shotSize: '', angle: '', movement: '' },  location: '', materials: [],    
         
         customFields: { 'custom:light': 'Warm' },
       },
@@ -99,8 +99,8 @@ describe('zipHandler', () => {
         id: 'scene-1',
         orderIndex: 0,
         imageFileName: 'images/large.jpg',
-        visualDescription: '',
-        title: '', action: '', text: '', audio: { dialogue: '', soundEffects: '', music: '' }, camera: { shotSize: '', angle: '', movement: '' }, duration: 0, location: '', materials: [], roles: [], transition: '', sources: [], reflection: '',
+        
+        title: '', action: '', text: '', audio: { dialogue: '', soundEffects: '', music: '' }, camera: { shotSize: '', angle: '', movement: '' },  location: '', materials: [],    
         
       },
     ];

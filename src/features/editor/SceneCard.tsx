@@ -8,6 +8,7 @@ import { useStoryboardStore } from '../../app/store/useStoryboardStore';
 import { resizeImage } from '../../shared/utils/imageResizer';
 import AutoResizeTextarea from '../../shared/ui/AutoResizeTextarea';
 import CommentThread from './CommentThread';
+import { FORMAT_FEATURES } from '../../domain/formatConfig';
 import { inputClass, labelClass } from '../../shared/ui/fieldStyles';
 import { MAX_SCENES } from '../../domain/projectCodec';
 import { GripVertical, Copy, Trash2, X, ChevronUp, ChevronDown } from 'lucide-react';
@@ -27,6 +28,8 @@ function SceneCard({ sceneId }: SceneCardProps) {
   const scene = useStoryboardStore((s) => s.scenes.find((x) => x.id === sceneId));
   const orderIndex = useStoryboardStore((s) => s.scenes.findIndex((x) => x.id === sceneId));
   const n = orderIndex + 1;
+  const productType = useStoryboardStore((s) => s.metaData.productType);
+  const features = productType ? FORMAT_FEATURES[productType] : FORMAT_FEATURES.shortFilm;
 
   // We must return early if scene is deleted but component is still rendering
   // to avoid crashes. However, hooks must be called unconditionally.
@@ -115,21 +118,14 @@ function SceneCard({ sceneId }: SceneCardProps) {
           >
             {n}
           </span>
-          {t('scene.title', { n })}
-          <div className="ml-2 flex items-center gap-1 opacity-0 transition-opacity focus-within:opacity-100 group-hover:opacity-100 max-sm:opacity-100 pointer-coarse:opacity-100 print:hidden">
-            <input
-              type="number"
-              min="1"
-              max="3600"
-              value={scene.duration ?? 3}
-              onChange={(e) =>
-                updateScene(scene.id, { duration: parseInt(e.target.value, 10) || 3 })
-              }
-              className="w-12 h-6 rounded border border-slate-200 bg-slate-50 px-1 text-center text-xs font-normal tabular-nums text-slate-700 focus:border-blue-400 focus:outline-none focus:ring-1 focus:ring-blue-400"
-              title={t('scene.duration', 'Dauer in Sekunden')}
-            />
-            <span className="text-xs font-normal normal-case text-slate-500">s</span>
-          </div>
+          <input
+            type="text"
+            value={scene.title}
+            placeholder={t('scene.title', { n })}
+            onChange={(e) => updateScene(scene.id, { title: e.target.value })}
+            className="flex-1 min-w-0 bg-transparent border-none p-0 focus:ring-0 text-xs font-bold tracking-[0.14em] text-slate-700 uppercase placeholder-slate-400"
+            aria-label={t('scene.titleLabel', { n })}
+          />
         </h3>
         <div className="flex items-center gap-1 print:hidden">
           <button
@@ -192,8 +188,9 @@ function SceneCard({ sceneId }: SceneCardProps) {
         <>
           <div className="flex gap-5 max-sm:flex-col max-sm:gap-4">
             {/* Medien-Feld */}
+            {features.hasImage && (
             <div
-              className={`relative w-48 shrink-0 max-sm:w-full ${imageUrl ? '' : 'print:hidden'}`}
+              className={`relative w-72 shrink-0 max-sm:w-full ${imageUrl ? '' : 'print:hidden'}`}
             >
               <div className="mb-1.5 flex items-center justify-between">
                 <span className="text-sm font-medium text-slate-700 print:text-xs">
@@ -210,7 +207,7 @@ function SceneCard({ sceneId }: SceneCardProps) {
                     <img
                       src={imageUrl}
                       alt={scene.altText?.trim() ? scene.altText : t('scene.imageAlt', { n })}
-                      className={`aspect-square w-full max-sm:aspect-[4/3] print:aspect-square print:rounded-none ${
+                      className={`aspect-video w-full max-sm:aspect-video print:aspect-video print:rounded-none ${
                         scene.imageFit === 'contain'
                           ? 'object-contain bg-slate-900'
                           : 'object-cover'
@@ -245,7 +242,7 @@ function SceneCard({ sceneId }: SceneCardProps) {
               ) : (
                 <label
                   htmlFor={`image-upload-${scene.id}`}
-                  className="flex flex-col aspect-square w-full cursor-pointer items-center justify-center rounded-lg border border-dashed border-slate-300 bg-slate-50 p-4 text-center text-sm font-medium text-slate-500 transition-colors hover:border-blue-400 hover:bg-blue-50 hover:text-blue-700 focus-within:border-blue-400 focus-within:ring-2 focus-within:ring-blue-500 focus-within:ring-offset-2 max-sm:aspect-[4/3] print:aspect-square print:border-slate-300"
+                  className="flex flex-col aspect-video w-full cursor-pointer items-center justify-center rounded-lg border border-dashed border-slate-300 bg-slate-50 p-4 text-center text-sm font-medium text-slate-500 transition-colors hover:border-blue-400 hover:bg-blue-50 hover:text-blue-700 focus-within:border-blue-400 focus-within:ring-2 focus-within:ring-blue-500 focus-within:ring-offset-2 max-sm:aspect-video print:aspect-video print:border-slate-300"
                 >
                   <span className="print:hidden">
                     {imageError ? (
@@ -284,6 +281,7 @@ function SceneCard({ sceneId }: SceneCardProps) {
                 </div>
               )}
             </div>
+            )}
 
             <div className="min-w-0 flex-1 space-y-3.5">
               {/* === IMMER SICHTBAR (SIMPLE) === */}
@@ -325,6 +323,7 @@ function SceneCard({ sceneId }: SceneCardProps) {
                         onChange={(e) => updateScene(scene.id, { audio: { ...scene.audio, dialogue: e.target.value } })}
                       />
                     </div>
+                    {features.hasAudioEffects && (
                     <div>
                       <label className={labelClass} htmlFor={`soundEffects-${scene.id}`}>
                         Soundeffekte / Musik
@@ -336,7 +335,9 @@ function SceneCard({ sceneId }: SceneCardProps) {
                         onChange={(e) => updateScene(scene.id, { audio: { ...scene.audio, soundEffects: e.target.value } })}
                       />
                     </div>
+                    )}
                   </div>
+                  {features.hasLocation && (
                   <div>
                     <label className={labelClass} htmlFor={`location-${scene.id}`}>
                       Ort / Location
@@ -348,6 +349,7 @@ function SceneCard({ sceneId }: SceneCardProps) {
                       onChange={(e) => updateScene(scene.id, { location: e.target.value })}
                     />
                   </div>
+                  )}
                 </>
               )}
 
@@ -355,6 +357,7 @@ function SceneCard({ sceneId }: SceneCardProps) {
               {complexity === 'advanced' && (
                 <>
                   <div className="grid grid-cols-2 gap-4">
+                    {features.hasCameraSize && (
                     <div>
                       <label className={labelClass} htmlFor={`camera-size-${scene.id}`}>
                         Einstellungsgröße
@@ -366,6 +369,8 @@ function SceneCard({ sceneId }: SceneCardProps) {
                         onChange={(e) => updateScene(scene.id, { camera: { ...scene.camera, shotSize: e.target.value } })}
                       />
                     </div>
+                    )}
+                    {features.hasCameraMovement && (
                     <div>
                       <label className={labelClass} htmlFor={`camera-movement-${scene.id}`}>
                         Kamerabewegung
@@ -377,6 +382,7 @@ function SceneCard({ sceneId }: SceneCardProps) {
                         onChange={(e) => updateScene(scene.id, { camera: { ...scene.camera, movement: e.target.value } })}
                       />
                     </div>
+                    )}
                   </div>
                   <div>
                     <label className={labelClass} htmlFor={`materials-${scene.id}`}>

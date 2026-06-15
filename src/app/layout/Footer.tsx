@@ -2,42 +2,39 @@ import { Link } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import LanguageToggle from './LanguageToggle';
 import DisplaySettings from './DisplaySettings';
-import BrandLogo from './BrandLogo';
 import { Code2 } from 'lucide-react';
 
 export default function Footer() {
   const { t } = useTranslation();
   return (
     <footer className="mt-auto border-t border-slate-200 bg-white print:hidden">
-      <div className="mx-auto flex max-w-screen-lg flex-wrap items-end justify-between gap-6 px-4 py-6">
-        <div className="flex flex-col gap-4">
-          <BrandLogo showTagline={false} />
+      <div className="mx-auto flex max-w-screen-lg flex-col items-center justify-between gap-6 px-4 py-8 sm:flex-row">
+        <div className="flex flex-col items-center gap-4 sm:items-start">
           <nav
             aria-label={t('footer.nav')}
-            className="flex flex-wrap items-center gap-x-5 gap-y-2 text-sm text-slate-600 [&_a]:font-medium [&_a]:hover:text-slate-950 [&_a]:hover:underline"
+            className="flex flex-wrap items-center justify-center gap-x-6 gap-y-2 text-sm font-medium text-slate-600 [&_a]:transition-colors [&_a]:hover:text-blue-600"
           >
             <Link to="/hilfe">{t('brand.forEducators')}</Link>
             <Link to="/ueber">{t('footer.about')}</Link>
             <Link to="/datenschutz">{t('footer.privacy')}</Link>
             <Link to="/impressum">{t('footer.imprint')}</Link>
           </nav>
-          <p className="text-xs text-slate-500 max-sm:w-full">{t('footer.localNote')}</p>
+          <p className="text-xs text-slate-400">{t('footer.localNote')}</p>
         </div>
 
-        <div className="flex flex-col items-end gap-4 max-sm:w-full max-sm:items-start">
-          <div className="flex items-center gap-3">
-            <DisplaySettings />
-            <LanguageToggle />
-          </div>
+        <div className="flex items-center gap-4">
+          <DisplaySettings />
+          <LanguageToggle />
+          <div className="h-4 w-px bg-slate-200" aria-hidden="true" />
           <a
             href="https://github.com/ChristianHaake/Storyboard-Creator"
             target="_blank"
             rel="noreferrer"
-            className="inline-flex items-center justify-center size-10 rounded-full text-slate-400 hover:bg-slate-100 hover:text-slate-900 transition-colors"
+            className="inline-flex items-center justify-center rounded-full p-2 text-slate-400 transition-colors hover:bg-slate-100 hover:text-slate-900"
             title={t('footer.repository')}
             aria-label="Quellcode auf GitHub"
           >
-            <Code2 className="w-5 h-5" strokeWidth={1.5} />
+            <Code2 className="h-5 w-5" strokeWidth={1.5} />
           </a>
         </div>
       </div>

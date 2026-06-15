@@ -148,20 +148,27 @@ export async function importProject(
     }
   }
 
-  if (totalImagesSize > MAX_TOTAL_IMAGE_BYTES) {
-    throw new ImportError(i18n.t('errors.imagesTooLargeImport', { file: 'total' }));
-  }
-
   let extracted: Record<string, Uint8Array>;
   try {
-    extracted = unzipSync(bytes);
-  } catch {
+    extracted = unzipSync(bytes, {
+      filter: (file) => {
+        if (file.name === 'data.json') {
+          if (file.originalSize > MAX_DATA_JSON_BYTES) {
+            throw new ImportError(i18n.t('errors.importDataTooLarge'));
+          }
+        } else if (file.name.startsWith('images/')) {
+          if (file.originalSize > MAX_IMAGE_BYTES) {
+            throw new ImportError(i18n.t('errors.imagesTooLargeImport', { file: file.name }));
+          }
+        }
+        return true;
+      },
+    });
+  } catch (e: any) {
+    if (e instanceof ImportError) throw e;
     throw new ImportError(i18n.t('errors.notStoryboard'));
   }
 
-  // Die Central-Directory-Prüfung oben nutzt deklarierte Größen (manipulierbar).
-  // unzipSync inflatet die echten Bytes — hier gegen die echten Längen prüfen,
-  // damit ein unter-deklariertes ZIP den Speicher nicht doch sprengt.
   let totalInflated = 0;
   for (const [name, content] of Object.entries(extracted)) {
     if (name === 'data.json') {

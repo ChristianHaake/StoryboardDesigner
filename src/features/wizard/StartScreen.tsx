@@ -40,12 +40,16 @@ export default function StartScreen() {
 
   return (
     <div className="mx-auto max-w-5xl py-8 px-4 sm:px-6 lg:px-8 fade-in">
-      <div className="text-center mb-10">
-        <h1 className="text-4xl font-extrabold tracking-tight text-slate-900 sm:text-5xl">
-          Was möchtest du erstellen?
+      <div className="mb-14 text-center mt-4">
+        <div className="inline-flex items-center gap-2 rounded-full bg-blue-50 px-3 py-1 text-sm font-medium text-blue-700 ring-1 ring-inset ring-blue-700/10 mb-6">
+          <Sparkles className="h-4 w-4" aria-hidden="true" />
+          <span>Storyboard Creator</span>
+        </div>
+        <h1 className="text-4xl font-extrabold tracking-tight text-slate-900 sm:text-6xl mb-6">
+          Was möchtest du <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-600 to-indigo-600">erstellen?</span>
         </h1>
-        <p className="mt-4 text-xl text-slate-500">
-          Wähle dein Medienprodukt, um das passende Storyboard zu starten.
+        <p className="mx-auto max-w-2xl text-lg text-slate-500 sm:text-xl leading-relaxed">
+          Wähle dein Medienprodukt, um das passende Storyboard zu starten und deine Ideen systematisch zu planen.
         </p>
       </div>
 

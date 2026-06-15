@@ -1,20 +1,21 @@
 import { useTranslation } from 'react-i18next';
 import { useStoryboardStore } from '../../app/store/useStoryboardStore';
+import { useShallow } from 'zustand/react/shallow';
 
 // Szenen-Navigator (#5): nummerierte Sprungziele. Klick scrollt zur Szene und
 // setzt den Fokus dorthin (Tastatur/SR). Erscheint erst ab zwei Szenen.
 export default function SceneNavigator() {
   const { t } = useTranslation();
-  const scenes = useStoryboardStore((s) => s.scenes);
+  const { sceneIds, done } = useStoryboardStore(
+    useShallow((s) => ({
+      sceneIds: s.scenes.map((scene) => scene.id),
+      done: s.scenes.filter((scene) => scene.text.trim() || scene.action.trim() || scene.imageFileName).length,
+    }))
+  );
 
-  if (scenes.length < 2) return null;
+  if (sceneIds.length < 2) return null;
 
-  // Gamification (#10): eine Szene gilt als befüllt, sobald Bildbeschreibung,
-  // Ton oder Notiz Inhalt hat.
-  const done = scenes.filter(
-    (s) => s.visualDescription.trim() || s.text.trim() || s.action.trim(),
-  ).length;
-  const percent = Math.round((done / scenes.length) * 100);
+  const percent = Math.round((done / sceneIds.length) * 100);
 
   function jump(id: string) {
     const el = document.getElementById(`scene-${id}`);
@@ -33,11 +34,11 @@ export default function SceneNavigator() {
         {t('navigator.heading')}
       </span>
       <ul className="flex flex-wrap gap-1.5">
-        {scenes.map((scene, index) => (
-          <li key={scene.id}>
+        {sceneIds.map((id, index) => (
+          <li key={id}>
             <button
               type="button"
-              onClick={() => jump(scene.id)}
+              onClick={() => jump(id)}
               aria-label={t('navigator.jump', { n: index + 1 })}
               title={t('navigator.jump', { n: index + 1 })}
               className="inline-flex size-9 items-center justify-center rounded-lg border border-slate-200 bg-white text-sm font-semibold text-slate-700 tabular-nums transition-colors hover:border-blue-400 hover:bg-blue-50 hover:text-blue-700"
@@ -50,13 +51,13 @@ export default function SceneNavigator() {
       <div
         role="progressbar"
         aria-valuemin={0}
-        aria-valuemax={scenes.length}
+        aria-valuemax={sceneIds.length}
         aria-valuenow={done}
         aria-label={t('navigator.progressLabel')}
         className="ml-auto flex items-center gap-2"
       >
         <span className="text-xs text-slate-500 tabular-nums">
-          {t('navigator.progress', { done, total: scenes.length })}
+          {t('navigator.progress', { done, total: sceneIds.length })}
         </span>
         <span className="h-1.5 w-24 overflow-hidden rounded-full bg-slate-200">
           <span

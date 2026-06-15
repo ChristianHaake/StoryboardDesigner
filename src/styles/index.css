@@ -154,7 +154,7 @@ html[data-theme='contrast'] :focus-visible {
 }
 
 @page {
-  size: A4;
+  size: A4 landscape;
   margin: 15mm;
 }
 

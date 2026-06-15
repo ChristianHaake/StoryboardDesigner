@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, memo } from 'react';
 import { useTranslation } from 'react-i18next';
 import type { SceneComment } from '../../domain/types';
 import { useStoryboardStore } from '../../app/store/useStoryboardStore';
@@ -12,7 +12,7 @@ interface CommentThreadProps {
 }
 
 // Feedback-Thread einer Szene (Lehrkraft-Sicht). Komplett print:hidden.
-export default function CommentThread({ sceneId, sceneNumber, comments }: CommentThreadProps) {
+export default memo(function CommentThread({ sceneId, sceneNumber, comments }: CommentThreadProps) {
   const { t } = useTranslation();
   const addComment = useStoryboardStore((s) => s.addComment);
   const toggleCommentDone = useStoryboardStore((s) => s.toggleCommentDone);
@@ -99,4 +99,4 @@ export default function CommentThread({ sceneId, sceneNumber, comments }: Commen
       </div>
     </section>
   );
-}
+});

@@ -34,8 +34,8 @@ describe('decodeProject', () => {
             id: 'scene-1',
             orderIndex: 0,
             imageFileName: null,
-            visualDescription: '',
-            title: '', action: '', text: '', audio: { dialogue: '', soundEffects: '', music: '' }, camera: { shotSize: '', angle: '', movement: '' }, duration: 0, location: '', materials: [], roles: [], transition: '', sources: [], reflection: '',
+            
+            title: '', action: '', text: '', audio: { dialogue: '', soundEffects: '', music: '' }, camera: { shotSize: '', angle: '', movement: '' },  location: '', materials: [],    
             
             customFields: { camera: 'Totale' },
           },
@@ -80,8 +80,8 @@ describe('decodeProject', () => {
             id: 'scene-1',
             orderIndex: 0,
             imageFileName: 'img-1.jpg',
-            visualDescription: '',
-            title: '', action: '', text: '', audio: { dialogue: '', soundEffects: '', music: '' }, camera: { shotSize: '', angle: '', movement: '' }, duration: 0, location: '', materials: [], roles: [], transition: '', sources: [], reflection: '',
+            
+            title: '', action: '', text: '', audio: { dialogue: '', soundEffects: '', music: '' }, camera: { shotSize: '', angle: '', movement: '' },  location: '', materials: [],    
             
             altText: 'Nahaufnahme einer Pflanze',
           },
@@ -89,8 +89,8 @@ describe('decodeProject', () => {
             id: 'scene-2',
             orderIndex: 1,
             imageFileName: null,
-            visualDescription: '',
-            title: '', action: '', text: '', audio: { dialogue: '', soundEffects: '', music: '' }, camera: { shotSize: '', angle: '', movement: '' }, duration: 0, location: '', materials: [], roles: [], transition: '', sources: [], reflection: '',
+            
+            title: '', action: '', text: '', audio: { dialogue: '', soundEffects: '', music: '' }, camera: { shotSize: '', angle: '', movement: '' },  location: '', materials: [],    
             
             altText: '',
           },
@@ -111,8 +111,8 @@ describe('decodeProject', () => {
             id: 'scene-1',
             orderIndex: 0,
             imageFileName: null,
-            visualDescription: '',
-            title: '', action: '', text: '', audio: { dialogue: '', soundEffects: '', music: '' }, camera: { shotSize: '', angle: '', movement: '' }, duration: 0, location: '', materials: [], roles: [], transition: '', sources: [], reflection: '',
+            
+            title: '', action: '', text: '', audio: { dialogue: '', soundEffects: '', music: '' }, camera: { shotSize: '', angle: '', movement: '' },  location: '', materials: [],    
             
             comments: [
               { id: 'c1', text: 'Gut!', done: true, createdAt: '2026-06-13T10:00:00Z' },
@@ -146,17 +146,16 @@ describe('decodeProject', () => {
             id: 'scene-1',
             orderIndex: 0,
             imageFileName: null,
-            visualDescription: '',
-            title: '', action: '', text: '', audio: { dialogue: '', soundEffects: '', music: '' }, camera: { shotSize: '', angle: '', movement: '' }, location: '', materials: [], roles: [], transition: '', sources: [], reflection: '',
+            
+            title: '', action: '', text: '', audio: { dialogue: '', soundEffects: '', music: '' }, camera: { shotSize: '', angle: '', movement: '' }, location: '', materials: [],    
             imageFit: 'contain',
-            duration: 10,
           },
           {
             id: 'scene-2',
             orderIndex: 1,
             imageFileName: null,
-            visualDescription: '',
-            title: '', action: '', text: '', audio: { dialogue: '', soundEffects: '', music: '' }, camera: { shotSize: '', angle: '', movement: '' }, location: '', materials: [], roles: [], transition: '', sources: [], reflection: '',
+            
+            title: '', action: '', text: '', audio: { dialogue: '', soundEffects: '', music: '' }, camera: { shotSize: '', angle: '', movement: '' }, location: '', materials: [],    
             
             // missing v1.5 fields should fallback to defaults
           },
@@ -165,10 +164,8 @@ describe('decodeProject', () => {
     );
 
     expect(decoded.scenes[0]?.imageFit).toBe('contain');
-    expect(decoded.scenes[0]?.duration).toBe(10);
 
     expect(decoded.scenes[1]?.imageFit).toBe('cover'); // default
-    expect(decoded.scenes[1]?.duration).toBe(3); // default
   });
 
   it('normalizes duplicate labels and excessive field definitions', () => {
@@ -193,8 +190,8 @@ describe('decodeProject', () => {
       id: 'duplicate',
       orderIndex: 0,
       imageFileName: null,
-      visualDescription: '',
-      title: '', action: '', text: '', audio: { dialogue: '', soundEffects: '', music: '' }, camera: { shotSize: '', angle: '', movement: '' }, duration: 0, location: '', materials: [], roles: [], transition: '', sources: [], reflection: '',
+      
+      title: '', action: '', text: '', audio: { dialogue: '', soundEffects: '', music: '' }, camera: { shotSize: '', angle: '', movement: '' },  location: '', materials: [],    
       
     };
     const decoded = decodeProject(project({ scenes: [scene, { ...scene, orderIndex: 1 }] }));
@@ -208,8 +205,8 @@ describe('decodeProject', () => {
       id: `scene-${index}`,
       orderIndex: index,
       imageFileName: null,
-      visualDescription: '',
-      title: '', action: '', text: '', audio: { dialogue: '', soundEffects: '', music: '' }, camera: { shotSize: '', angle: '', movement: '' }, duration: 0, location: '', materials: [], roles: [], transition: '', sources: [], reflection: '',
+      
+      title: '', action: '', text: '', audio: { dialogue: '', soundEffects: '', music: '' }, camera: { shotSize: '', angle: '', movement: '' },  location: '', materials: [],    
       
     }));
 

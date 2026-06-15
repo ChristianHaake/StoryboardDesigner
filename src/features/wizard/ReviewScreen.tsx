@@ -14,16 +14,13 @@ export default function ReviewScreen() {
     const hasImage = !!imageUrls[scene.id];
     const hasContent =
       !!scene.title?.trim() ||
-      !!scene.visualDescription?.trim() ||
       !!scene.action?.trim() ||
       !!scene.text?.trim() ||
       !!scene.audio?.dialogue?.trim() ||
       !!scene.audio?.soundEffects?.trim() ||
       !!scene.audio?.music?.trim() ||
       !!scene.location?.trim() ||
-      !!scene.reflection?.trim() ||
-      (scene.materials && scene.materials.length > 0) ||
-      (scene.roles && scene.roles.length > 0);
+      (scene.materials && scene.materials.length > 0);
 
     const isAudioOnly = productType === 'podcast' || productType === 'audioPlay';
 

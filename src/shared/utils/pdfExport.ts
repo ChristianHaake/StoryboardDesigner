@@ -3,8 +3,8 @@
 // sie als eigener Chunk laden und das Editor-Bundle nicht belasten.
 
 const RENDER_SCALE = 2; // Auflösung der Zwischengrafik
-const A4_WIDTH_MM = 210;
-const A4_HEIGHT_MM = 297;
+const A4_WIDTH_MM = 297;
+const A4_HEIGHT_MM = 210;
 // Browser-Canvas haben ein Höhenlimit (~32 k px). Bei sehr vielen Szenen die
 // Auflösung reduzieren, statt eine leere/abgeschnittene Grafik zu erzeugen.
 const MAX_CANVAS_PX = 30000;
@@ -84,7 +84,7 @@ export async function exportElementToPdf(
 
   if (image.width <= 0 || image.height <= 0) throw new Error('pdf-empty-render');
 
-  const pdf = new jsPDF({ format: 'a4', orientation: 'portrait', unit: 'mm' });
+  const pdf = new jsPDF({ format: 'a4', orientation: 'landscape', unit: 'mm' });
   // Seitenhöhe in Bildpixeln, die einer vollen A4-Seite (gleiche Breite) entspricht.
   const pageHeightPx = Math.floor(image.width * (A4_HEIGHT_MM / A4_WIDTH_MM));
   const heights = paginate(image.height, pageHeightPx, safeBreaks);

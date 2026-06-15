@@ -4,7 +4,6 @@ import { useTranslation } from 'react-i18next';
 import TopBar from './layout/TopBar';
 import Footer from './layout/Footer';
 import Notifications from './layout/Notifications';
-import OnboardingOverlay from './layout/OnboardingOverlay';
 import WizardRouter from '../features/wizard/WizardRouter';
 
 // Lazy: react-markdown bleibt aus dem Editor-Bundle (Hilfe-Seiten selten besucht).
@@ -164,7 +163,6 @@ export default function App() {
           </Routes>
         </Suspense>
         <Footer />
-        <OnboardingOverlay />
       </div>
     </BrowserRouter>
   );
