@@ -22,13 +22,14 @@ import { MAX_SCENES } from '../../domain/projectCodec';
 import FieldConfigDialog from '../../shared/ui/FieldConfigDialog';
 import SceneNavigator from './SceneNavigator';
 import TemplatePicker from './TemplatePicker';
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
 import { ChevronDown, ChevronUp, LayoutTemplate, Film, Camera, Mic } from 'lucide-react';
 
 export default function EditorView() {
   const { t } = useTranslation();
   const [fieldDialogOpen, setFieldDialogOpen] = useState(false);
+  const closeFieldDialog = useCallback(() => setFieldDialogOpen(false), []);
   const metaData = useStoryboardStore((s) => s.metaData);
   const prePlanning = useStoryboardStore((s) => s.prePlanning);
   const scenes = useStoryboardStore((s) => s.scenes);
@@ -329,7 +330,7 @@ export default function EditorView() {
           </button>
         </section>
       </A4Page>
-      <FieldConfigDialog open={fieldDialogOpen} onClose={() => setFieldDialogOpen(false)} />
+      <FieldConfigDialog open={fieldDialogOpen} onClose={closeFieldDialog} />
     </main>
   );
 }
