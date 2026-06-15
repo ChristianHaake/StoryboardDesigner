@@ -6,7 +6,7 @@ import { buttonSecondary } from '../../shared/ui/fieldStyles';
 const FORMAT_KEY: Record<StarterFormat, string> = {
   film: 'format.film',
   fotostory: 'format.fotostory',
-  rede: 'format.rede',
+
 };
 
 // Auswahl von Beispielvorlagen (#10). Erscheint im Leerzustand des Storyboards.

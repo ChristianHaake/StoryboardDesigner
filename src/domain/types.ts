@@ -5,7 +5,7 @@ export interface MetaData {
   projectName: string;
   participants: string;
   subject: string;
-  formatType: 'film' | 'fotostory' | 'rede' | 'custom';
+  formatType: 'film' | 'fotostory' | 'custom';
   date: string;
 }
 

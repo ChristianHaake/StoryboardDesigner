@@ -42,11 +42,6 @@ const FORMAT_FIELD_PRESETS: Record<MetaData['formatType'], PresetField[]> = {
     { key: 'preset:fotostory:framing', labelKey: 'presets.fotostoryFraming' },
     { key: 'preset:fotostory:caption', labelKey: 'presets.fotostoryCaption' },
   ],
-  rede: [
-    { key: 'preset:rede:key-message', labelKey: 'presets.redeKeyMessage' },
-    { key: 'preset:rede:visualization', labelKey: 'presets.redeVisualization' },
-    { key: 'preset:rede:caption', labelKey: 'presets.caption' },
-  ],
   custom: [],
 };
 

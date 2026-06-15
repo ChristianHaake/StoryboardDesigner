@@ -138,17 +138,17 @@ describe('useStoryboardStore', () => {
       ],
     });
 
-    expect(useStoryboardStore.getState().setFormatType('rede')).toBe(3);
+    expect(useStoryboardStore.getState().setFormatType('film')).toBe(3);
     const state = useStoryboardStore.getState();
-    expect(state.metaData.formatType).toBe('rede');
+    expect(state.metaData.formatType).toBe('film');
     expect(state.fieldDefinitions?.map((field) => field.label)).toEqual([
       'Licht',
-      'Kernaussage',
-      'Visualisierung',
+      'Kameraeinstellung',
+      'Kamerabewegung',
       'Bildunterschrift',
     ]);
     expect(state.scenes[0]?.customFields?.['custom:light']).toBe('Warm');
-    expect(useStoryboardStore.getState().setFormatType('rede')).toBe(0);
+    expect(useStoryboardStore.getState().setFormatType('film')).toBe(0);
   });
 
   it('validates adding and renaming custom fields', () => {

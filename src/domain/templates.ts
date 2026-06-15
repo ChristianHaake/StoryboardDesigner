@@ -9,7 +9,7 @@ import i18n from '../shared/i18n';
 // i18n, damit die Vorlage in der aktiven Sprache erscheint.
 
 export type StarterFormat = Exclude<MetaData['formatType'], 'custom'>;
-export const STARTER_FORMATS: StarterFormat[] = ['film', 'fotostory', 'rede'];
+export const STARTER_FORMATS: StarterFormat[] = ['film', 'fotostory'];
 
 // Welche Text-Preset-Felder je Format mit Beispielwerten befüllt werden, plus
 // der zugehörige (flache) i18n-Key-Teil. Select-Felder bleiben leer — ihre
@@ -23,11 +23,6 @@ const TEXT_FIELDS: Record<StarterFormat, { key: string; part: string }[]> = {
   fotostory: [
     { key: 'preset:fotostory:framing', part: 'Framing' },
     { key: 'preset:fotostory:caption', part: 'Caption' },
-  ],
-  rede: [
-    { key: 'preset:rede:key-message', part: 'KeyMessage' },
-    { key: 'preset:rede:visualization', part: 'Visualization' },
-    { key: 'preset:rede:caption', part: 'Caption' },
   ],
 };
 

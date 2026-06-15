@@ -63,7 +63,7 @@ describe('customFields', () => {
       label: `Feld ${index}`,
     }));
 
-    expect(mergeFormatPreset(definitions, 'rede')).toEqual({
+    expect(mergeFormatPreset(definitions, 'film')).toEqual({
       definitions,
       added: 0,
     });

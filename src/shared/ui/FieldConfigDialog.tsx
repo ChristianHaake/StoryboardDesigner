@@ -124,7 +124,6 @@ function FieldDefinitionRow({
 const FORMAT_KEYS: Record<MetaData['formatType'], string> = {
   film: 'format.film',
   fotostory: 'format.fotostory',
-  rede: 'format.rede',
   custom: 'format.custom',
 };
 

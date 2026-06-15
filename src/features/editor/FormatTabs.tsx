@@ -6,7 +6,7 @@ import type { MetaData } from '../../domain/types';
 const FORMATS: { id: MetaData['formatType']; labelKey: string }[] = [
   { id: 'film', labelKey: 'format.film' },
   { id: 'fotostory', labelKey: 'format.fotostory' },
-  { id: 'rede', labelKey: 'format.rede' },
+
   { id: 'custom', labelKey: 'format.custom' },
 ];
 

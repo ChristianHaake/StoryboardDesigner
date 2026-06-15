@@ -24,7 +24,7 @@ import SceneNavigator from './SceneNavigator';
 import TemplatePicker from './TemplatePicker';
 import { useState, useEffect, useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
-import { ChevronDown, ChevronUp, LayoutTemplate, Film, Camera, Mic } from 'lucide-react';
+import { ChevronDown, ChevronUp, LayoutTemplate, Film, Camera } from 'lucide-react';
 
 export default function EditorView() {
   const { t } = useTranslation();
@@ -166,7 +166,7 @@ export default function EditorView() {
               >
                 <option value="film">{t('format.film')}</option>
                 <option value="fotostory">{t('format.fotostory')}</option>
-                <option value="rede">{t('format.rede')}</option>
+
                 <option value="custom">{t('format.custom')}</option>
               </select>
             </div>
@@ -294,9 +294,7 @@ export default function EditorView() {
                       {formatType === 'fotostory' && (
                         <Camera className="h-8 w-8 text-slate-400" strokeWidth={1.5} />
                       )}
-                      {formatType === 'rede' && (
-                        <Mic className="h-8 w-8 text-slate-400" strokeWidth={1.5} />
-                      )}
+
                       {formatType === 'custom' && (
                         <LayoutTemplate className="h-8 w-8 text-slate-400" strokeWidth={1.5} />
                       )}
