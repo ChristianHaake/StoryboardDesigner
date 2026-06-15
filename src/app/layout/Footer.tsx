@@ -29,7 +29,7 @@ export default function Footer() {
             <LanguageToggle />
           </div>
           <a
-            href="https://github.com/ChristianHaake/StoryboardDesigner"
+            href="https://github.com/ChristianHaake/Storyboard-Creator"
             target="_blank"
             rel="noreferrer"
             className="inline-flex items-center text-sm font-medium text-slate-500 hover:text-slate-900 transition-colors"

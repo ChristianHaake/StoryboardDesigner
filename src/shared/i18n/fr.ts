@@ -10,7 +10,7 @@ type Translations = {
 // Traduction française. Reflète exactement la structure de clés de `de`.
 const fr: Translations = {
   common: {
-    appTitle: 'StoryboardDesigner',
+    appTitle: 'Storyboard-Creator',
   },
   save: {
     saving: 'Enregistrement …',
@@ -109,7 +109,7 @@ const fr: Translations = {
     fontXlarge: 'Très grande',
   },
   brand: {
-    name: 'StoryboardDesigner',
+    name: 'Storyboard-Creator',
     tagline: 'Atelier pour les formats numériques',
     localPill: 'Le contenu reste local',
     eduNotice:
@@ -309,7 +309,7 @@ const fr: Translations = {
     privacy: 'Confidentialité',
     imprint: 'Mentions légales',
     repository: 'Code source',
-    localNote: 'StoryboardDesigner · Le contenu reste sur ton appareil',
+    localNote: 'Storyboard-Creator · Le contenu reste sur ton appareil',
   },
   fields: {
     labelEmpty: 'Saisis un nom de champ.',
@@ -337,7 +337,7 @@ const fr: Translations = {
     exportFileTooLarge: 'Le fichier du projet est trop volumineux (max. 100 Mo).',
     versionMissing: 'Indication de version manquante.',
     versionInvalid: 'Version de projet non valide.',
-    versionTooNew: 'Ce fichier a été créé avec une version plus récente de StoryboardDesigner.',
+    versionTooNew: 'Ce fichier a été créé avec une version plus récente de Storyboard-Creator.',
     incompleteStructure: 'Structure du projet incomplète.',
     codecTooManyScenes: 'Trop de scènes (max. {{max}}).',
     sceneCorrupt: 'La scène {{n}} est endommagée.',

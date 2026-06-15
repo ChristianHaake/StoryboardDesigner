@@ -29,6 +29,10 @@ function createEmptyScene(orderIndex: number): Scene {
     visualDescription: '',
     audioText: '',
     directorNotes: '',
+    // v1.5-Defaults gleich setzen, damit der In-Memory-Stand dem decodeProject-
+    // Ergebnis entspricht (sonst erst nach Export→Reimport gesetzt).
+    imageFit: 'cover',
+    duration: 3,
   };
 }
 

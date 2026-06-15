@@ -143,7 +143,12 @@ export default function FieldConfigDialog({ open, onClose }: FieldConfigDialogPr
   const applyCurrentFormatPreset = useStoryboardStore((state) => state.applyCurrentFormatPreset);
   const [newType, setNewType] = useState<CustomFieldType>('text');
   const [newOptions, setNewOptions] = useState('');
-  const [message, setMessage] = useState<string | null>(null);
+  const [message, setMessage] = useState<{ text: string; kind: 'error' | 'info' } | null>(null);
+  const isError = message?.kind === 'error';
+
+  const notify = useCallback((text: string, kind: 'error' | 'info') => {
+    setMessage({ text, kind });
+  }, []);
 
   const closeDialog = useCallback(() => {
     dialogRef.current?.close();
@@ -171,13 +176,13 @@ export default function FieldConfigDialog({ open, onClose }: FieldConfigDialogPr
 
   function handleAdd() {
     if (!newLabel.trim()) {
-      setMessage(t('fields.labelEmpty'));
+      notify(t('fields.labelEmpty'), 'error');
       return;
     }
     const options = newType === 'select' ? newOptions.split('\n') : [];
     const error = addCustomField(newLabel, newType, options, newDescription);
     if (error) {
-      setMessage(error);
+      notify(error, 'error');
       addInputRef.current?.focus();
       return;
     } else {
@@ -185,23 +190,25 @@ export default function FieldConfigDialog({ open, onClose }: FieldConfigDialogPr
       setNewDescription('');
       setNewOptions('');
       setNewType('text');
-      setMessage(t('fieldConfig.added'));
+      notify(t('fieldConfig.added'), 'info');
       addInputRef.current?.focus();
     }
   }
 
-  function handleSave(key: string, label: string, options?: string[]) {
-    const renameError = renameCustomField(key, label);
+  function handleSave(key: string, label: string, options?: string[], description?: string) {
+    const renameError = renameCustomField(key, label, description);
     if (renameError) {
-      setMessage(renameError);
+      notify(renameError, 'error');
       return;
     }
     if (options) {
       const optionsError = updateCustomFieldOptions(key, options);
-      setMessage(optionsError ?? t('fieldConfig.renamed'));
-      return;
+      if (optionsError) {
+        notify(optionsError, 'error');
+        return;
+      }
     }
-    setMessage(t('fieldConfig.renamed'));
+    notify(t('fieldConfig.renamed'), 'info');
   }
 
   function handleDelete(key: string, label: string) {
@@ -209,13 +216,14 @@ export default function FieldConfigDialog({ open, onClose }: FieldConfigDialogPr
       return;
     }
     deleteCustomField(key);
-    setMessage(t('fieldConfig.deleted'));
+    notify(t('fieldConfig.deleted'), 'info');
   }
 
   function handleApplyPreset() {
     const added = applyCurrentFormatPreset();
-    setMessage(
+    notify(
       added > 0 ? t('fieldConfig.presetAdded', { count: added }) : t('fieldConfig.presetComplete'),
+      'info',
     );
   }
 
@@ -281,16 +289,8 @@ export default function FieldConfigDialog({ open, onClose }: FieldConfigDialogPr
                     value={newLabel}
                     maxLength={MAX_CUSTOM_FIELD_LABEL_LENGTH}
                     placeholder={t('fieldConfig.newPlaceholder')}
-                    aria-invalid={
-                      message &&
-                      message !== t('fieldConfig.added') &&
-                      message !== t('fieldConfig.deleted') &&
-                      message !== t('fieldConfig.renamed') &&
-                      !message.includes('preset')
-                        ? 'true'
-                        : undefined
-                    }
-                    aria-describedby={message ? 'field-config-message' : undefined}
+                    aria-invalid={isError ? 'true' : undefined}
+                    aria-describedby={isError ? 'field-config-message' : undefined}
                     onChange={(event) => {
                       setNewLabel(event.target.value);
                       setMessage(null);
@@ -301,21 +301,17 @@ export default function FieldConfigDialog({ open, onClose }: FieldConfigDialogPr
                         handleAdd();
                       }
                     }}
-                    className={`${dialogInputClass} w-full ${message && message !== t('fieldConfig.added') && message !== t('fieldConfig.deleted') && message !== t('fieldConfig.renamed') && !message.includes('preset') ? 'border-red-500 focus:border-red-500 focus:ring-red-100' : ''}`}
+                    className={`${dialogInputClass} w-full ${isError ? 'border-red-500 focus:border-red-500 focus:ring-red-100' : ''}`}
                   />
-                  {message &&
-                    message !== t('fieldConfig.added') &&
-                    message !== t('fieldConfig.deleted') &&
-                    message !== t('fieldConfig.renamed') &&
-                    !message.includes('preset') && (
-                      <p
-                        id="field-config-message"
-                        role="alert"
-                        className="mt-1.5 text-xs font-medium text-red-600"
-                      >
-                        {message}
-                      </p>
-                    )}
+                  {isError && (
+                    <p
+                      id="field-config-message"
+                      role="alert"
+                      className="mt-1.5 text-xs font-medium text-red-600"
+                    >
+                      {message.text}
+                    </p>
+                  )}
                 </div>
                 <div className="flex-1">
                   <label
@@ -436,9 +432,9 @@ export default function FieldConfigDialog({ open, onClose }: FieldConfigDialogPr
             )}
           </section>
 
-          {message && (
+          {message && !isError && (
             <p role="status" className="mt-4 rounded-lg bg-blue-50 px-3 py-2 text-sm text-blue-900">
-              {message}
+              {message.text}
             </p>
           )}
         </div>

@@ -162,6 +162,17 @@ describe('useStoryboardStore', () => {
     expect(useStoryboardStore.getState().fieldDefinitions?.[0]?.label).toBe('Kamera');
   });
 
+  it('preserves and updates the field description when renaming', () => {
+    useStoryboardStore.setState({
+      fieldDefinitions: [{ key: 'custom:shot', label: 'Einstellung', description: 'Wie nah?' }],
+    });
+    const key = 'custom:shot';
+
+    // Rename mit Beschreibung → bleibt erhalten/aktualisiert.
+    expect(useStoryboardStore.getState().renameCustomField(key, 'Kamera', 'Wie nah dran?')).toBeNull();
+    expect(useStoryboardStore.getState().fieldDefinitions?.[0]?.description).toBe('Wie nah dran?');
+  });
+
   it('deletes a field definition and all scene values', () => {
     useStoryboardStore.setState({
       fieldDefinitions: [{ key: 'custom:light', label: 'Licht' }],

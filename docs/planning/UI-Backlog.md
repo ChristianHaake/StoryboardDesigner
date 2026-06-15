@@ -27,7 +27,7 @@ User-Stories zur UI-Verbesserung. Grundlage: Code-Audit (Doppelungen, Stil-Inkon
 
 1. **Jede Botschaft genau 1×** — Pill nur im Header; Footer nutzt eine Wortvariante („SocialMediaCreator · Inhalte bleiben auf deinem Gerät"), kein identisches Element doppelt.
 2. **Hero = knapper Dreiklang** („Fiktiv. Lokal. Exportierbar.") plus ein Satz — kein zusätzlicher Banner davor.
-3. **Formatwahl prominent als Modul-Tabs** direkt im Einstieg — im StoryboardDesigner versteckt als Select in der Metadatenzeile.
+3. **Formatwahl prominent als Modul-Tabs** direkt im Einstieg — im Storyboard-Creator versteckt als Select in der Metadatenzeile.
 4. **Edu-Hinweis ist ein Satz** mit einem Link — nicht Banner und Header-Link parallel.
 
 ---
@@ -40,7 +40,7 @@ User-Stories zur UI-Verbesserung. Grundlage: Code-Audit (Doppelungen, Stil-Inkon
 
 **Akzeptanzkriterien:**
 - StatusPill „Inhalte bleiben lokal" erscheint nur in der TopBar.
-- Footer zeigt stattdessen Textvariante „StoryboardDesigner · Inhalte bleiben auf deinem Gerät" (SMC-Muster).
+- Footer zeigt stattdessen Textvariante „Storyboard-Creator · Inhalte bleiben auf deinem Gerät" (SMC-Muster).
 - Hero-Subtitle verliert „ohne Konto, direkt im Browser" (Botschaft steckt bereits in Pill und Banner).
 - i18n: DE + EN angepasst, Paritäts-Test grün.
 

@@ -9,6 +9,7 @@ export default function PresentationView() {
   const navigate = useNavigate();
   const scenes = useStoryboardStore((s) => s.scenes);
   const imageUrls = useStoryboardStore((s) => s.imageUrls);
+  const fieldDefinitions = useStoryboardStore((s) => s.fieldDefinitions);
   const [currentIndex, setCurrentIndex] = useState(0);
   const [isPlaying, setIsPlaying] = useState(false);
 
@@ -183,14 +184,16 @@ export default function PresentationView() {
               </div>
             )}
 
-            {/* Custom Fields */}
+            {/* Custom Fields — nur Felder mit aktiver Definition, mit Label. */}
             {currentScene.customFields &&
-              Object.entries(currentScene.customFields).map(([key, value]) => {
+              (fieldDefinitions ?? []).map((definition) => {
+                const value = currentScene.customFields?.[definition.key];
                 if (!value) return null;
-                // We could look up the label from fieldDefinitions, but for simplicity we'll just display the value
-                // In a real presentation, usually only visual/audio/notes are needed, but we'll show custom fields as a bonus
                 return (
-                  <div key={key}>
+                  <div key={definition.key}>
+                    <h3 className="mb-1 text-xs font-semibold tracking-wider text-slate-500 uppercase">
+                      {definition.label}
+                    </h3>
                     <p className="text-lg leading-relaxed text-slate-300">{value}</p>
                   </div>
                 );

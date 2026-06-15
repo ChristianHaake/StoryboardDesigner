@@ -2,7 +2,7 @@
 // Interpolation: i18next-Syntax {{name}}. Pluralisierung: *_one / *_other mit `count`.
 const de = {
   common: {
-    appTitle: 'StoryboardDesigner',
+    appTitle: 'Storyboard-Creator',
   },
   save: {
     saving: 'Speichern …',
@@ -101,7 +101,7 @@ const de = {
     fontXlarge: 'Sehr groß',
   },
   brand: {
-    name: 'StoryboardDesigner',
+    name: 'Storyboard-Creator',
     tagline: 'Workshop für digitale Formate',
     localPill: 'Inhalte bleiben lokal',
     eduNotice:
@@ -301,7 +301,7 @@ const de = {
     privacy: 'Datenschutz',
     imprint: 'Impressum',
     repository: 'Quellcode',
-    localNote: 'StoryboardDesigner · Inhalte bleiben auf deinem Gerät',
+    localNote: 'Storyboard-Creator · Inhalte bleiben auf deinem Gerät',
   },
   fields: {
     labelEmpty: 'Bitte eine Feldbezeichnung eingeben.',
@@ -329,7 +329,7 @@ const de = {
     exportFileTooLarge: 'Projektdatei ist zu groß (max. 100 MB).',
     versionMissing: 'Versionsangabe fehlt.',
     versionInvalid: 'Ungültige Projektversion.',
-    versionTooNew: 'Diese Datei wurde mit einer neueren Version des StoryboardDesigners erstellt.',
+    versionTooNew: 'Diese Datei wurde mit einer neueren Version des Storyboard-Creators erstellt.',
     incompleteStructure: 'Projektstruktur unvollständig.',
     codecTooManyScenes: 'Zu viele Szenen (max. {{max}}).',
     sceneCorrupt: 'Szene {{n}} ist beschädigt.',

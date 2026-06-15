@@ -1,8 +1,8 @@
-# About StoryboardDesigner
+# About Storyboard-Creator
 
 ## Purpose
 
-StoryboardDesigner is an educational web app that lets students plan storyboards
+Storyboard-Creator is an educational web app that lets students plan storyboards
 for film, photo story or speech. It is built following the haak3 web app
 standard for classroom-ready, privacy-conscious tools.
 
@@ -20,7 +20,7 @@ high-contrast mode, adjustable font size, and image descriptions (alt text).
 ## Open source
 
 The source code is published at
-<https://github.com/ChristianHaake/StoryboardDesigner>.
+<https://github.com/ChristianHaake/Storyboard-Creator>.
 
 The software is licensed under the GNU General Public License v3.0 only
 (GPL-3.0-only).

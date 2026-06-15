@@ -73,7 +73,7 @@ App ─ Autosave-Wiring (Effect), beforeunload, html-lang + document.title (i18n
 
 ## Design-System (SMC-Familie)
 
-StoryboardDesigner folgt der visuellen Sprache von smc.haak3.de:
+Storyboard-Creator folgt der visuellen Sprache von smc.haak3.de:
 
 | Token         | Wert                                 |
 | ------------- | ------------------------------------ |
