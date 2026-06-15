@@ -2,7 +2,16 @@ import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { useStoryboardStore } from '../../app/store/useStoryboardStore';
-import { ChevronLeft, ChevronRight, X, LayoutTemplate, Play, Pause, MessageSquare, Video } from 'lucide-react';
+import {
+  ChevronLeft,
+  ChevronRight,
+  X,
+  LayoutTemplate,
+  Play,
+  Pause,
+  MessageSquare,
+  Video,
+} from 'lucide-react';
 
 export default function PresentationView() {
   const { t } = useTranslation();

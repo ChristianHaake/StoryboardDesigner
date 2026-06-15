@@ -57,7 +57,9 @@ export function buildStarterProject(format: StarterFormat): StoryboardProject {
   const metaData: MetaData = {
     id: generateId(),
     projectName: t(`templates.${format}Name`),
-    groupMembers: [], topic: '', complexity: 'standard',
+    groupMembers: [],
+    topic: '',
+    complexity: 'standard',
     subject: t(`templates.${format}Subject`, { defaultValue: '' }),
     productType: format,
     date: '',

@@ -34,9 +34,15 @@ describe('decodeProject', () => {
             id: 'scene-1',
             orderIndex: 0,
             imageFileName: null,
-            
-            title: '', action: '', text: '', audio: { dialogue: '', soundEffects: '', music: '' }, camera: { shotSize: '', angle: '', movement: '' },  location: '', materials: [],    
-            
+
+            title: '',
+            action: '',
+            text: '',
+            audio: { dialogue: '', soundEffects: '', music: '' },
+            camera: { shotSize: '', angle: '', movement: '' },
+            location: '',
+            materials: [],
+
             customFields: { camera: 'Totale' },
           },
         ],
@@ -80,18 +86,30 @@ describe('decodeProject', () => {
             id: 'scene-1',
             orderIndex: 0,
             imageFileName: 'img-1.jpg',
-            
-            title: '', action: '', text: '', audio: { dialogue: '', soundEffects: '', music: '' }, camera: { shotSize: '', angle: '', movement: '' },  location: '', materials: [],    
-            
+
+            title: '',
+            action: '',
+            text: '',
+            audio: { dialogue: '', soundEffects: '', music: '' },
+            camera: { shotSize: '', angle: '', movement: '' },
+            location: '',
+            materials: [],
+
             altText: 'Nahaufnahme einer Pflanze',
           },
           {
             id: 'scene-2',
             orderIndex: 1,
             imageFileName: null,
-            
-            title: '', action: '', text: '', audio: { dialogue: '', soundEffects: '', music: '' }, camera: { shotSize: '', angle: '', movement: '' },  location: '', materials: [],    
-            
+
+            title: '',
+            action: '',
+            text: '',
+            audio: { dialogue: '', soundEffects: '', music: '' },
+            camera: { shotSize: '', angle: '', movement: '' },
+            location: '',
+            materials: [],
+
             altText: '',
           },
         ],
@@ -111,9 +129,15 @@ describe('decodeProject', () => {
             id: 'scene-1',
             orderIndex: 0,
             imageFileName: null,
-            
-            title: '', action: '', text: '', audio: { dialogue: '', soundEffects: '', music: '' }, camera: { shotSize: '', angle: '', movement: '' },  location: '', materials: [],    
-            
+
+            title: '',
+            action: '',
+            text: '',
+            audio: { dialogue: '', soundEffects: '', music: '' },
+            camera: { shotSize: '', angle: '', movement: '' },
+            location: '',
+            materials: [],
+
             comments: [
               { id: 'c1', text: 'Gut!', done: true, createdAt: '2026-06-13T10:00:00Z' },
               { id: 'c2', text: '   ', done: false }, // leer → verworfen
@@ -146,17 +170,29 @@ describe('decodeProject', () => {
             id: 'scene-1',
             orderIndex: 0,
             imageFileName: null,
-            
-            title: '', action: '', text: '', audio: { dialogue: '', soundEffects: '', music: '' }, camera: { shotSize: '', angle: '', movement: '' }, location: '', materials: [],    
+
+            title: '',
+            action: '',
+            text: '',
+            audio: { dialogue: '', soundEffects: '', music: '' },
+            camera: { shotSize: '', angle: '', movement: '' },
+            location: '',
+            materials: [],
             imageFit: 'contain',
           },
           {
             id: 'scene-2',
             orderIndex: 1,
             imageFileName: null,
-            
-            title: '', action: '', text: '', audio: { dialogue: '', soundEffects: '', music: '' }, camera: { shotSize: '', angle: '', movement: '' }, location: '', materials: [],    
-            
+
+            title: '',
+            action: '',
+            text: '',
+            audio: { dialogue: '', soundEffects: '', music: '' },
+            camera: { shotSize: '', angle: '', movement: '' },
+            location: '',
+            materials: [],
+
             // missing v1.5 fields should fallback to defaults
           },
         ],
@@ -190,9 +226,14 @@ describe('decodeProject', () => {
       id: 'duplicate',
       orderIndex: 0,
       imageFileName: null,
-      
-      title: '', action: '', text: '', audio: { dialogue: '', soundEffects: '', music: '' }, camera: { shotSize: '', angle: '', movement: '' },  location: '', materials: [],    
-      
+
+      title: '',
+      action: '',
+      text: '',
+      audio: { dialogue: '', soundEffects: '', music: '' },
+      camera: { shotSize: '', angle: '', movement: '' },
+      location: '',
+      materials: [],
     };
     const decoded = decodeProject(project({ scenes: [scene, { ...scene, orderIndex: 1 }] }));
 
@@ -205,9 +246,14 @@ describe('decodeProject', () => {
       id: `scene-${index}`,
       orderIndex: index,
       imageFileName: null,
-      
-      title: '', action: '', text: '', audio: { dialogue: '', soundEffects: '', music: '' }, camera: { shotSize: '', angle: '', movement: '' },  location: '', materials: [],    
-      
+
+      title: '',
+      action: '',
+      text: '',
+      audio: { dialogue: '', soundEffects: '', music: '' },
+      camera: { shotSize: '', angle: '', movement: '' },
+      location: '',
+      materials: [],
     }));
 
     expect(() => decodeProject(project({ scenes }))).toThrow(

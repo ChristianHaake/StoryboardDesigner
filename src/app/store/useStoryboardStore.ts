@@ -64,7 +64,7 @@ const initialPrePlanning: PrePlanning = {
 
 function renumber(scenes: Scene[]): Scene[] {
   return scenes.map((scene, index) =>
-    scene.orderIndex === index ? scene : { ...scene, orderIndex: index }
+    scene.orderIndex === index ? scene : { ...scene, orderIndex: index },
   );
 }
 

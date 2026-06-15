@@ -9,8 +9,10 @@ export default function SceneNavigator() {
   const { sceneIds, done } = useStoryboardStore(
     useShallow((s) => ({
       sceneIds: s.scenes.map((scene) => scene.id),
-      done: s.scenes.filter((scene) => scene.text.trim() || scene.action.trim() || scene.imageFileName).length,
-    }))
+      done: s.scenes.filter(
+        (scene) => scene.text.trim() || scene.action.trim() || scene.imageFileName,
+      ).length,
+    })),
   );
 
   if (sceneIds.length < 2) return null;

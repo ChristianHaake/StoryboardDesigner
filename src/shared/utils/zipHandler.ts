@@ -133,7 +133,6 @@ export async function importProject(
 
   const bytes = new Uint8Array(await file.arrayBuffer());
   const centralEntries = readCentralDirectory(bytes);
-  let totalImagesSize = 0;
 
   for (const entry of centralEntries) {
     if (entry.name === 'data.json') {
@@ -144,7 +143,6 @@ export async function importProject(
       if (entry.uncompressedSize > MAX_IMAGE_BYTES) {
         throw new ImportError(i18n.t('errors.imagesTooLargeImport', { file: entry.name }));
       }
-      totalImagesSize += entry.uncompressedSize;
     }
   }
 
@@ -164,7 +162,7 @@ export async function importProject(
         return true;
       },
     });
-  } catch (e: any) {
+  } catch (e: unknown) {
     if (e instanceof ImportError) throw e;
     throw new ImportError(i18n.t('errors.notStoryboard'));
   }

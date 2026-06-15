@@ -60,7 +60,7 @@ const FORMAT_TYPES: MetaData['productType'][] = [
   'comic',
   'socialMediaClip',
   'roleplay',
-  'custom'
+  'custom',
 ];
 
 function validateVersion(value: unknown): string {
@@ -147,14 +147,14 @@ export function decodeProject(raw: unknown): StoryboardProject {
       action: str(scene.action || scene.directorNotes),
       text: str(scene.text || scene.audioText),
       audio: {
-        dialogue: str((scene.audio as any)?.dialogue),
-        soundEffects: str((scene.audio as any)?.soundEffects),
-        music: str((scene.audio as any)?.music),
+        dialogue: str((scene.audio as Record<string, unknown> | undefined)?.dialogue),
+        soundEffects: str((scene.audio as Record<string, unknown> | undefined)?.soundEffects),
+        music: str((scene.audio as Record<string, unknown> | undefined)?.music),
       },
       camera: {
-        shotSize: str((scene.camera as any)?.shotSize),
-        angle: str((scene.camera as any)?.angle),
-        movement: str((scene.camera as any)?.movement),
+        shotSize: str((scene.camera as Record<string, unknown> | undefined)?.shotSize),
+        angle: str((scene.camera as Record<string, unknown> | undefined)?.angle),
+        movement: str((scene.camera as Record<string, unknown> | undefined)?.movement),
       },
       title: str(scene.title),
       location: str(scene.location),
@@ -172,11 +172,19 @@ export function decodeProject(raw: unknown): StoryboardProject {
     metaData: {
       id: str(md.id) || generateId(),
       projectName: str(md.projectName),
-      groupMembers: Array.isArray(md.groupMembers) ? md.groupMembers.map((x) => str(x)) : typeof md.participants === 'string' ? [md.participants] : [],
+      groupMembers: Array.isArray(md.groupMembers)
+        ? md.groupMembers.map((x) => str(x))
+        : typeof md.participants === 'string'
+          ? [md.participants]
+          : [],
       topic: str(md.topic),
       subject: str(md.subject),
       productType,
-      complexity: typeof md.complexity === 'string' && ['simple', 'standard', 'advanced'].includes(md.complexity) ? md.complexity as any : 'standard',
+      complexity:
+        typeof md.complexity === 'string' &&
+        ['simple', 'standard', 'advanced'].includes(md.complexity)
+          ? (md.complexity as import('./types').Complexity)
+          : 'standard',
       date: str(md.date),
     },
     prePlanning: {

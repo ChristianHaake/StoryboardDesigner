@@ -44,9 +44,7 @@ export default function ReviewScreen() {
       </div>
 
       <div className="mb-10 text-center">
-        <h1 className="text-3xl font-bold tracking-tight text-slate-900">
-          Projekt prüfen
-        </h1>
+        <h1 className="text-3xl font-bold tracking-tight text-slate-900">Projekt prüfen</h1>
         <p className="mt-2 text-slate-500">
           Schritt 4 von 5 • Überprüfe dein Storyboard auf Vollständigkeit.
         </p>
@@ -99,7 +97,11 @@ export default function ReviewScreen() {
 
       <div className="flex items-center justify-between border-t border-slate-200 pt-8">
         <p className="text-sm text-slate-500">
-          {scenes.length === 0 ? 'Keine Szenen vorhanden' : allComplete ? 'Alles sieht gut aus!' : 'Einige Szenen sind noch leer.'}
+          {scenes.length === 0
+            ? 'Keine Szenen vorhanden'
+            : allComplete
+              ? 'Alles sieht gut aus!'
+              : 'Einige Szenen sind noch leer.'}
         </p>
         <button
           onClick={() => setWizardStep('export')}

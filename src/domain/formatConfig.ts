@@ -10,20 +10,80 @@ export interface FormatFeatures {
 
 export const FORMAT_FEATURES: Record<ProductType, FormatFeatures> = {
   // Video-based formats
-  shortFilm: { hasImage: true, hasCameraSize: true, hasCameraMovement: true, hasAudioEffects: true, hasLocation: true },
-  explainerVideo: { hasImage: true, hasCameraSize: true, hasCameraMovement: true, hasAudioEffects: true, hasLocation: true },
-  socialMediaClip: { hasImage: true, hasCameraSize: true, hasCameraMovement: true, hasAudioEffects: true, hasLocation: true },
-  stopMotion: { hasImage: true, hasCameraSize: true, hasCameraMovement: true, hasAudioEffects: true, hasLocation: true },
-  custom: { hasImage: true, hasCameraSize: true, hasCameraMovement: true, hasAudioEffects: true, hasLocation: true },
-  
+  shortFilm: {
+    hasImage: true,
+    hasCameraSize: true,
+    hasCameraMovement: true,
+    hasAudioEffects: true,
+    hasLocation: true,
+  },
+  explainerVideo: {
+    hasImage: true,
+    hasCameraSize: true,
+    hasCameraMovement: true,
+    hasAudioEffects: true,
+    hasLocation: true,
+  },
+  socialMediaClip: {
+    hasImage: true,
+    hasCameraSize: true,
+    hasCameraMovement: true,
+    hasAudioEffects: true,
+    hasLocation: true,
+  },
+  stopMotion: {
+    hasImage: true,
+    hasCameraSize: true,
+    hasCameraMovement: true,
+    hasAudioEffects: true,
+    hasLocation: true,
+  },
+  custom: {
+    hasImage: true,
+    hasCameraSize: true,
+    hasCameraMovement: true,
+    hasAudioEffects: true,
+    hasLocation: true,
+  },
+
   // Static visual formats
-  fotostory: { hasImage: true, hasCameraSize: true, hasCameraMovement: false, hasAudioEffects: false, hasLocation: true },
-  comic: { hasImage: true, hasCameraSize: true, hasCameraMovement: false, hasAudioEffects: false, hasLocation: true },
-  
+  fotostory: {
+    hasImage: true,
+    hasCameraSize: true,
+    hasCameraMovement: false,
+    hasAudioEffects: false,
+    hasLocation: true,
+  },
+  comic: {
+    hasImage: true,
+    hasCameraSize: true,
+    hasCameraMovement: false,
+    hasAudioEffects: false,
+    hasLocation: true,
+  },
+
   // Audio-only formats
-  podcast: { hasImage: false, hasCameraSize: false, hasCameraMovement: false, hasAudioEffects: true, hasLocation: false },
-  audioPlay: { hasImage: false, hasCameraSize: false, hasCameraMovement: false, hasAudioEffects: true, hasLocation: false },
-  
+  podcast: {
+    hasImage: false,
+    hasCameraSize: false,
+    hasCameraMovement: false,
+    hasAudioEffects: true,
+    hasLocation: false,
+  },
+  audioPlay: {
+    hasImage: false,
+    hasCameraSize: false,
+    hasCameraMovement: false,
+    hasAudioEffects: true,
+    hasLocation: false,
+  },
+
   // Stage formats
-  roleplay: { hasImage: true, hasCameraSize: false, hasCameraMovement: false, hasAudioEffects: true, hasLocation: true },
+  roleplay: {
+    hasImage: true,
+    hasCameraSize: false,
+    hasCameraMovement: false,
+    hasAudioEffects: true,
+    hasLocation: true,
+  },
 };

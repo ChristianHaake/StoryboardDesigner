@@ -24,7 +24,7 @@ interface SceneCardProps {
 
 function SceneCard({ sceneId }: SceneCardProps) {
   const { t } = useTranslation();
-  
+
   const scene = useStoryboardStore((s) => s.scenes.find((x) => x.id === sceneId));
   const orderIndex = useStoryboardStore((s) => s.scenes.findIndex((x) => x.id === sceneId));
   const n = orderIndex + 1;
@@ -53,15 +53,15 @@ function SceneCard({ sceneId }: SceneCardProps) {
   const [isTooTall, setIsTooTall] = useState(false);
   const cardRef = useRef<HTMLElement | null>(null);
 
-  const [localMaterials, setLocalMaterials] = useState(() => 
-    scene && Array.isArray(scene.materials) ? scene.materials.join(', ') : ''
+  const [localMaterials, setLocalMaterials] = useState(() =>
+    scene && Array.isArray(scene.materials) ? scene.materials.join(', ') : '',
   );
+  const [prevMaterials, setPrevMaterials] = useState(scene?.materials);
 
-  useEffect(() => {
-    if (scene && Array.isArray(scene.materials)) {
-      setLocalMaterials(scene.materials.join(', '));
-    }
-  }, [scene?.materials]);
+  if (scene?.materials !== prevMaterials) {
+    setPrevMaterials(scene?.materials);
+    setLocalMaterials(scene && Array.isArray(scene.materials) ? scene.materials.join(', ') : '');
+  }
 
   useEffect(() => {
     if (!cardRef.current) return;
@@ -189,98 +189,98 @@ function SceneCard({ sceneId }: SceneCardProps) {
           <div className="flex gap-5 max-sm:flex-col max-sm:gap-4">
             {/* Medien-Feld */}
             {features.hasImage && (
-            <div
-              className={`relative w-72 shrink-0 max-sm:w-full ${imageUrl ? '' : 'print:hidden'}`}
-            >
-              <div className="mb-1.5 flex items-center justify-between">
-                <span className="text-sm font-medium text-slate-700 print:text-xs">
-                  {t('scene.imageLabel', 'Szenenbild')}
-                </span>
-              </div>
-              {imageUrl ? (
-                <div className="relative group">
-                  <label
-                    htmlFor={`image-upload-${scene.id}`}
-                    aria-label={t('scene.imageReplace', { n })}
-                    className="block w-full cursor-pointer overflow-hidden rounded-lg focus-within:ring-2 focus-within:ring-blue-500 focus-within:ring-offset-2"
-                  >
-                    <img
-                      src={imageUrl}
-                      alt={scene.altText?.trim() ? scene.altText : t('scene.imageAlt', { n })}
-                      className={`aspect-video w-full max-sm:aspect-video print:aspect-video print:rounded-none ${
-                        scene.imageFit === 'contain'
-                          ? 'object-contain bg-slate-900'
-                          : 'object-cover'
-                      }`}
-                    />
-                  </label>
-                  <div className="absolute bottom-2 left-2 flex gap-1 print:hidden opacity-0 transition-opacity group-hover:opacity-100 focus-within:opacity-100">
+              <div
+                className={`relative w-72 shrink-0 max-sm:w-full ${imageUrl ? '' : 'print:hidden'}`}
+              >
+                <div className="mb-1.5 flex items-center justify-between">
+                  <span className="text-sm font-medium text-slate-700 print:text-xs">
+                    {t('scene.imageLabel', 'Szenenbild')}
+                  </span>
+                </div>
+                {imageUrl ? (
+                  <div className="relative group">
+                    <label
+                      htmlFor={`image-upload-${scene.id}`}
+                      aria-label={t('scene.imageReplace', { n })}
+                      className="block w-full cursor-pointer overflow-hidden rounded-lg focus-within:ring-2 focus-within:ring-blue-500 focus-within:ring-offset-2"
+                    >
+                      <img
+                        src={imageUrl}
+                        alt={scene.altText?.trim() ? scene.altText : t('scene.imageAlt', { n })}
+                        className={`aspect-video w-full max-sm:aspect-video print:aspect-video print:rounded-none ${
+                          scene.imageFit === 'contain'
+                            ? 'object-contain bg-slate-900'
+                            : 'object-cover'
+                        }`}
+                      />
+                    </label>
+                    <div className="absolute bottom-2 left-2 flex gap-1 print:hidden opacity-0 transition-opacity group-hover:opacity-100 focus-within:opacity-100">
+                      <button
+                        type="button"
+                        onClick={() =>
+                          updateScene(scene.id, {
+                            imageFit: scene.imageFit === 'contain' ? 'cover' : 'contain',
+                          })
+                        }
+                        className="inline-flex h-7 items-center justify-center rounded bg-slate-900/70 px-2 text-[10px] font-medium text-white backdrop-blur-md transition-colors hover:bg-slate-900"
+                      >
+                        {scene.imageFit === 'contain'
+                          ? t('scene.fitCover', 'Füllen')
+                          : t('scene.fitContain', 'Einpassen')}
+                      </button>
+                    </div>
                     <button
                       type="button"
-                      onClick={() =>
-                        updateScene(scene.id, {
-                          imageFit: scene.imageFit === 'contain' ? 'cover' : 'contain',
-                        })
-                      }
-                      className="inline-flex h-7 items-center justify-center rounded bg-slate-900/70 px-2 text-[10px] font-medium text-white backdrop-blur-md transition-colors hover:bg-slate-900"
+                      onClick={() => removeSceneImage(scene.id)}
+                      aria-label={t('scene.imageRemove', { n })}
+                      title={t('scene.imageRemove', { n })}
+                      className="absolute top-2 right-2 inline-flex size-11 items-center justify-center rounded-lg bg-white/95 text-slate-700 shadow-md transition-colors hover:bg-red-50 hover:text-red-700 print:hidden"
                     >
-                      {scene.imageFit === 'contain'
-                        ? t('scene.fitCover', 'Füllen')
-                        : t('scene.fitContain', 'Einpassen')}
+                      <X className="w-4 h-4" strokeWidth={2} aria-hidden="true" />
                     </button>
                   </div>
-                  <button
-                    type="button"
-                    onClick={() => removeSceneImage(scene.id)}
-                    aria-label={t('scene.imageRemove', { n })}
-                    title={t('scene.imageRemove', { n })}
-                    className="absolute top-2 right-2 inline-flex size-11 items-center justify-center rounded-lg bg-white/95 text-slate-700 shadow-md transition-colors hover:bg-red-50 hover:text-red-700 print:hidden"
+                ) : (
+                  <label
+                    htmlFor={`image-upload-${scene.id}`}
+                    className="flex flex-col aspect-video w-full cursor-pointer items-center justify-center rounded-lg border border-dashed border-slate-300 bg-slate-50 p-4 text-center text-sm font-medium text-slate-500 transition-colors hover:border-blue-400 hover:bg-blue-50 hover:text-blue-700 focus-within:border-blue-400 focus-within:ring-2 focus-within:ring-blue-500 focus-within:ring-offset-2 max-sm:aspect-video print:aspect-video print:border-slate-300"
                   >
-                    <X className="w-4 h-4" strokeWidth={2} aria-hidden="true" />
-                  </button>
-                </div>
-              ) : (
-                <label
-                  htmlFor={`image-upload-${scene.id}`}
-                  className="flex flex-col aspect-video w-full cursor-pointer items-center justify-center rounded-lg border border-dashed border-slate-300 bg-slate-50 p-4 text-center text-sm font-medium text-slate-500 transition-colors hover:border-blue-400 hover:bg-blue-50 hover:text-blue-700 focus-within:border-blue-400 focus-within:ring-2 focus-within:ring-blue-500 focus-within:ring-offset-2 max-sm:aspect-video print:aspect-video print:border-slate-300"
-                >
-                  <span className="print:hidden">
-                    {imageError ? (
-                      <span className="text-red-600">{t('scene.imageError')}</span>
-                    ) : (
-                      <>
-                        <span className="mb-1 block font-semibold text-slate-700">
-                          {t('scene.imageAdd', 'Bild hinzufügen')}
-                        </span>
-                        <span className="text-xs font-normal text-slate-500">
-                          {t('scene.imageInstruction', 'Klicken oder Datei ziehen')}
-                        </span>
-                      </>
-                    )}
-                  </span>
-                </label>
-              )}
-              <input
-                id={`image-upload-${scene.id}`}
-                type="file"
-                accept="image/*"
-                className="sr-only"
-                onChange={handleFileChange}
-              />
-              {imageUrl && (
-                <div className="mt-2 print:hidden">
-                  <label className={labelClass} htmlFor={`alt-${scene.id}`}>
-                    {t('scene.altLabel')}
+                    <span className="print:hidden">
+                      {imageError ? (
+                        <span className="text-red-600">{t('scene.imageError')}</span>
+                      ) : (
+                        <>
+                          <span className="mb-1 block font-semibold text-slate-700">
+                            {t('scene.imageAdd', 'Bild hinzufügen')}
+                          </span>
+                          <span className="text-xs font-normal text-slate-500">
+                            {t('scene.imageInstruction', 'Klicken oder Datei ziehen')}
+                          </span>
+                        </>
+                      )}
+                    </span>
                   </label>
-                  <AutoResizeTextarea
-                    id={`alt-${scene.id}`}
-                    placeholder={t('scene.altPlaceholder')}
-                    value={scene.altText ?? ''}
-                    onChange={(e) => updateScene(scene.id, { altText: e.target.value })}
-                  />
-                </div>
-              )}
-            </div>
+                )}
+                <input
+                  id={`image-upload-${scene.id}`}
+                  type="file"
+                  accept="image/*"
+                  className="sr-only"
+                  onChange={handleFileChange}
+                />
+                {imageUrl && (
+                  <div className="mt-2 print:hidden">
+                    <label className={labelClass} htmlFor={`alt-${scene.id}`}>
+                      {t('scene.altLabel')}
+                    </label>
+                    <AutoResizeTextarea
+                      id={`alt-${scene.id}`}
+                      placeholder={t('scene.altPlaceholder')}
+                      value={scene.altText ?? ''}
+                      onChange={(e) => updateScene(scene.id, { altText: e.target.value })}
+                    />
+                  </div>
+                )}
+              </div>
             )}
 
             <div className="min-w-0 flex-1 space-y-3.5">
@@ -320,35 +320,43 @@ function SceneCard({ sceneId }: SceneCardProps) {
                         id={`dialogue-${scene.id}`}
                         placeholder="Wer spricht mit wem?"
                         value={scene.audio?.dialogue ?? ''}
-                        onChange={(e) => updateScene(scene.id, { audio: { ...scene.audio, dialogue: e.target.value } })}
+                        onChange={(e) =>
+                          updateScene(scene.id, {
+                            audio: { ...scene.audio, dialogue: e.target.value },
+                          })
+                        }
                       />
                     </div>
                     {features.hasAudioEffects && (
-                    <div>
-                      <label className={labelClass} htmlFor={`soundEffects-${scene.id}`}>
-                        Soundeffekte / Musik
-                      </label>
-                      <AutoResizeTextarea
-                        id={`soundEffects-${scene.id}`}
-                        placeholder="Geräusche oder Musik"
-                        value={scene.audio?.soundEffects ?? ''}
-                        onChange={(e) => updateScene(scene.id, { audio: { ...scene.audio, soundEffects: e.target.value } })}
-                      />
-                    </div>
+                      <div>
+                        <label className={labelClass} htmlFor={`soundEffects-${scene.id}`}>
+                          Soundeffekte / Musik
+                        </label>
+                        <AutoResizeTextarea
+                          id={`soundEffects-${scene.id}`}
+                          placeholder="Geräusche oder Musik"
+                          value={scene.audio?.soundEffects ?? ''}
+                          onChange={(e) =>
+                            updateScene(scene.id, {
+                              audio: { ...scene.audio, soundEffects: e.target.value },
+                            })
+                          }
+                        />
+                      </div>
                     )}
                   </div>
                   {features.hasLocation && (
-                  <div>
-                    <label className={labelClass} htmlFor={`location-${scene.id}`}>
-                      Ort / Location
-                    </label>
-                    <AutoResizeTextarea
-                      id={`location-${scene.id}`}
-                      placeholder="Wo findet die Szene statt?"
-                      value={scene.location ?? ''}
-                      onChange={(e) => updateScene(scene.id, { location: e.target.value })}
-                    />
-                  </div>
+                    <div>
+                      <label className={labelClass} htmlFor={`location-${scene.id}`}>
+                        Ort / Location
+                      </label>
+                      <AutoResizeTextarea
+                        id={`location-${scene.id}`}
+                        placeholder="Wo findet die Szene statt?"
+                        value={scene.location ?? ''}
+                        onChange={(e) => updateScene(scene.id, { location: e.target.value })}
+                      />
+                    </div>
                   )}
                 </>
               )}
@@ -358,30 +366,38 @@ function SceneCard({ sceneId }: SceneCardProps) {
                 <>
                   <div className="grid grid-cols-2 gap-4">
                     {features.hasCameraSize && (
-                    <div>
-                      <label className={labelClass} htmlFor={`camera-size-${scene.id}`}>
-                        Einstellungsgröße
-                      </label>
-                      <AutoResizeTextarea
-                        id={`camera-size-${scene.id}`}
-                        placeholder="z.B. Halbnah, Totale"
-                        value={scene.camera?.shotSize ?? ''}
-                        onChange={(e) => updateScene(scene.id, { camera: { ...scene.camera, shotSize: e.target.value } })}
-                      />
-                    </div>
+                      <div>
+                        <label className={labelClass} htmlFor={`camera-size-${scene.id}`}>
+                          Einstellungsgröße
+                        </label>
+                        <AutoResizeTextarea
+                          id={`camera-size-${scene.id}`}
+                          placeholder="z.B. Halbnah, Totale"
+                          value={scene.camera?.shotSize ?? ''}
+                          onChange={(e) =>
+                            updateScene(scene.id, {
+                              camera: { ...scene.camera, shotSize: e.target.value },
+                            })
+                          }
+                        />
+                      </div>
                     )}
                     {features.hasCameraMovement && (
-                    <div>
-                      <label className={labelClass} htmlFor={`camera-movement-${scene.id}`}>
-                        Kamerabewegung
-                      </label>
-                      <AutoResizeTextarea
-                        id={`camera-movement-${scene.id}`}
-                        placeholder="z.B. Schwenk, Statisch"
-                        value={scene.camera?.movement ?? ''}
-                        onChange={(e) => updateScene(scene.id, { camera: { ...scene.camera, movement: e.target.value } })}
-                      />
-                    </div>
+                      <div>
+                        <label className={labelClass} htmlFor={`camera-movement-${scene.id}`}>
+                          Kamerabewegung
+                        </label>
+                        <AutoResizeTextarea
+                          id={`camera-movement-${scene.id}`}
+                          placeholder="z.B. Schwenk, Statisch"
+                          value={scene.camera?.movement ?? ''}
+                          onChange={(e) =>
+                            updateScene(scene.id, {
+                              camera: { ...scene.camera, movement: e.target.value },
+                            })
+                          }
+                        />
+                      </div>
                     )}
                   </div>
                   <div>
@@ -393,9 +409,14 @@ function SceneCard({ sceneId }: SceneCardProps) {
                       placeholder="Was wird für das Bild benötigt?"
                       value={localMaterials}
                       onChange={(e) => setLocalMaterials(e.target.value)}
-                      onBlur={() => updateScene(scene.id, { 
-                        materials: localMaterials.split(',').map(s => s.trim()).filter(Boolean) 
-                      })}
+                      onBlur={() =>
+                        updateScene(scene.id, {
+                          materials: localMaterials
+                            .split(',')
+                            .map((s) => s.trim())
+                            .filter(Boolean),
+                        })
+                      }
                     />
                   </div>
                 </>

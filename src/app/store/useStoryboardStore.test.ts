@@ -7,7 +7,9 @@ beforeEach(() => {
     metaData: {
       id: 'project-1',
       projectName: '',
-      groupMembers: [], topic: '', complexity: 'standard',
+      groupMembers: [],
+      topic: '',
+      complexity: 'standard',
       subject: '',
       productType: 'shortFilm',
       date: '2026-06-12',
@@ -51,9 +53,14 @@ describe('useStoryboardStore', () => {
       id: 'scene',
       orderIndex: 0,
       imageFileName: null,
-      
-      title: '', action: '', text: '', audio: { dialogue: '', soundEffects: '', music: '' }, camera: { shotSize: '', angle: '', movement: '' },  location: '', materials: [],    
-      
+
+      title: '',
+      action: '',
+      text: '',
+      audio: { dialogue: '', soundEffects: '', music: '' },
+      camera: { shotSize: '', angle: '', movement: '' },
+      location: '',
+      materials: [],
     };
     useStoryboardStore.setState({
       scenes: Array.from({ length: MAX_SCENES }, (_, index) => ({
@@ -73,9 +80,14 @@ describe('useStoryboardStore', () => {
       id: 'deleted',
       orderIndex: 0,
       imageFileName: null,
-      
-      title: '', action: '', text: '', audio: { dialogue: '', soundEffects: '', music: '' }, camera: { shotSize: '', angle: '', movement: '' },  location: '', materials: [],    
-      
+
+      title: '',
+      action: '',
+      text: '',
+      audio: { dialogue: '', soundEffects: '', music: '' },
+      camera: { shotSize: '', angle: '', movement: '' },
+      location: '',
+      materials: [],
     };
     useStoryboardStore.setState({
       scenes: Array.from({ length: MAX_SCENES }, (_, index) => ({
@@ -130,9 +142,15 @@ describe('useStoryboardStore', () => {
           id: 'scene-1',
           orderIndex: 0,
           imageFileName: null,
-          
-          title: '', action: '', text: '', audio: { dialogue: '', soundEffects: '', music: '' }, camera: { shotSize: '', angle: '', movement: '' },  location: '', materials: [],    
-          
+
+          title: '',
+          action: '',
+          text: '',
+          audio: { dialogue: '', soundEffects: '', music: '' },
+          camera: { shotSize: '', angle: '', movement: '' },
+          location: '',
+          materials: [],
+
           customFields: { 'custom:light': 'Warm' },
         },
       ],
@@ -169,7 +187,9 @@ describe('useStoryboardStore', () => {
     const key = 'custom:shot';
 
     // Rename mit Beschreibung → bleibt erhalten/aktualisiert.
-    expect(useStoryboardStore.getState().renameCustomField(key, 'Kamera', 'Wie nah dran?')).toBeNull();
+    expect(
+      useStoryboardStore.getState().renameCustomField(key, 'Kamera', 'Wie nah dran?'),
+    ).toBeNull();
     expect(useStoryboardStore.getState().fieldDefinitions?.[0]?.description).toBe('Wie nah dran?');
   });
 
@@ -181,9 +201,15 @@ describe('useStoryboardStore', () => {
           id: 'scene-1',
           orderIndex: 0,
           imageFileName: null,
-          
-          title: '', action: '', text: '', audio: { dialogue: '', soundEffects: '', music: '' }, camera: { shotSize: '', angle: '', movement: '' },  location: '', materials: [],    
-          
+
+          title: '',
+          action: '',
+          text: '',
+          audio: { dialogue: '', soundEffects: '', music: '' },
+          camera: { shotSize: '', angle: '', movement: '' },
+          location: '',
+          materials: [],
+
           customFields: { 'custom:light': 'Warm', keep: 'Ja' },
         },
       ],
