@@ -29,7 +29,11 @@ export async function resizeImage(file: Blob, maxEdge: number = MAX_EDGE): Promi
 
     return await new Promise<Blob>((resolve, reject) => {
       canvas.toBlob(
-        (blob) => (blob ? resolve(blob) : reject(new Error('Bild konnte nicht kodiert werden'))),
+        (blob) => {
+          canvas.width = 0;
+          canvas.height = 0;
+          blob ? resolve(blob) : reject(new Error('Bild konnte nicht kodiert werden'));
+        },
         'image/jpeg',
         JPEG_QUALITY,
       );

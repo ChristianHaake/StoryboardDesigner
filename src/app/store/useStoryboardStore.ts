@@ -29,21 +29,15 @@ function createEmptyScene(orderIndex: number): Scene {
     orderIndex,
     imageFileName: null,
     title: '',
-    visualDescription: '',
     action: '',
     text: '',
     audio: { dialogue: '', soundEffects: '', music: '' },
     camera: { shotSize: '', angle: '', movement: '' },
     location: '',
     materials: [],
-    roles: [],
-    transition: '',
-    sources: [],
-    reflection: '',
     // v1.5-Defaults gleich setzen, damit der In-Memory-Stand dem decodeProject-
     // Ergebnis entspricht (sonst erst nach Export→Reimport gesetzt).
     imageFit: 'cover',
-    duration: 3,
   };
 }
 
@@ -69,7 +63,9 @@ const initialPrePlanning: PrePlanning = {
 };
 
 function renumber(scenes: Scene[]): Scene[] {
-  return scenes.map((scene, index) => ({ ...scene, orderIndex: index }));
+  return scenes.map((scene, index) =>
+    scene.orderIndex === index ? scene : { ...scene, orderIndex: index }
+  );
 }
 
 interface StoryboardState {

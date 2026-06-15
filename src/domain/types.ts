@@ -46,18 +46,12 @@ export interface Scene {
   orderIndex: number;
   imageFileName: string | null;
   title: string;
-  visualDescription: string;
   action: string;
   text: string;
   audio: SceneAudio;
   camera: SceneCamera;
-  duration?: number;
   location: string;
   materials: string[];
-  roles: string[];
-  transition: string;
-  sources: string[];
-  reflection: string;
   altText?: string;
   customFields?: Record<string, string>;
   comments?: SceneComment[];

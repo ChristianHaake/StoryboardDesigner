@@ -51,8 +51,8 @@ describe('useStoryboardStore', () => {
       id: 'scene',
       orderIndex: 0,
       imageFileName: null,
-      visualDescription: '',
-      title: '', action: '', text: '', audio: { dialogue: '', soundEffects: '', music: '' }, camera: { shotSize: '', angle: '', movement: '' }, duration: 0, location: '', materials: [], roles: [], transition: '', sources: [], reflection: '',
+      
+      title: '', action: '', text: '', audio: { dialogue: '', soundEffects: '', music: '' }, camera: { shotSize: '', angle: '', movement: '' },  location: '', materials: [],    
       
     };
     useStoryboardStore.setState({
@@ -73,8 +73,8 @@ describe('useStoryboardStore', () => {
       id: 'deleted',
       orderIndex: 0,
       imageFileName: null,
-      visualDescription: '',
-      title: '', action: '', text: '', audio: { dialogue: '', soundEffects: '', music: '' }, camera: { shotSize: '', angle: '', movement: '' }, duration: 0, location: '', materials: [], roles: [], transition: '', sources: [], reflection: '',
+      
+      title: '', action: '', text: '', audio: { dialogue: '', soundEffects: '', music: '' }, camera: { shotSize: '', angle: '', movement: '' },  location: '', materials: [],    
       
     };
     useStoryboardStore.setState({
@@ -130,8 +130,8 @@ describe('useStoryboardStore', () => {
           id: 'scene-1',
           orderIndex: 0,
           imageFileName: null,
-          visualDescription: '',
-          title: '', action: '', text: '', audio: { dialogue: '', soundEffects: '', music: '' }, camera: { shotSize: '', angle: '', movement: '' }, duration: 0, location: '', materials: [], roles: [], transition: '', sources: [], reflection: '',
+          
+          title: '', action: '', text: '', audio: { dialogue: '', soundEffects: '', music: '' }, camera: { shotSize: '', angle: '', movement: '' },  location: '', materials: [],    
           
           customFields: { 'custom:light': 'Warm' },
         },
@@ -181,8 +181,8 @@ describe('useStoryboardStore', () => {
           id: 'scene-1',
           orderIndex: 0,
           imageFileName: null,
-          visualDescription: '',
-          title: '', action: '', text: '', audio: { dialogue: '', soundEffects: '', music: '' }, camera: { shotSize: '', angle: '', movement: '' }, duration: 0, location: '', materials: [], roles: [], transition: '', sources: [], reflection: '',
+          
+          title: '', action: '', text: '', audio: { dialogue: '', soundEffects: '', music: '' }, camera: { shotSize: '', angle: '', movement: '' },  location: '', materials: [],    
           
           customFields: { 'custom:light': 'Warm', keep: 'Ja' },
         },

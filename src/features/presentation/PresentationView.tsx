@@ -19,7 +19,7 @@ export default function PresentationView() {
   useEffect(() => {
     let timer: number;
     if (isPlaying && currentScene) {
-      const durationMs = (currentScene.duration || 3) * 1000;
+      const durationMs = 3000;
       timer = window.setTimeout(() => {
         if (currentIndex < totalScenes - 1) {
           setCurrentIndex((prev) => prev + 1);
@@ -153,17 +153,6 @@ export default function PresentationView() {
         {/* Text Section */}
         <div className="flex shrink-0 flex-col items-center p-8 pt-4">
           <div className="w-full max-w-4xl space-y-4">
-            {currentScene.visualDescription && (
-              <div>
-                <h3 className="mb-1 text-xs font-semibold tracking-wider text-slate-500 uppercase">
-                  {t('scene.visual', 'Bild')}
-                </h3>
-                <p className="text-xl leading-relaxed text-slate-100">
-                  {currentScene.visualDescription}
-                </p>
-              </div>
-            )}
-
             {currentScene.text && (
               <div className="flex items-start gap-3 rounded-lg bg-slate-800/50 p-4 border border-slate-700/50">
                 <MessageSquare className="mt-1 h-5 w-5 shrink-0 text-slate-400" />

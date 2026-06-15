@@ -26,8 +26,8 @@ function project(): StoryboardProject {
         id: 'scene-1',
         orderIndex: 0,
         imageFileName: null,
-        visualDescription: '',
-        title: '', action: '', text: '', audio: { dialogue: '', soundEffects: '', music: '' }, camera: { shotSize: '', angle: '', movement: '' }, duration: 0, location: '', materials: [], roles: [], transition: '', sources: [], reflection: '',
+        
+        title: '', action: '', text: '', audio: { dialogue: '', soundEffects: '', music: '' }, camera: { shotSize: '', angle: '', movement: '' },  location: '', materials: [],    
         
       },
     ],
