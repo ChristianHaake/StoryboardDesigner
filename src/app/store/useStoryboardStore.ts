@@ -577,24 +577,28 @@ export const useStoryboardStore = create<StoryboardState>((set) => ({
         imageUrls: {},
         touched: false,
         hasContent: false,
+        activeStep: 'start',
         lastDeleted: null,
         errorMessage: null,
       };
     }),
 
   clearProject: () =>
-    set({
-      metaData: createInitialMetaData(),
-      prePlanning: initialPrePlanning,
-      fieldDefinitions: getFormatPreset('shortFilm'),
-      scenes: [],
-      images: {},
-      imageUrls: {},
-      touched: false,
-      hasContent: false,
-      activeStep: 'start',
-      isReady: false,
-      lastDeleted: null,
+    set((state) => {
+      Object.values(state.imageUrls).forEach((url) => URL.revokeObjectURL(url));
+      return {
+        metaData: createInitialMetaData(),
+        prePlanning: initialPrePlanning,
+        fieldDefinitions: getFormatPreset('shortFilm'),
+        scenes: [],
+        images: {},
+        imageUrls: {},
+        touched: false,
+        hasContent: false,
+        activeStep: 'start',
+        isReady: false,
+        lastDeleted: null,
+      };
     }),
 
   loadProject: (project, images = {}, markTouched = false) =>
@@ -613,6 +617,7 @@ export const useStoryboardStore = create<StoryboardState>((set) => ({
         imageUrls,
         touched: markTouched,
         hasContent: true,
+        activeStep: 'editor',
         lastDeleted: null,
       };
     }),

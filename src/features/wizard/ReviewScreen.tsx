@@ -1,17 +1,34 @@
 import { useStoryboardStore } from '../../app/store/useStoryboardStore';
 import { ArrowLeft, ArrowRight, CheckCircle2, AlertCircle } from 'lucide-react';
 import { buttonPrimary } from '../../shared/ui/fieldStyles';
+import type { Scene } from '../../domain/types';
 
 export default function ReviewScreen() {
   const setWizardStep = useStoryboardStore((s) => s.setWizardStep);
   const scenes = useStoryboardStore((s) => s.scenes);
   const imageUrls = useStoryboardStore((s) => s.imageUrls);
 
-  const getSceneStatus = (scene: any) => {
+  const productType = useStoryboardStore((s) => s.metaData.productType);
+
+  const getSceneStatus = (scene: Scene) => {
     const hasImage = !!imageUrls[scene.id];
-    const hasText = !!scene.text?.trim() || !!scene.action?.trim();
-    if (hasImage && hasText) return 'complete';
-    if (hasImage || hasText) return 'partial';
+    const hasContent =
+      !!scene.title?.trim() ||
+      !!scene.visualDescription?.trim() ||
+      !!scene.action?.trim() ||
+      !!scene.text?.trim() ||
+      !!scene.audio?.dialogue?.trim() ||
+      !!scene.audio?.soundEffects?.trim() ||
+      !!scene.audio?.music?.trim() ||
+      !!scene.location?.trim() ||
+      !!scene.reflection?.trim() ||
+      (scene.materials && scene.materials.length > 0) ||
+      (scene.roles && scene.roles.length > 0);
+
+    const isAudioOnly = productType === 'podcast' || productType === 'audioPlay';
+
+    if (hasContent && (hasImage || isAudioOnly)) return 'complete';
+    if (hasImage || hasContent) return 'partial';
     return 'empty';
   };
 

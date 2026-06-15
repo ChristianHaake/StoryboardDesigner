@@ -90,12 +90,14 @@ export async function exportElementToPdf(
   const heights = paginate(image.height, pageHeightPx, safeBreaks);
 
   let y = 0;
+  const canvas = document.createElement('canvas');
+  const ctx = canvas.getContext('2d');
+  if (!ctx) throw new Error('pdf-canvas');
+
   heights.forEach((height, index) => {
-    const canvas = document.createElement('canvas');
     canvas.width = image.width;
     canvas.height = height;
-    const ctx = canvas.getContext('2d');
-    if (!ctx) throw new Error('pdf-canvas');
+    ctx.clearRect(0, 0, canvas.width, canvas.height);
     ctx.drawImage(image, 0, y, image.width, height, 0, 0, image.width, height);
     if (index > 0) pdf.addPage();
     const renderHeightMm = A4_WIDTH_MM * (height / image.width);

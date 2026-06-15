@@ -25,7 +25,7 @@ export default function StartScreen() {
     setWizardStep('setup');
   };
 
-  const TILES: { type: ProductType; icon: any; title: string; desc: string }[] = [
+  const TILES: { type: ProductType; icon: React.ElementType; title: string; desc: string }[] = [
     { type: 'shortFilm', icon: Video, title: t('format.shortFilm'), desc: 'Spielfilm, Dokumentation oder Reportage' },
     { type: 'explainerVideo', icon: MonitorPlay, title: t('format.explainerVideo'), desc: 'Wissen vermitteln mit Animationen' },
     { type: 'fotostory', icon: Camera, title: t('format.fotostory'), desc: 'Geschichte in Bildern mit Sprechblasen' },

@@ -50,7 +50,18 @@ function str(value: unknown, fallback = ''): string {
   return typeof value === 'string' ? value : fallback;
 }
 
-const FORMAT_TYPES: MetaData['productType'][] = ['shortFilm', 'fotostory', 'custom'];
+const FORMAT_TYPES: MetaData['productType'][] = [
+  'shortFilm',
+  'explainerVideo',
+  'fotostory',
+  'audioPlay',
+  'podcast',
+  'stopMotion',
+  'comic',
+  'socialMediaClip',
+  'roleplay',
+  'custom'
+];
 
 function validateVersion(value: unknown): string {
   if (typeof value !== 'string') throw new ProjectValidationError(i18n.t('errors.versionMissing'));

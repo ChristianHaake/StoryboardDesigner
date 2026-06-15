@@ -18,17 +18,23 @@ const EMPTY_FIELD_DEFINITIONS: NonNullable<
 const EMPTY_COMMENTS: NonNullable<Scene['comments']> = [];
 
 interface SceneCardProps {
-  scene: Scene;
+  sceneId: string;
 }
 
-function SceneCard({ scene }: SceneCardProps) {
+function SceneCard({ sceneId }: SceneCardProps) {
   const { t } = useTranslation();
-  const n = scene.orderIndex + 1;
-  const imageUrl = useStoryboardStore((s) => s.imageUrls[scene.id] ?? null);
+  
+  const scene = useStoryboardStore((s) => s.scenes.find((x) => x.id === sceneId));
+  const orderIndex = useStoryboardStore((s) => s.scenes.findIndex((x) => x.id === sceneId));
+  const n = orderIndex + 1;
+
+  // We must return early if scene is deleted but component is still rendering
+  // to avoid crashes. However, hooks must be called unconditionally.
+  const imageUrl = useStoryboardStore((s) => s.imageUrls[sceneId] ?? null);
   const fieldDefinitions = useStoryboardStore(
     (state) => state.fieldDefinitions ?? EMPTY_FIELD_DEFINITIONS,
   );
-  const isCollapsed = useStoryboardStore((state) => state.collapsedScenes[scene.id] ?? false);
+  const isCollapsed = useStoryboardStore((state) => state.collapsedScenes[sceneId] ?? false);
   const toggleSceneCollapse = useStoryboardStore((state) => state.toggleSceneCollapse);
   const updateScene = useStoryboardStore((state) => state.updateScene);
   const updateCustomField = useStoryboardStore((s) => s.updateCustomField);
@@ -44,6 +50,16 @@ function SceneCard({ scene }: SceneCardProps) {
   const [isTooTall, setIsTooTall] = useState(false);
   const cardRef = useRef<HTMLElement | null>(null);
 
+  const [localMaterials, setLocalMaterials] = useState(() => 
+    scene && Array.isArray(scene.materials) ? scene.materials.join(', ') : ''
+  );
+
+  useEffect(() => {
+    if (scene && Array.isArray(scene.materials)) {
+      setLocalMaterials(scene.materials.join(', '));
+    }
+  }, [scene?.materials]);
+
   useEffect(() => {
     if (!cardRef.current) return;
     const observer = new ResizeObserver((entries) => {
@@ -56,8 +72,10 @@ function SceneCard({ scene }: SceneCardProps) {
   }, []);
 
   const { attributes, listeners, setNodeRef, transform, transition, isDragging } = useSortable({
-    id: scene.id,
+    id: sceneId,
   });
+
+  if (!scene) return null;
 
   async function handleFileChange(event: ChangeEvent<HTMLInputElement>) {
     const file = event.target.files?.[0];
@@ -65,7 +83,7 @@ function SceneCard({ scene }: SceneCardProps) {
     event.target.value = '';
     if (!file) return;
     try {
-      setSceneImage(scene.id, await resizeImage(file));
+      setSceneImage(sceneId, await resizeImage(file));
       setImageError(false);
     } catch (error: unknown) {
       console.warn('Bild konnte nicht verarbeitet werden:', error);
@@ -367,8 +385,11 @@ function SceneCard({ scene }: SceneCardProps) {
                     <AutoResizeTextarea
                       id={`materials-${scene.id}`}
                       placeholder="Was wird für das Bild benötigt?"
-                      value={Array.isArray(scene.materials) ? scene.materials.join(', ') : ''}
-                      onChange={(e) => updateScene(scene.id, { materials: e.target.value.split(',').map(s => s.trim()) })}
+                      value={localMaterials}
+                      onChange={(e) => setLocalMaterials(e.target.value)}
+                      onBlur={() => updateScene(scene.id, { 
+                        materials: localMaterials.split(',').map(s => s.trim()).filter(Boolean) 
+                      })}
                     />
                   </div>
                 </>

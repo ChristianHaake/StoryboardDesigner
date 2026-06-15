@@ -1,6 +1,8 @@
 import { useTranslation } from 'react-i18next';
 import { useStoryboardStore } from '../../app/store/useStoryboardStore';
 import { ArrowLeft, ArrowRight, Settings } from 'lucide-react';
+import { useState, useEffect } from 'react';
+import type { Complexity } from '../../domain/types';
 import { buttonPrimary, inputClass } from '../../shared/ui/fieldStyles';
 
 export default function SetupScreen() {
@@ -8,6 +10,13 @@ export default function SetupScreen() {
   const metaData = useStoryboardStore((s) => s.metaData);
   const updateMetaData = useStoryboardStore((s) => s.updateMetaData);
   const setWizardStep = useStoryboardStore((s) => s.setWizardStep);
+
+  const [groupMembersStr, setGroupMembersStr] = useState(metaData.groupMembers.join(', '));
+
+  // Sync local state if metaData changes externally
+  useEffect(() => {
+    setGroupMembersStr(metaData.groupMembers.join(', '));
+  }, [metaData.groupMembers]);
 
   const handleNext = () => {
     // Validate if necessary
@@ -95,10 +104,13 @@ export default function SetupScreen() {
             <input
               id="groupMembers"
               type="text"
-              value={metaData.groupMembers.join(', ')}
-              onChange={(e) => updateMetaData({ 
-                groupMembers: e.target.value.split(',').map(s => s.trim()).filter(Boolean) 
-              })}
+              value={groupMembersStr}
+              onChange={(e) => setGroupMembersStr(e.target.value)}
+              onBlur={() => {
+                updateMetaData({
+                  groupMembers: groupMembersStr.split(',').map((s) => s.trim()).filter(Boolean),
+                });
+              }}
               className={`mt-2 ${inputClass}`}
               placeholder="Namen kommagetrennt eingeben..."
             />
@@ -113,14 +125,16 @@ export default function SetupScreen() {
             Detaillierungsgrad
           </h3>
           <div className="grid grid-cols-1 gap-4 sm:grid-cols-3">
-            {[
-              { id: 'simple', label: 'Einfach', desc: 'Nur die wichtigsten Felder' },
-              { id: 'standard', label: 'Standard', desc: 'Ideale Balance' },
-              { id: 'advanced', label: 'Profi', desc: 'Alle Details (Kamera, Licht)' }
-            ].map((level) => (
+            {(
+              [
+                { id: 'simple', label: 'Einfach', desc: 'Nur die wichtigsten Felder' },
+                { id: 'standard', label: 'Standard', desc: 'Ideale Balance' },
+                { id: 'advanced', label: 'Profi', desc: 'Alle Details (Kamera, Licht)' },
+              ] as const
+            ).map((level) => (
               <button
                 key={level.id}
-                onClick={() => updateMetaData({ complexity: level.id as any })}
+                onClick={() => updateMetaData({ complexity: level.id as Complexity })}
                 className={`relative flex flex-col items-start rounded-xl border p-4 text-left transition-all ${
                   metaData.complexity === level.id
                     ? 'border-blue-500 bg-blue-50 ring-1 ring-blue-500'
