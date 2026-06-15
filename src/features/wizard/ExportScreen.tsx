@@ -72,7 +72,8 @@ export default function ExportScreen() {
           Dein Storyboard ist fertig!
         </h1>
         <p className="mt-4 text-xl text-slate-500 max-w-lg">
-          Schritt 5 von 5 • Exportiere dein Projekt als Projektdatei zur späteren Bearbeitung oder als PDF zum Ausdrucken.
+          Schritt 5 von 5 • Exportiere dein Projekt als Projektdatei zur späteren Bearbeitung oder
+          als PDF zum Ausdrucken.
         </p>
       </div>
 
@@ -83,7 +84,8 @@ export default function ExportScreen() {
           </div>
           <h3 className="text-lg font-bold text-slate-900 mb-2">Projekt speichern</h3>
           <p className="text-sm text-slate-500 mb-6 flex-1">
-            Lädt eine .storyboard Datei herunter, die du später wieder importieren und weiterbearbeiten kannst.
+            Lädt eine .storyboard Datei herunter, die du später wieder importieren und
+            weiterbearbeiten kannst.
           </p>
           <button
             onClick={handleExport}
@@ -119,10 +121,7 @@ export default function ExportScreen() {
           <p className="text-sm text-slate-500 mb-6 flex-1">
             Öffnet den Druckdialog des Browsers. Optimal formatierte DIN A4 Seiten.
           </p>
-          <button
-            onClick={() => window.print()}
-            className={`${buttonSecondary} w-full py-3`}
-          >
+          <button onClick={() => window.print()} className={`${buttonSecondary} w-full py-3`}>
             Drucken
           </button>
         </div>

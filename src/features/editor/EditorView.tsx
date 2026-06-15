@@ -29,17 +29,17 @@ export default function EditorView() {
   const { t } = useTranslation();
   const [fieldDialogOpen, setFieldDialogOpen] = useState(false);
   const closeFieldDialog = useCallback(() => setFieldDialogOpen(false), []);
-  
+
   const sceneIds = useStoryboardStore(useShallow((s) => s.scenes.map((x) => x.id)));
   const numScenes = sceneIds.length;
-  
+
   const productType = useStoryboardStore((state) => state.metaData.productType);
   const collapseAllScenes = useStoryboardStore((state) => state.collapseAllScenes);
   const isAllCollapsed = useStoryboardStore((state) => {
     if (state.scenes.length === 0) return false;
     return state.scenes.every((s) => state.collapsedScenes[s.id] === true);
   });
-  
+
   const addScene = useStoryboardStore((s) => s.addScene);
   const moveScene = useStoryboardStore((s) => s.moveScene);
 
@@ -101,7 +101,7 @@ export default function EditorView() {
           >
             Zurück zu Einstellungen
           </button>
-          
+
           <button
             onClick={() => useStoryboardStore.getState().setWizardStep('review')}
             className="rounded-lg bg-blue-600 px-6 py-2 text-sm font-semibold text-white shadow-sm hover:bg-blue-500 transition-colors"
@@ -134,10 +134,7 @@ export default function EditorView() {
             onDragEnd={handleDragEnd}
             accessibility={{ announcements, screenReaderInstructions }}
           >
-            <SortableContext
-              items={sceneIds}
-              strategy={verticalListSortingStrategy}
-            >
+            <SortableContext items={sceneIds} strategy={verticalListSortingStrategy}>
               <div className="mt-4 space-y-3">
                 {numScenes > 1 && (
                   <div className="flex justify-end print:hidden">

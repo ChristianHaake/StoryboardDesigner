@@ -1,7 +1,17 @@
 // Zentrale Datenstrukturen der .storyboard-Datei (data.json), siehe Codingplan Abschnitt 2.
 
 export type Complexity = 'simple' | 'standard' | 'advanced';
-export type ProductType = 'shortFilm' | 'explainerVideo' | 'fotostory' | 'audioPlay' | 'podcast' | 'stopMotion' | 'comic' | 'socialMediaClip' | 'roleplay' | 'custom';
+export type ProductType =
+  | 'shortFilm'
+  | 'explainerVideo'
+  | 'fotostory'
+  | 'audioPlay'
+  | 'podcast'
+  | 'stopMotion'
+  | 'comic'
+  | 'socialMediaClip'
+  | 'roleplay'
+  | 'custom';
 
 export interface MetaData {
   id: string;

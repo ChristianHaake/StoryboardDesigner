@@ -395,7 +395,11 @@ export default function FieldConfigDialog({ open, onClose }: FieldConfigDialogPr
                   {t('fieldConfig.presetHeading')}
                 </h3>
                 <p className="mt-1 text-xs text-slate-500">
-                  {t('fieldConfig.presetDescription', { format: FORMAT_KEYS[productType] ? t(FORMAT_KEYS[productType]!) : t('format.custom') })}
+                  {t('fieldConfig.presetDescription', {
+                    format: FORMAT_KEYS[productType]
+                      ? t(FORMAT_KEYS[productType]!)
+                      : t('format.custom'),
+                  })}
                 </p>
               </div>
               <button

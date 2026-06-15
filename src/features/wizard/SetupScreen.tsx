@@ -1,7 +1,7 @@
 import { useTranslation } from 'react-i18next';
 import { useStoryboardStore } from '../../app/store/useStoryboardStore';
 import { ArrowLeft, ArrowRight, Settings } from 'lucide-react';
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import type { Complexity } from '../../domain/types';
 import { buttonPrimary, inputClass } from '../../shared/ui/fieldStyles';
 
@@ -12,11 +12,12 @@ export default function SetupScreen() {
   const setWizardStep = useStoryboardStore((s) => s.setWizardStep);
 
   const [groupMembersStr, setGroupMembersStr] = useState(metaData.groupMembers.join(', '));
+  const [prevGroupMembers, setPrevGroupMembers] = useState(metaData.groupMembers);
 
-  // Sync local state if metaData changes externally
-  useEffect(() => {
+  if (metaData.groupMembers !== prevGroupMembers) {
+    setPrevGroupMembers(metaData.groupMembers);
     setGroupMembersStr(metaData.groupMembers.join(', '));
-  }, [metaData.groupMembers]);
+  }
 
   const handleNext = () => {
     // Validate if necessary
@@ -40,9 +41,7 @@ export default function SetupScreen() {
           <Settings className="h-6 w-6" />
         </div>
         <div>
-          <h1 className="text-3xl font-bold tracking-tight text-slate-900">
-            Projekt einrichten
-          </h1>
+          <h1 className="text-3xl font-bold tracking-tight text-slate-900">Projekt einrichten</h1>
           <p className="mt-1 text-slate-500">
             {t(`format.${metaData.productType}`)} • Schritt 2 von 5
           </p>
@@ -50,7 +49,6 @@ export default function SetupScreen() {
       </div>
 
       <div className="space-y-8 rounded-2xl border border-slate-200 bg-white p-8 shadow-sm">
-        
         {/* Basic Info */}
         <div className="space-y-6">
           <div>
@@ -108,7 +106,10 @@ export default function SetupScreen() {
               onChange={(e) => setGroupMembersStr(e.target.value)}
               onBlur={() => {
                 updateMetaData({
-                  groupMembers: groupMembersStr.split(',').map((s) => s.trim()).filter(Boolean),
+                  groupMembers: groupMembersStr
+                    .split(',')
+                    .map((s) => s.trim())
+                    .filter(Boolean),
                 });
               }}
               className={`mt-2 ${inputClass}`}
@@ -121,9 +122,7 @@ export default function SetupScreen() {
 
         {/* Complexity Selection */}
         <div>
-          <h3 className="text-sm font-semibold text-slate-900 mb-4">
-            Detaillierungsgrad
-          </h3>
+          <h3 className="text-sm font-semibold text-slate-900 mb-4">Detaillierungsgrad</h3>
           <div className="grid grid-cols-1 gap-4 sm:grid-cols-3">
             {(
               [
@@ -141,10 +140,14 @@ export default function SetupScreen() {
                     : 'border-slate-200 bg-white hover:border-blue-300 hover:bg-slate-50'
                 }`}
               >
-                <span className={`text-sm font-semibold ${metaData.complexity === level.id ? 'text-blue-700' : 'text-slate-900'}`}>
+                <span
+                  className={`text-sm font-semibold ${metaData.complexity === level.id ? 'text-blue-700' : 'text-slate-900'}`}
+                >
                   {level.label}
                 </span>
-                <span className={`mt-1 text-xs ${metaData.complexity === level.id ? 'text-blue-600' : 'text-slate-500'}`}>
+                <span
+                  className={`mt-1 text-xs ${metaData.complexity === level.id ? 'text-blue-600' : 'text-slate-500'}`}
+                >
                   {level.desc}
                 </span>
               </button>

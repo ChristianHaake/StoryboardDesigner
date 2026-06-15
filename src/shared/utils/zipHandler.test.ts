@@ -11,7 +11,9 @@ function project(): StoryboardProject {
     metaData: {
       id: 'project-1',
       projectName: 'Test',
-      groupMembers: [], topic: '', complexity: 'standard',
+      groupMembers: [],
+      topic: '',
+      complexity: 'standard',
       subject: '',
       productType: 'shortFilm',
       date: '2026-06-12',
@@ -27,9 +29,14 @@ describe('zipHandler', () => {
       id: 'scene-1',
       orderIndex: 0,
       imageFileName: null,
-      
-      title: '', action: '', text: '', audio: { dialogue: '', soundEffects: '', music: '' }, camera: { shotSize: '', angle: '', movement: '' },  location: '', materials: [],    
-      
+
+      title: '',
+      action: '',
+      text: '',
+      audio: { dialogue: '', soundEffects: '', music: '' },
+      camera: { shotSize: '', angle: '', movement: '' },
+      location: '',
+      materials: [],
     };
     const data = project();
     data.scenes = [scene];
@@ -52,9 +59,14 @@ describe('zipHandler', () => {
       id,
       orderIndex,
       imageFileName: 'images/shared.jpg',
-      
-      title: '', action: '', text: '', audio: { dialogue: '', soundEffects: '', music: '' }, camera: { shotSize: '', angle: '', movement: '' },  location: '', materials: [],    
-      
+
+      title: '',
+      action: '',
+      text: '',
+      audio: { dialogue: '', soundEffects: '', music: '' },
+      camera: { shotSize: '', angle: '', movement: '' },
+      location: '',
+      materials: [],
     }));
 
     const archive = zipSync({
@@ -75,9 +87,15 @@ describe('zipHandler', () => {
         id: 'scene-1',
         orderIndex: 0,
         imageFileName: null,
-        
-        title: '', action: '', text: '', audio: { dialogue: '', soundEffects: '', music: '' }, camera: { shotSize: '', angle: '', movement: '' },  location: '', materials: [],    
-        
+
+        title: '',
+        action: '',
+        text: '',
+        audio: { dialogue: '', soundEffects: '', music: '' },
+        camera: { shotSize: '', angle: '', movement: '' },
+        location: '',
+        materials: [],
+
         customFields: { 'custom:light': 'Warm' },
       },
     ];
@@ -99,9 +117,14 @@ describe('zipHandler', () => {
         id: 'scene-1',
         orderIndex: 0,
         imageFileName: 'images/large.jpg',
-        
-        title: '', action: '', text: '', audio: { dialogue: '', soundEffects: '', music: '' }, camera: { shotSize: '', angle: '', movement: '' },  location: '', materials: [],    
-        
+
+        title: '',
+        action: '',
+        text: '',
+        audio: { dialogue: '', soundEffects: '', music: '' },
+        camera: { shotSize: '', angle: '', movement: '' },
+        location: '',
+        materials: [],
       },
     ];
 

@@ -12,7 +12,7 @@ import {
   Smartphone,
   Users,
   Sparkles,
-  ArrowRight
+  ArrowRight,
 } from 'lucide-react';
 
 export default function StartScreen() {
@@ -26,16 +26,61 @@ export default function StartScreen() {
   };
 
   const TILES: { type: ProductType; icon: React.ElementType; title: string; desc: string }[] = [
-    { type: 'shortFilm', icon: Video, title: t('format.shortFilm'), desc: 'Spielfilm, Dokumentation oder Reportage' },
-    { type: 'explainerVideo', icon: MonitorPlay, title: t('format.explainerVideo'), desc: 'Wissen vermitteln mit Animationen' },
-    { type: 'fotostory', icon: Camera, title: t('format.fotostory'), desc: 'Geschichte in Bildern mit Sprechblasen' },
-    { type: 'audioPlay', icon: Headphones, title: t('format.audioPlay'), desc: 'Szenisches Hörspiel mit Geräuschen' },
-    { type: 'podcast', icon: Mic, title: t('format.podcast'), desc: 'Interview, Diskussion oder Reportage' },
-    { type: 'stopMotion', icon: Scissors, title: t('format.stopMotion'), desc: 'Objekte Bild für Bild zum Leben erwecken' },
+    {
+      type: 'shortFilm',
+      icon: Video,
+      title: t('format.shortFilm'),
+      desc: 'Spielfilm, Dokumentation oder Reportage',
+    },
+    {
+      type: 'explainerVideo',
+      icon: MonitorPlay,
+      title: t('format.explainerVideo'),
+      desc: 'Wissen vermitteln mit Animationen',
+    },
+    {
+      type: 'fotostory',
+      icon: Camera,
+      title: t('format.fotostory'),
+      desc: 'Geschichte in Bildern mit Sprechblasen',
+    },
+    {
+      type: 'audioPlay',
+      icon: Headphones,
+      title: t('format.audioPlay'),
+      desc: 'Szenisches Hörspiel mit Geräuschen',
+    },
+    {
+      type: 'podcast',
+      icon: Mic,
+      title: t('format.podcast'),
+      desc: 'Interview, Diskussion oder Reportage',
+    },
+    {
+      type: 'stopMotion',
+      icon: Scissors,
+      title: t('format.stopMotion'),
+      desc: 'Objekte Bild für Bild zum Leben erwecken',
+    },
     { type: 'comic', icon: PenTool, title: t('format.comic'), desc: 'Gezeichnete Bildabfolge' },
-    { type: 'socialMediaClip', icon: Smartphone, title: t('format.socialMediaClip'), desc: 'Kurzformat für Social Media' },
-    { type: 'roleplay', icon: Users, title: t('format.roleplay'), desc: 'Bühnenstück oder szenisches Spiel' },
-    { type: 'custom', icon: Sparkles, title: t('format.custom'), desc: 'Freies Format nach eigener Idee' },
+    {
+      type: 'socialMediaClip',
+      icon: Smartphone,
+      title: t('format.socialMediaClip'),
+      desc: 'Kurzformat für Social Media',
+    },
+    {
+      type: 'roleplay',
+      icon: Users,
+      title: t('format.roleplay'),
+      desc: 'Bühnenstück oder szenisches Spiel',
+    },
+    {
+      type: 'custom',
+      icon: Sparkles,
+      title: t('format.custom'),
+      desc: 'Freies Format nach eigener Idee',
+    },
   ];
 
   return (
@@ -46,10 +91,14 @@ export default function StartScreen() {
           <span>Storyboard Creator</span>
         </div>
         <h1 className="text-4xl font-extrabold tracking-tight text-slate-900 sm:text-6xl mb-6">
-          Was möchtest du <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-600 to-indigo-600">erstellen?</span>
+          Was möchtest du{' '}
+          <span className="text-transparent bg-clip-text bg-gradient-to-r from-blue-600 to-indigo-600">
+            erstellen?
+          </span>
         </h1>
         <p className="mx-auto max-w-2xl text-lg text-slate-500 sm:text-xl leading-relaxed">
-          Wähle dein Medienprodukt, um das passende Storyboard zu starten und deine Ideen systematisch zu planen.
+          Wähle dein Medienprodukt, um das passende Storyboard zu starten und deine Ideen
+          systematisch zu planen.
         </p>
       </div>
 
@@ -72,9 +121,7 @@ export default function StartScreen() {
                 <h3 className="text-lg font-semibold text-slate-900 group-hover:text-blue-600 transition-colors duration-200">
                   {tile.title}
                 </h3>
-                <p className="mt-2 text-sm text-slate-500 leading-relaxed">
-                  {tile.desc}
-                </p>
+                <p className="mt-2 text-sm text-slate-500 leading-relaxed">{tile.desc}</p>
               </div>
             </button>
           );
