@@ -4,6 +4,7 @@ import { getFormatPreset } from '../../../domain/customFields';
 import { createInitialMetaData, initialPrePlanning } from './projectSlice';
 import { renumber } from './sceneSlice';
 import i18n from '../../../shared/i18n';
+import { resetHistory } from '../../../domain/history';
 
 export const createHistorySlice: StoryboardCreator<HistorySlice> = (set) => ({
   touched: false,
@@ -52,25 +53,10 @@ export const createHistorySlice: StoryboardCreator<HistorySlice> = (set) => ({
 
   clearLastDeleted: () => set({ lastDeleted: null }),
 
-  resetProject: () =>
-    set((state) => {
-      Object.values(state.imageUrls).forEach((url) => URL.revokeObjectURL(url));
-      return {
-        metaData: createInitialMetaData(),
-        prePlanning: initialPrePlanning,
-        fieldDefinitions: getFormatPreset('shortFilm'),
-        scenes: [],
-        images: {},
-        imageUrls: {},
-        touched: false,
-        hasContent: false,
-        activeStep: 'start',
-        lastDeleted: null,
-        errorMessage: null,
-      };
-    }),
-
-  clearProject: () =>
+  resetProject: () => {
+    // Undo-Stack der Vorgängerprojekts leeren, sonst kann Undo nach „Neu"
+    // den alten Projektinhalt zurückholen.
+    resetHistory();
     set((state) => {
       Object.values(state.imageUrls).forEach((url) => URL.revokeObjectURL(url));
       return {
@@ -85,8 +71,37 @@ export const createHistorySlice: StoryboardCreator<HistorySlice> = (set) => ({
         activeStep: 'start',
         isReady: false,
         lastDeleted: null,
+        canUndo: false,
+        canRedo: false,
+        errorMessage: null,
+        successMessage: null,
       };
-    }),
+    });
+  },
+
+  clearProject: () => {
+    resetHistory();
+    set((state) => {
+      Object.values(state.imageUrls).forEach((url) => URL.revokeObjectURL(url));
+      return {
+        metaData: createInitialMetaData(),
+        prePlanning: initialPrePlanning,
+        fieldDefinitions: getFormatPreset('shortFilm'),
+        scenes: [],
+        images: {},
+        imageUrls: {},
+        touched: false,
+        hasContent: false,
+        activeStep: 'start',
+        isReady: false,
+        lastDeleted: null,
+        canUndo: false,
+        canRedo: false,
+        errorMessage: null,
+        successMessage: null,
+      };
+    });
+  },
 
   loadProject: (project, images = {}, markTouched = false) =>
     set((state) => {
