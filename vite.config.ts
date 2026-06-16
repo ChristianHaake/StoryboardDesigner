@@ -35,5 +35,6 @@ export default defineConfig({
   test: {
     // i18next mit Default-Deutsch initialisieren, damit i18n.t() in Tests echte Strings liefert.
     setupFiles: ['./src/test/setup-i18n.ts'],
+    exclude: ['**/node_modules/**', '**/dist/**', 'tests/e2e/**'],
   },
 });
