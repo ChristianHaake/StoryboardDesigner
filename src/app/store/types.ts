@@ -77,6 +77,7 @@ export interface HistorySlice {
     prePlanning: PrePlanning;
     fieldDefinitions?: CustomFieldDefinition[];
     scenes: Scene[];
+    images: Record<string, Blob>;
   }) => void;
   undoDelete: () => void;
   clearLastDeleted: () => void;

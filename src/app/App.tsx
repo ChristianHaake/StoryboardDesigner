@@ -55,6 +55,7 @@ export default function App() {
       prePlanning: state.prePlanning,
       fieldDefinitions: state.fieldDefinitions,
       scenes: state.scenes,
+      images: state.images,
     });
     setHistoryHooks({
       getCurrent: () => toSnapshot(useStoryboardStore.getState()),
@@ -63,12 +64,17 @@ export default function App() {
         useStoryboardStore.getState().setHistoryFlags(canUndo, canRedo),
     });
 
+    const initialMetaData = useStoryboardStore.getState().metaData;
     // Autosave nur wiederherstellen, solange noch nichts eingegeben wurde —
     // sonst würde frische Eingabe vom asynchron geladenen Stand überschrieben.
     void loadAutosave().then((payload) => {
       if (cancelled) return;
       const state = useStoryboardStore.getState();
-      if (payload && !state.touched) state.loadProject(payload.project, payload.images);
+      // Wenn die MetaData-Referenz sich geändert hat (z.B. durch resetProject),
+      // hat der Nutzer bereits interagiert → Autosave verwerfen.
+      if (payload && !state.touched && state.metaData === initialMetaData) {
+        state.loadProject(payload.project, payload.images);
+      }
       // History-Stack nach dem initialen Laden leeren — der Restore selbst soll
       // nicht rückgängig gemacht werden.
       resetHistory();
@@ -87,11 +93,11 @@ export default function App() {
         state.metaData !== prev.metaData ||
         state.prePlanning !== prev.prePlanning ||
         state.fieldDefinitions !== prev.fieldDefinitions ||
-        state.scenes !== prev.scenes;
-      const imagesChanged = state.images !== prev.images;
-      if (!contentChanged && !imagesChanged) return;
-      // History nur bei Inhaltsänderung (Bilder sind nicht Teil der History).
-      if (contentChanged) recordChange(toSnapshot(prev), toSnapshot(state));
+        state.scenes !== prev.scenes ||
+        state.images !== prev.images;
+      if (!contentChanged) return;
+      
+      recordChange(toSnapshot(prev), toSnapshot(state));
       scheduleAutosave({ project: selectProject(state), images: state.images });
     });
 

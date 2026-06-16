@@ -154,12 +154,14 @@ export async function importProject(
           if (file.originalSize > MAX_DATA_JSON_BYTES) {
             throw new ImportError(i18n.t('errors.importDataTooLarge'));
           }
+          return true;
         } else if (file.name.startsWith('images/')) {
           if (file.originalSize > MAX_IMAGE_BYTES) {
             throw new ImportError(i18n.t('errors.imagesTooLargeImport', { file: file.name }));
           }
+          return true;
         }
-        return true;
+        return false;
       },
     });
   } catch (e: unknown) {

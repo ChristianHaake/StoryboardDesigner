@@ -39,12 +39,12 @@ export function hasPendingAutosave(): boolean {
 
 export function scheduleAutosave(payload: AutosavePayload): void {
   pending = true;
-  emitStatus('saving');
   // Sequenznummer: ein noch laufender älterer Save darf pending nicht
   // zurücksetzen, wenn inzwischen neuere Änderungen anstehen.
   const seq = ++saveSeq;
   window.clearTimeout(timer);
   timer = window.setTimeout(() => {
+    emitStatus('saving');
     void set(AUTOSAVE_KEY, payload)
       .then(() => {
         if (seq === saveSeq) {
