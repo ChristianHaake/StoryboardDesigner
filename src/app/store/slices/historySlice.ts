@@ -16,13 +16,37 @@ export const createHistorySlice: StoryboardCreator<HistorySlice> = (set) => ({
   setHistoryFlags: (canUndo, canRedo) => set({ canUndo, canRedo }),
 
   restoreContent: (snapshot) =>
-    set({
-      touched: true,
-      hasContent: true,
-      metaData: snapshot.metaData,
-      prePlanning: snapshot.prePlanning,
-      fieldDefinitions: snapshot.fieldDefinitions,
-      scenes: snapshot.scenes,
+    set((state) => {
+      const restoredImages = snapshot.images || {};
+      const restoredImageIds = new Set(Object.keys(restoredImages));
+      const imageUrls = { ...state.imageUrls };
+      
+      // Neue ObjectURLs für wiederhergestellte Bilder
+      for (const [id, blob] of Object.entries(restoredImages)) {
+        if (!imageUrls[id]) {
+          imageUrls[id] = URL.createObjectURL(blob);
+        }
+      }
+      
+      // Alte ObjectURLs freigeben, wenn das Bild verworfen wird
+      const currentImageIds = Object.keys(state.images);
+      for (const id of currentImageIds) {
+        if (!restoredImageIds.has(id) && imageUrls[id]) {
+          URL.revokeObjectURL(imageUrls[id]);
+          delete imageUrls[id];
+        }
+      }
+
+      return {
+        touched: true,
+        hasContent: true,
+        metaData: snapshot.metaData,
+        prePlanning: snapshot.prePlanning,
+        fieldDefinitions: snapshot.fieldDefinitions,
+        scenes: snapshot.scenes,
+        images: restoredImages,
+        imageUrls,
+      };
     }),
 
   undoDelete: () =>
@@ -54,9 +78,6 @@ export const createHistorySlice: StoryboardCreator<HistorySlice> = (set) => ({
   clearLastDeleted: () => set({ lastDeleted: null }),
 
   resetProject: () => {
-    // Undo-Stack der Vorgängerprojekts leeren, sonst kann Undo nach „Neu"
-    // den alten Projektinhalt zurückholen.
-    resetHistory();
     set((state) => {
       Object.values(state.imageUrls).forEach((url) => URL.revokeObjectURL(url));
       return {
@@ -77,10 +98,13 @@ export const createHistorySlice: StoryboardCreator<HistorySlice> = (set) => ({
         successMessage: null,
       };
     });
+    // Undo-Stack der Vorgängerprojekts leeren, sonst kann Undo nach „Neu"
+    // den alten Projektinhalt zurückholen. Dies muss NACH dem set() passieren,
+    // damit der durch set() ausgelöste History-Eintrag direkt wieder gelöscht wird.
+    resetHistory();
   },
 
   clearProject: () => {
-    resetHistory();
     set((state) => {
       Object.values(state.imageUrls).forEach((url) => URL.revokeObjectURL(url));
       return {
@@ -101,6 +125,7 @@ export const createHistorySlice: StoryboardCreator<HistorySlice> = (set) => ({
         successMessage: null,
       };
     });
+    resetHistory();
   },
 
   loadProject: (project, images = {}, markTouched = false) =>

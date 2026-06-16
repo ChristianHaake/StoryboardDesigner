@@ -14,6 +14,7 @@ export interface ContentSnapshot {
   prePlanning: PrePlanning;
   fieldDefinitions?: CustomFieldDefinition[];
   scenes: Scene[];
+  images: Record<string, Blob>;
 }
 
 const LIMIT = 50;
@@ -35,6 +36,7 @@ function snapshot(state: ContentSnapshot): ContentSnapshot {
     prePlanning: state.prePlanning,
     fieldDefinitions: state.fieldDefinitions,
     scenes: state.scenes,
+    images: state.images,
   };
 }
 
