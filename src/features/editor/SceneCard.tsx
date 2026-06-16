@@ -30,6 +30,7 @@ function SceneCard({ sceneId }: SceneCardProps) {
   const n = orderIndex + 1;
   const productType = useStoryboardStore((s) => s.metaData.productType);
   const features = productType ? FORMAT_FEATURES[productType] : FORMAT_FEATURES.shortFilm;
+  const visual = features.hasImage; // false = reine Audioformate (kein Bild/Szene-Bezug)
 
   // We must return early if scene is deleted but component is still rendering
   // to avoid crashes. However, hooks must be called unconditionally.
@@ -121,7 +122,7 @@ function SceneCard({ sceneId }: SceneCardProps) {
           <input
             type="text"
             value={scene.title}
-            placeholder={t('scene.title', { n })}
+            placeholder={t(productType === 'podcast' ? 'scene.titlePodcast' : 'scene.title', { n })}
             onChange={(e) => updateScene(scene.id, { title: e.target.value })}
             className="flex-1 min-w-0 bg-transparent border-none p-0 focus:ring-0 text-xs font-bold tracking-[0.14em] text-slate-700 uppercase placeholder-slate-400"
             aria-label={t('scene.titleLabel', { n })}
@@ -287,11 +288,11 @@ function SceneCard({ sceneId }: SceneCardProps) {
               {/* === IMMER SICHTBAR (SIMPLE) === */}
               <div>
                 <label className={labelClass} htmlFor={`action-${scene.id}`}>
-                  Handlung / Bildbeschreibung
+                  {visual ? 'Handlung / Bildbeschreibung' : 'Handlung / Beschreibung'}
                 </label>
                 <AutoResizeTextarea
                   id={`action-${scene.id}`}
-                  placeholder="Was passiert im Bild?"
+                  placeholder={visual ? 'Was passiert im Bild?' : 'Was passiert?'}
                   value={scene.action}
                   onChange={(e) => updateScene(scene.id, { action: e.target.value })}
                 />
@@ -406,7 +407,7 @@ function SceneCard({ sceneId }: SceneCardProps) {
                     </label>
                     <AutoResizeTextarea
                       id={`materials-${scene.id}`}
-                      placeholder="Was wird für das Bild benötigt?"
+                      placeholder={visual ? 'Was wird für das Bild benötigt?' : 'Was wird benötigt?'}
                       value={localMaterials}
                       onChange={(e) => setLocalMaterials(e.target.value)}
                       onBlur={() =>

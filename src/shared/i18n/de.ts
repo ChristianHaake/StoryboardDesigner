@@ -210,6 +210,7 @@ const de = {
   },
   scene: {
     title: 'Szene {{n}}',
+    titlePodcast: 'Abschnitt {{n}}',
     move: 'Szene {{n}} verschieben',
     duplicate: 'Szene {{n}} duplizieren',
     delete: 'Szene {{n}} löschen',
