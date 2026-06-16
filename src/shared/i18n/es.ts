@@ -219,6 +219,7 @@ const es: Translations = {
   },
   scene: {
     title: 'Escena {{n}}',
+    titlePodcast: 'Sección {{n}}',
     move: 'Mover la escena {{n}}',
     duplicate: 'Duplicar la escena {{n}}',
     delete: 'Eliminar la escena {{n}}',

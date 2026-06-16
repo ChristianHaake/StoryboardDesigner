@@ -217,6 +217,7 @@ const en: Translations = {
   },
   scene: {
     title: 'Scene {{n}}',
+    titlePodcast: 'Section {{n}}',
     move: 'Move scene {{n}}',
     duplicate: 'Duplicate scene {{n}}',
     delete: 'Delete scene {{n}}',
