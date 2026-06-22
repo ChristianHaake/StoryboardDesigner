@@ -47,13 +47,18 @@ export const createProjectSlice: StoryboardCreator<ProjectSlice> = (set) => ({
   setFormatType: (productType) => {
     let added = 0;
     set((state) => {
-      const merged = mergeFormatPreset(state.fieldDefinitions ?? [], productType);
-      added = merged.added;
+      const existingProject = state.hasContent || state.scenes.length > 0;
+      const freshPreset = getFormatPreset(productType);
+      const nextDefinitions = existingProject
+        ? mergeFormatPreset(state.fieldDefinitions ?? [], productType)
+        : { definitions: freshPreset, added: freshPreset.length };
+      added = nextDefinitions.added;
       return {
         touched: true,
         hasContent: true,
         metaData: { ...state.metaData, productType },
-        fieldDefinitions: merged.definitions.length > 0 ? merged.definitions : undefined,
+        fieldDefinitions:
+          nextDefinitions.definitions.length > 0 ? nextDefinitions.definitions : undefined,
       };
     });
     return added;

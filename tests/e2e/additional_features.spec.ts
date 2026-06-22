@@ -200,7 +200,7 @@ test.describe('Storyboard Creator Additional Features E2E Suite', () => {
     const fileBuffer = fs.readFileSync(imagePath);
 
     // Attach mock image
-    const fileInput = page.locator('input[accept="image/*"]').first();
+    const fileInput = page.locator('input[accept="image/png,image/jpeg"]').first();
     await fileInput.setInputFiles({
       name: 'pwa-192x192.png',
       mimeType: 'image/png',

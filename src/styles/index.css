@@ -108,6 +108,10 @@ html[data-theme='dark'] {
   --color-red-700: #fca5a5;
 }
 
+html[data-theme='dark'] .text-white {
+  color: #f8fafc;
+}
+
 /* ---- High-Contrast: helle Flächen, maximaler Textkontrast ---- */
 html[data-theme='contrast'] {
   color-scheme: light;

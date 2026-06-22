@@ -5,6 +5,13 @@ import { exportProject, importProject } from './zipHandler';
 
 vi.mock('file-saver', () => ({ saveAs: vi.fn() }));
 
+const TINY_PNG = Uint8Array.from(
+  atob(
+    'iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAIAAACQd1PeAAAADUlEQVR42mP8z8BQDwAFgwJ/lwHkJQAAAABJRU5ErkJggg==',
+  ),
+  (char) => char.charCodeAt(0),
+);
+
 function project(): StoryboardProject {
   return {
     version: '1.1',
@@ -58,7 +65,7 @@ describe('zipHandler', () => {
     data.scenes = ['scene-1', 'scene-2'].map((id, orderIndex) => ({
       id,
       orderIndex,
-      imageFileName: 'images/shared.jpg',
+      imageFileName: 'images/shared.png',
 
       title: '',
       action: '',
@@ -71,12 +78,12 @@ describe('zipHandler', () => {
 
     const archive = zipSync({
       'data.json': strToU8(JSON.stringify(data)),
-      'images/shared.jpg': new Uint8Array([1, 2, 3]),
+      'images/shared.png': TINY_PNG,
     });
 
     const imported = await importProject(new Blob([archive]));
     expect(imported.images['scene-1']).toBe(imported.images['scene-2']);
-    expect(imported.images['scene-1']?.size).toBe(3);
+    expect(imported.images['scene-1']?.size).toBe(TINY_PNG.byteLength);
   });
 
   it('round-trips v1.1 field definitions and dynamic values', async () => {

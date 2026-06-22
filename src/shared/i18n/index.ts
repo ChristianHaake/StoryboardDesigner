@@ -29,7 +29,7 @@ i18n
     detection: {
       order: ['localStorage', 'navigator'],
       caches: ['localStorage'],
-      lookupLocalStorage: 'lang',
+      lookupLocalStorage: 'storyboard-creator:lang',
     },
     interpolation: {
       escapeValue: false, // React escaped selbst

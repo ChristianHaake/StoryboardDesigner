@@ -3,7 +3,6 @@ import { useTranslation } from 'react-i18next';
 import { Link } from 'react-router-dom';
 import { useStoryboardStore, selectProject } from '../../app/store/useStoryboardStore';
 import { ArrowLeft, Download, Printer, FileText, Play, CheckCircle2 } from 'lucide-react';
-import { exportProject } from '../../shared/utils/zipHandler';
 import { exportElementToPdf } from '../../shared/utils/pdfExport';
 import { buttonPrimary, buttonSecondary } from '../../shared/ui/fieldStyles';
 
@@ -18,8 +17,9 @@ export default function ExportScreen() {
     const state = useStoryboardStore.getState();
     setSaveBusy(true);
     try {
+      const { exportProject } = await import('../../shared/utils/zipHandler');
       await exportProject(selectProject(state), state.images);
-      state.setSuccessMessage(t('topbar.saveSuccess', 'Projekt gespeichert'));
+      state.setSuccessMessage(t('topbar.saveSuccess'));
       state.clearErrorMessage();
     } catch (err: unknown) {
       console.warn('Export fehlgeschlagen:', err);
@@ -32,9 +32,12 @@ export default function ExportScreen() {
   async function handlePdf() {
     if (pdfBusy) return;
     const state = useStoryboardStore.getState();
+    setWizardStep('editor');
+    await new Promise(requestAnimationFrame);
+    await new Promise(requestAnimationFrame);
     const element = document.getElementById('storyboard-document');
     if (!element) {
-      state.setErrorMessage('Das Dokument konnte nicht für den PDF-Export gefunden werden.');
+      state.setErrorMessage(t('topbar.documentMissing'));
       return;
     }
     const rawName = state.metaData.projectName.trim() || t('topbar.pdfFallbackName');
@@ -42,7 +45,7 @@ export default function ExportScreen() {
     setPdfBusy(true);
     try {
       await exportElementToPdf(element, `${name}.pdf`, 'article');
-      state.setSuccessMessage(t('topbar.pdfSuccess', 'PDF erfolgreich erstellt'));
+      state.setSuccessMessage(t('topbar.pdfSuccess'));
       state.clearErrorMessage();
     } catch (err: unknown) {
       console.warn('PDF-Export fehlgeschlagen:', err);
@@ -50,6 +53,13 @@ export default function ExportScreen() {
     } finally {
       setPdfBusy(false);
     }
+  }
+
+  async function handlePrint() {
+    setWizardStep('editor');
+    await new Promise(requestAnimationFrame);
+    await new Promise(requestAnimationFrame);
+    window.print();
   }
 
   return (
@@ -60,7 +70,7 @@ export default function ExportScreen() {
           className="flex items-center text-sm text-slate-500 hover:text-blue-600 transition-colors"
         >
           <ArrowLeft className="mr-1 h-4 w-4" />
-          Zurück zur Prüfung
+          {t('wizard.exportBack')}
         </button>
       </div>
 
@@ -69,12 +79,9 @@ export default function ExportScreen() {
           <CheckCircle2 className="h-12 w-12" />
         </div>
         <h1 className="text-4xl font-extrabold tracking-tight text-slate-900">
-          Dein Storyboard ist fertig!
+          {t('wizard.exportTitle')}
         </h1>
-        <p className="mt-4 text-xl text-slate-500 max-w-lg">
-          Schritt 5 von 5 • Exportiere dein Projekt als Projektdatei zur späteren Bearbeitung oder
-          als PDF zum Ausdrucken.
-        </p>
+        <p className="mt-4 text-xl text-slate-500 max-w-lg">{t('wizard.exportSubtitle')}</p>
       </div>
 
       <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-2">
@@ -82,17 +89,14 @@ export default function ExportScreen() {
           <div className="mb-4 inline-flex rounded-xl bg-blue-50 p-4 text-blue-600">
             <Download className="h-8 w-8" />
           </div>
-          <h3 className="text-lg font-bold text-slate-900 mb-2">Projekt speichern</h3>
-          <p className="text-sm text-slate-500 mb-6 flex-1">
-            Lädt eine .storyboard Datei herunter, die du später wieder importieren und
-            weiterbearbeiten kannst.
-          </p>
+          <h3 className="text-lg font-bold text-slate-900 mb-2">{t('wizard.saveProject')}</h3>
+          <p className="text-sm text-slate-500 mb-6 flex-1">{t('wizard.saveProjectDesc')}</p>
           <button
             onClick={handleExport}
             disabled={saveBusy}
             className={`${buttonPrimary} w-full py-3`}
           >
-            {saveBusy ? 'Speichere...' : 'Als Projektdatei (.storyboard) speichern'}
+            {saveBusy ? t('wizard.saveBusy') : t('wizard.saveProjectFile')}
           </button>
         </div>
 
@@ -100,16 +104,14 @@ export default function ExportScreen() {
           <div className="mb-4 inline-flex rounded-xl bg-purple-50 p-4 text-purple-600">
             <FileText className="h-8 w-8" />
           </div>
-          <h3 className="text-lg font-bold text-slate-900 mb-2">Als PDF exportieren</h3>
-          <p className="text-sm text-slate-500 mb-6 flex-1">
-            Erstellt eine kompakte PDF-Datei, ideal zum Drucken oder digitalen Teilen.
-          </p>
+          <h3 className="text-lg font-bold text-slate-900 mb-2">{t('wizard.exportPdf')}</h3>
+          <p className="text-sm text-slate-500 mb-6 flex-1">{t('wizard.exportPdfDesc')}</p>
           <button
             onClick={handlePdf}
             disabled={pdfBusy}
             className={`${buttonSecondary} w-full py-3 border-purple-200 hover:bg-purple-50 text-purple-700`}
           >
-            {pdfBusy ? 'Erstelle PDF...' : 'Als PDF herunterladen'}
+            {pdfBusy ? t('wizard.exportPdfBusy') : t('wizard.exportPdfFile')}
           </button>
         </div>
 
@@ -117,12 +119,10 @@ export default function ExportScreen() {
           <div className="mb-4 inline-flex rounded-xl bg-slate-50 p-4 text-slate-600">
             <Printer className="h-8 w-8" />
           </div>
-          <h3 className="text-lg font-bold text-slate-900 mb-2">Direkt drucken</h3>
-          <p className="text-sm text-slate-500 mb-6 flex-1">
-            Öffnet den Druckdialog des Browsers. Optimal formatierte DIN A4 Seiten.
-          </p>
-          <button onClick={() => window.print()} className={`${buttonSecondary} w-full py-3`}>
-            Drucken
+          <h3 className="text-lg font-bold text-slate-900 mb-2">{t('wizard.directPrint')}</h3>
+          <p className="text-sm text-slate-500 mb-6 flex-1">{t('wizard.directPrintDesc')}</p>
+          <button onClick={handlePrint} className={`${buttonSecondary} w-full py-3`}>
+            {t('topbar.print')}
           </button>
         </div>
 
@@ -130,15 +130,13 @@ export default function ExportScreen() {
           <div className="mb-4 inline-flex rounded-xl bg-amber-50 p-4 text-amber-600">
             <Play className="h-8 w-8" />
           </div>
-          <h3 className="text-lg font-bold text-slate-900 mb-2">Präsentieren</h3>
-          <p className="text-sm text-slate-500 mb-6 flex-1">
-            Starte den Vollbildmodus, um das Storyboard auf einem Beamer zu präsentieren.
-          </p>
+          <h3 className="text-lg font-bold text-slate-900 mb-2">{t('topbar.present')}</h3>
+          <p className="text-sm text-slate-500 mb-6 flex-1">{t('wizard.presentationDesc')}</p>
           <Link
             to="/play"
             className={`${buttonSecondary} w-full py-3 flex items-center justify-center border-amber-200 hover:bg-amber-50 text-amber-700`}
           >
-            Präsentation starten
+            {t('wizard.startPresentation')}
           </Link>
         </div>
       </div>

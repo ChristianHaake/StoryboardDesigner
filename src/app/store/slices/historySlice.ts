@@ -20,14 +20,15 @@ export const createHistorySlice: StoryboardCreator<HistorySlice> = (set) => ({
       const restoredImages = snapshot.images || {};
       const restoredImageIds = new Set(Object.keys(restoredImages));
       const imageUrls = { ...state.imageUrls };
-      
+
       // Neue ObjectURLs für wiederhergestellte Bilder
       for (const [id, blob] of Object.entries(restoredImages)) {
-        if (!imageUrls[id]) {
+        if (!imageUrls[id] || state.images[id] !== blob) {
+          if (imageUrls[id]) URL.revokeObjectURL(imageUrls[id]);
           imageUrls[id] = URL.createObjectURL(blob);
         }
       }
-      
+
       // Alte ObjectURLs freigeben, wenn das Bild verworfen wird
       const currentImageIds = Object.keys(state.images);
       for (const id of currentImageIds) {

@@ -3,7 +3,6 @@ import type { ChangeEvent } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Link } from 'react-router-dom';
 import { selectProject, useStoryboardStore } from '../store/useStoryboardStore';
-import { exportProject, importProject, ImportError } from '../../shared/utils/zipHandler';
 import { clearAutosave } from '../../shared/utils/persistence';
 import { redo as historyRedo, undo as historyUndo } from '../../domain/history';
 import { exportElementToPdf } from '../../shared/utils/pdfExport';
@@ -35,7 +34,9 @@ export default function TopBar() {
   const canUndo = useStoryboardStore((s) => s.canUndo);
   const canRedo = useStoryboardStore((s) => s.canRedo);
   const activeStep = useStoryboardStore((s) => s.activeStep);
-  const showActions = activeStep === 'editor' || activeStep === 'review' || activeStep === 'export';
+  const setWizardStep = useStoryboardStore((s) => s.setWizardStep);
+  const showDocumentActions =
+    activeStep === 'editor' || activeStep === 'review' || activeStep === 'export';
 
   const [saveBusy, setSaveBusy] = useState(false);
 
@@ -44,8 +45,9 @@ export default function TopBar() {
     const state = useStoryboardStore.getState();
     setSaveBusy(true);
     try {
+      const { exportProject } = await import('../../shared/utils/zipHandler');
       await exportProject(selectProject(state), state.images);
-      state.setSuccessMessage(t('topbar.saveSuccess', 'Projekt gespeichert'));
+      state.setSuccessMessage(t('topbar.saveSuccess'));
       state.clearErrorMessage();
     } catch (err: unknown) {
       console.warn('Export fehlgeschlagen:', err);
@@ -58,15 +60,24 @@ export default function TopBar() {
   async function handlePdf() {
     if (pdfBusy) return;
     const state = useStoryboardStore.getState();
-    const element = document.getElementById('storyboard-document');
-    if (!element) return;
+    let element = document.getElementById('storyboard-document');
+    if (!element) {
+      setWizardStep('editor');
+      await new Promise(requestAnimationFrame);
+      await new Promise(requestAnimationFrame);
+      element = document.getElementById('storyboard-document');
+    }
+    if (!element) {
+      state.setErrorMessage(t('topbar.documentMissing'));
+      return;
+    }
     const rawName = state.metaData.projectName.trim() || t('topbar.pdfFallbackName');
     // Unzulässige Dateinamen-Zeichen ersetzen, damit der Download-Name nicht bricht.
     const name = rawName.replace(/[/\\:*?"<>|]/g, '_');
     setPdfBusy(true);
     try {
       await exportElementToPdf(element, `${name}.pdf`, 'article');
-      state.setSuccessMessage(t('topbar.pdfSuccess', 'PDF erfolgreich erstellt'));
+      state.setSuccessMessage(t('topbar.pdfSuccess'));
       state.clearErrorMessage();
     } catch (err: unknown) {
       console.warn('PDF-Export fehlgeschlagen:', err);
@@ -76,13 +87,22 @@ export default function TopBar() {
     }
   }
 
+  async function handlePrint() {
+    if (!document.getElementById('storyboard-document')) {
+      setWizardStep('editor');
+      await new Promise(requestAnimationFrame);
+      await new Promise(requestAnimationFrame);
+    }
+    window.print();
+  }
+
   function handleReset() {
     const state = useStoryboardStore.getState();
     // Irreversibel: aktuelles Projekt UND Autosave löschen. Daher Bestätigung.
     if (state.hasContent && !window.confirm(t('topbar.confirmReset'))) return;
     state.resetProject();
     void clearAutosave();
-    state.setSuccessMessage(t('topbar.resetSuccess', 'Projekt zurückgesetzt'));
+    state.setSuccessMessage(t('topbar.resetSuccess'));
   }
 
   async function handleImportFile(event: ChangeEvent<HTMLInputElement>) {
@@ -93,15 +113,16 @@ export default function TopBar() {
     if (state.hasContent && !window.confirm(t('topbar.confirmReplace'))) {
       return;
     }
+    const zipHandler = await import('../../shared/utils/zipHandler');
     try {
-      const { project, images } = await importProject(file);
+      const { project, images } = await zipHandler.importProject(file);
       useStoryboardStore.getState().loadProject(project, images, true);
-      useStoryboardStore
-        .getState()
-        .setSuccessMessage(t('topbar.loadSuccess', 'Projekt erfolgreich geladen'));
+      useStoryboardStore.getState().setSuccessMessage(t('topbar.loadSuccess'));
       state.clearErrorMessage();
     } catch (err: unknown) {
-      state.setErrorMessage(err instanceof ImportError ? err.message : t('topbar.importFailed'));
+      state.setErrorMessage(
+        err instanceof zipHandler.ImportError ? err.message : t('topbar.importFailed'),
+      );
     }
   }
 
@@ -130,126 +151,130 @@ export default function TopBar() {
         }
         actionsAriaLabel={t('topbar.actions')}
         actionsArea={
-          showActions ? (
-            <div className="flex w-full items-center gap-2 max-sm:col-span-2">
-              {/* File Menu */}
-              <details
-                ref={fileMenuRef}
-                className="relative group [&>summary::-webkit-details-marker]:hidden"
+          <div className="flex w-full items-center gap-2 max-sm:col-span-2">
+            {/* File Menu */}
+            <details
+              ref={fileMenuRef}
+              className="relative group [&>summary::-webkit-details-marker]:hidden"
+            >
+              <summary
+                aria-label={t('topbar.file')}
+                title={t('topbar.file')}
+                className={`${buttonSecondary} min-h-11 cursor-pointer list-none select-none`}
               >
-                <summary
-                  className={`${buttonSecondary} min-h-11 cursor-pointer list-none select-none`}
-                >
-                  <Folder className="w-[18px] h-[18px]" strokeWidth={1.8} aria-hidden="true" />
-                  <span className="max-sm:hidden">{t('topbar.file', 'Datei')}</span>
-                </summary>
-                {/* Overlay to close details when clicking outside */}
-                <div
-                  className="fixed inset-0 z-40 hidden cursor-default group-open:block"
+                <Folder className="w-[18px] h-[18px]" strokeWidth={1.8} aria-hidden="true" />
+                <span className="max-sm:hidden">{t('topbar.file')}</span>
+              </summary>
+              {/* Overlay to close details when clicking outside */}
+              <div
+                className="fixed inset-0 z-40 hidden cursor-default group-open:block"
+                onClick={() => {
+                  if (fileMenuRef.current) fileMenuRef.current.open = false;
+                }}
+                aria-hidden="true"
+              />
+              <div className="absolute left-0 top-full mt-1.5 w-52 rounded-xl border border-slate-200 bg-white p-1.5 shadow-xl z-50">
+                <button
+                  type="button"
                   onClick={() => {
                     if (fileMenuRef.current) fileMenuRef.current.open = false;
+                    fileInputRef.current?.click();
                   }}
-                  aria-hidden="true"
-                />
-                <div className="absolute left-0 top-full mt-1.5 w-52 rounded-xl border border-slate-200 bg-white p-1.5 shadow-xl z-50">
+                  className="flex w-full items-center gap-2.5 rounded-lg px-3 py-2.5 text-sm font-medium text-slate-700 transition-colors hover:bg-slate-100 hover:text-slate-900"
+                >
+                  <Upload className="w-[18px] h-[18px]" strokeWidth={1.8} />
+                  {t('topbar.load')}
+                </button>
+                <button
+                  type="button"
+                  disabled={saveBusy}
+                  aria-busy={saveBusy}
+                  onClick={() => {
+                    if (fileMenuRef.current) fileMenuRef.current.open = false;
+                    void handleExport();
+                  }}
+                  className="flex w-full items-center gap-2.5 rounded-lg px-3 py-2.5 text-sm font-medium text-slate-700 transition-colors hover:bg-slate-100 hover:text-slate-900 disabled:opacity-50 disabled:cursor-not-allowed"
+                >
+                  <Download className="w-[18px] h-[18px]" strokeWidth={1.8} />
+                  {t('topbar.save')}
+                </button>
+                <div className="my-1.5 h-px bg-slate-100" />
+                <button
+                  type="button"
+                  onClick={() => {
+                    if (fileMenuRef.current) fileMenuRef.current.open = false;
+                    handleReset();
+                  }}
+                  className="flex w-full items-center gap-2.5 rounded-lg px-3 py-2.5 text-sm font-medium text-red-600 transition-colors hover:bg-red-50 hover:text-red-700"
+                >
+                  <Trash2 className="w-[18px] h-[18px]" strokeWidth={1.8} />
+                  {t('topbar.reset')}
+                </button>
+              </div>
+            </details>
+
+            {showDocumentActions ? (
+              <>
+                {/* History Controls */}
+                <div className="flex gap-2 mr-auto">
                   <button
                     type="button"
-                    onClick={() => {
-                      if (fileMenuRef.current) fileMenuRef.current.open = false;
-                      fileInputRef.current?.click();
-                    }}
-                    className="flex w-full items-center gap-2.5 rounded-lg px-3 py-2.5 text-sm font-medium text-slate-700 transition-colors hover:bg-slate-100 hover:text-slate-900"
+                    onClick={historyUndo}
+                    disabled={!canUndo}
+                    aria-label={t('topbar.undo')}
+                    title={t('topbar.undo')}
+                    className={`${buttonSecondary} min-h-11 px-3`}
                   >
-                    <Upload className="w-[18px] h-[18px]" strokeWidth={1.8} />
-                    {t('topbar.load')}
+                    <Undo className="w-[18px] h-[18px]" strokeWidth={1.8} aria-hidden="true" />
                   </button>
                   <button
                     type="button"
-                    disabled={saveBusy}
-                    aria-busy={saveBusy}
-                    onClick={() => {
-                      if (fileMenuRef.current) fileMenuRef.current.open = false;
-                      void handleExport();
-                    }}
-                    className="flex w-full items-center gap-2.5 rounded-lg px-3 py-2.5 text-sm font-medium text-slate-700 transition-colors hover:bg-slate-100 hover:text-slate-900 disabled:opacity-50 disabled:cursor-not-allowed"
+                    onClick={historyRedo}
+                    disabled={!canRedo}
+                    aria-label={t('topbar.redo')}
+                    title={t('topbar.redo')}
+                    className={`${buttonSecondary} min-h-11 px-3`}
                   >
-                    <Download className="w-[18px] h-[18px]" strokeWidth={1.8} />
-                    {t('topbar.save')}
-                  </button>
-                  <div className="my-1.5 h-px bg-slate-100" />
-                  <button
-                    type="button"
-                    onClick={() => {
-                      if (fileMenuRef.current) fileMenuRef.current.open = false;
-                      handleReset();
-                    }}
-                    className="flex w-full items-center gap-2.5 rounded-lg px-3 py-2.5 text-sm font-medium text-red-600 transition-colors hover:bg-red-50 hover:text-red-700"
-                  >
-                    <Trash2 className="w-[18px] h-[18px]" strokeWidth={1.8} />
-                    {t('topbar.reset')}
+                    <Redo className="w-[18px] h-[18px]" strokeWidth={1.8} aria-hidden="true" />
                   </button>
                 </div>
-              </details>
 
-              {/* History Controls */}
-              <div className="flex gap-2 mr-auto">
-                <button
-                  type="button"
-                  onClick={historyUndo}
-                  disabled={!canUndo}
-                  aria-label={t('topbar.undo')}
-                  title={t('topbar.undo')}
-                  className={`${buttonSecondary} min-h-11 px-3`}
-                >
-                  <Undo className="w-[18px] h-[18px]" strokeWidth={1.8} aria-hidden="true" />
-                </button>
-                <button
-                  type="button"
-                  onClick={historyRedo}
-                  disabled={!canRedo}
-                  aria-label={t('topbar.redo')}
-                  title={t('topbar.redo')}
-                  className={`${buttonSecondary} min-h-11 px-3`}
-                >
-                  <Redo className="w-[18px] h-[18px]" strokeWidth={1.8} aria-hidden="true" />
-                </button>
-              </div>
-
-              {/* Export / Print */}
-              <div className="flex gap-2">
-                <Link
-                  to="/play"
-                  className={`${buttonSecondary} min-h-11 flex items-center justify-center max-sm:px-3`}
-                  title={t('topbar.present', 'Präsentieren')}
-                >
-                  <Play className="w-[18px] h-[18px]" strokeWidth={1.8} aria-hidden="true" />
-                  <span className="max-sm:hidden">{t('topbar.present', 'Präsentieren')}</span>
-                </Link>
-                <button
-                  type="button"
-                  onClick={() => window.print()}
-                  className={`${buttonSecondary} min-h-11 max-sm:px-3`}
-                  title={t('topbar.print')}
-                >
-                  <Printer className="w-[18px] h-[18px]" strokeWidth={1.8} aria-hidden="true" />
-                  <span className="max-sm:hidden">{t('topbar.print')}</span>
-                </button>
-                <button
-                  type="button"
-                  onClick={handlePdf}
-                  disabled={pdfBusy}
-                  aria-busy={pdfBusy}
-                  className={`${buttonPrimary} min-h-11 max-sm:px-3`}
-                  title={t('topbar.pdf')}
-                >
-                  <FileText className="w-[18px] h-[18px]" strokeWidth={1.8} aria-hidden="true" />
-                  <span className="max-sm:hidden">
-                    {pdfBusy ? t('topbar.pdfBusy') : t('topbar.pdf')}
-                  </span>
-                </button>
-              </div>
-            </div>
-          ) : null
+                {/* Export / Print */}
+                <div className="flex gap-2">
+                  <Link
+                    to="/play"
+                    className={`${buttonSecondary} min-h-11 flex items-center justify-center max-sm:px-3`}
+                    title={t('topbar.present')}
+                  >
+                    <Play className="w-[18px] h-[18px]" strokeWidth={1.8} aria-hidden="true" />
+                    <span className="max-sm:hidden">{t('topbar.present')}</span>
+                  </Link>
+                  <button
+                    type="button"
+                    onClick={handlePrint}
+                    className={`${buttonSecondary} min-h-11 max-sm:px-3`}
+                    title={t('topbar.print')}
+                  >
+                    <Printer className="w-[18px] h-[18px]" strokeWidth={1.8} aria-hidden="true" />
+                    <span className="max-sm:hidden">{t('topbar.print')}</span>
+                  </button>
+                  <button
+                    type="button"
+                    onClick={handlePdf}
+                    disabled={pdfBusy}
+                    aria-busy={pdfBusy}
+                    className={`${buttonPrimary} min-h-11 max-sm:px-3`}
+                    title={t('topbar.pdf')}
+                  >
+                    <FileText className="w-[18px] h-[18px]" strokeWidth={1.8} aria-hidden="true" />
+                    <span className="max-sm:hidden">
+                      {pdfBusy ? t('topbar.pdfBusy') : t('topbar.pdf')}
+                    </span>
+                  </button>
+                </div>
+              </>
+            ) : null}
+          </div>
         }
       />
       <input

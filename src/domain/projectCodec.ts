@@ -50,6 +50,13 @@ function str(value: unknown, fallback = ''): string {
   return typeof value === 'string' ? value : fallback;
 }
 
+function imageFileName(value: unknown): string | null {
+  if (typeof value !== 'string') return null;
+  if (!value.startsWith('images/')) return null;
+  if (value.includes('\\') || value.split('/').includes('..')) return null;
+  return value;
+}
+
 const FORMAT_TYPES: MetaData['productType'][] = [
   'shortFilm',
   'explainerVideo',
@@ -143,7 +150,7 @@ export function decodeProject(raw: unknown): StoryboardProject {
     return {
       id,
       orderIndex: typeof scene.orderIndex === 'number' ? scene.orderIndex : index,
-      imageFileName: typeof scene.imageFileName === 'string' ? scene.imageFileName : null,
+      imageFileName: imageFileName(scene.imageFileName),
       action: str(scene.action || scene.directorNotes),
       text: str(scene.text || scene.audioText),
       audio: {

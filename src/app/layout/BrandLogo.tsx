@@ -8,22 +8,14 @@ interface LocalBrandLogoProps {
   inverted?: boolean;
 }
 
-export default function BrandLogo({
-  className = '',
-  inverted = false,
-}: LocalBrandLogoProps) {
+export default function BrandLogo({ className = '', inverted = false }: LocalBrandLogoProps) {
   const { t } = useTranslation();
 
   const wideLogo = inverted ? logoWideInverted : logoWideDefault;
 
   return (
     <div className={`flex items-center gap-3 ${className}`}>
-      <img
-        src={wideLogo}
-        alt={t('brand.name')}
-        className="h-9 w-auto object-contain"
-      />
+      <img src={wideLogo} alt={t('brand.name')} className="h-9 w-auto object-contain" />
     </div>
   );
 }
-

@@ -32,7 +32,7 @@ export default function Footer() {
             rel="noreferrer"
             className="inline-flex items-center justify-center rounded-full p-2 text-slate-400 transition-colors hover:bg-slate-100 hover:text-slate-900"
             title={t('footer.repository')}
-            aria-label="Quellcode auf GitHub"
+            aria-label={t('footer.repository')}
           >
             <Code2 className="h-5 w-5" strokeWidth={1.5} />
           </a>
