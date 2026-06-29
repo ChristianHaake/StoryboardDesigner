@@ -1,25 +1,21 @@
 import { useTranslation } from 'react-i18next';
-import { BrandLogo as SharedBrandLogo } from '@haak3/ui';
+import logoWideDefault from '../../assets/logo-wide-default.png';
+import logoWideInverted from '../../assets/logo-wide-inverted.png';
 
 interface LocalBrandLogoProps {
-  showTagline?: boolean;
+  showTagline?: boolean; // Kept for interface compatibility
   className?: string;
   inverted?: boolean;
 }
 
-export default function BrandLogo({
-  showTagline = true,
-  className = '',
-  inverted = false,
-}: LocalBrandLogoProps) {
+export default function BrandLogo({ className = '', inverted = false }: LocalBrandLogoProps) {
   const { t } = useTranslation();
+
+  const wideLogo = inverted ? logoWideInverted : logoWideDefault;
+
   return (
-    <SharedBrandLogo
-      appTitle={t('brand.name')}
-      tagline={t('brand.tagline')}
-      showTagline={showTagline}
-      className={className}
-      inverted={inverted}
-    />
+    <div className={`flex items-center gap-3 ${className}`}>
+      <img src={wideLogo} alt={t('brand.name')} className="h-9 w-auto object-contain" />
+    </div>
   );
 }

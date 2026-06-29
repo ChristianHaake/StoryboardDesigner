@@ -2,8 +2,10 @@ import { useStoryboardStore } from '../../app/store/useStoryboardStore';
 import { ArrowLeft, ArrowRight, CheckCircle2, AlertCircle } from 'lucide-react';
 import { buttonPrimary } from '../../shared/ui/fieldStyles';
 import type { Scene } from '../../domain/types';
+import { useTranslation } from 'react-i18next';
 
 export default function ReviewScreen() {
+  const { t } = useTranslation();
   const setWizardStep = useStoryboardStore((s) => s.setWizardStep);
   const scenes = useStoryboardStore((s) => s.scenes);
   const imageUrls = useStoryboardStore((s) => s.imageUrls);
@@ -18,7 +20,6 @@ export default function ReviewScreen() {
       !!scene.text?.trim() ||
       !!scene.audio?.dialogue?.trim() ||
       !!scene.audio?.soundEffects?.trim() ||
-      !!scene.audio?.music?.trim() ||
       !!scene.location?.trim() ||
       (scene.materials && scene.materials.length > 0);
 
@@ -39,15 +40,15 @@ export default function ReviewScreen() {
           className="flex items-center text-sm text-slate-500 hover:text-blue-600 transition-colors"
         >
           <ArrowLeft className="mr-1 h-4 w-4" />
-          Zurück zum Editor
+          {t('wizard.reviewBack')}
         </button>
       </div>
 
       <div className="mb-10 text-center">
-        <h1 className="text-3xl font-bold tracking-tight text-slate-900">Projekt prüfen</h1>
-        <p className="mt-2 text-slate-500">
-          Schritt 4 von 5 • Überprüfe dein Storyboard auf Vollständigkeit.
-        </p>
+        <h1 className="text-3xl font-bold tracking-tight text-slate-900">
+          {t('wizard.reviewTitle')}
+        </h1>
+        <p className="mt-2 text-slate-500">{t('wizard.reviewSubtitle')}</p>
       </div>
 
       <div className="space-y-4 mb-10">
@@ -65,23 +66,23 @@ export default function ReviewScreen() {
                   {index + 1}
                 </span>
                 <span className="font-medium text-slate-900">
-                  {scene.title?.trim() || `Szene ${index + 1}`}
+                  {scene.title?.trim() || t('scene.title', { n: index + 1 })}
                 </span>
               </div>
               <div className="flex items-center gap-2">
                 {status === 'complete' && (
                   <span className="flex items-center text-sm text-emerald-600 font-medium">
-                    <CheckCircle2 className="mr-1 h-5 w-5" /> Vollständig
+                    <CheckCircle2 className="mr-1 h-5 w-5" /> {t('wizard.complete')}
                   </span>
                 )}
                 {status === 'partial' && (
                   <span className="flex items-center text-sm text-blue-600 font-medium">
-                    <CheckCircle2 className="mr-1 h-5 w-5" /> Teilweise (OK)
+                    <CheckCircle2 className="mr-1 h-5 w-5" /> {t('wizard.partial')}
                   </span>
                 )}
                 {status === 'empty' && (
                   <span className="flex items-center text-sm text-amber-600 font-medium">
-                    <AlertCircle className="mr-1 h-5 w-5" /> Leer
+                    <AlertCircle className="mr-1 h-5 w-5" /> {t('wizard.empty')}
                   </span>
                 )}
               </div>
@@ -90,7 +91,7 @@ export default function ReviewScreen() {
         })}
         {scenes.length === 0 && (
           <div className="rounded-xl border border-amber-200 bg-amber-50 p-6 text-center text-amber-800">
-            Dein Projekt hat noch keine Szenen. Gehe zurück zum Editor, um welche hinzuzufügen.
+            {t('wizard.noScenes')}
           </div>
         )}
       </div>
@@ -98,17 +99,17 @@ export default function ReviewScreen() {
       <div className="flex items-center justify-between border-t border-slate-200 pt-8">
         <p className="text-sm text-slate-500">
           {scenes.length === 0
-            ? 'Keine Szenen vorhanden'
+            ? t('wizard.noScenesSummary')
             : allComplete
-              ? 'Alles sieht gut aus!'
-              : 'Einige Szenen sind noch leer.'}
+              ? t('wizard.allGood')
+              : t('wizard.someEmpty')}
         </p>
         <button
           onClick={() => setWizardStep('export')}
           disabled={scenes.length === 0}
           className={`${buttonPrimary} px-8 py-3`}
         >
-          Weiter zum Export
+          {t('wizard.toExport')}
           <ArrowRight className="ml-2 h-5 w-5" />
         </button>
       </div>

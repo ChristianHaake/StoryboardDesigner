@@ -4,7 +4,8 @@ import { decodeProject } from '../../domain/projectCodec';
 
 // IndexedDB statt localStorage: Bild-Blobs hängen am Projekt und werden
 // per Structured Clone nativ mitgespeichert.
-const AUTOSAVE_KEY = 'currentProject';
+const AUTOSAVE_KEY = 'storyboard-creator:v1:currentProject';
+const LEGACY_AUTOSAVE_KEY = 'currentProject';
 const DEBOUNCE_MS = 1000;
 
 export interface AutosavePayload {
@@ -67,12 +68,12 @@ export async function clearAutosave(): Promise<void> {
   window.clearTimeout(timer);
   pending = false;
   saveSeq++;
-  await del(AUTOSAVE_KEY);
+  await Promise.all([del(AUTOSAVE_KEY), del(LEGACY_AUTOSAVE_KEY)]);
 }
 
 export async function loadAutosave(): Promise<AutosavePayload | undefined> {
   try {
-    const stored = await get<unknown>(AUTOSAVE_KEY);
+    const stored = (await get<unknown>(AUTOSAVE_KEY)) ?? (await get<unknown>(LEGACY_AUTOSAVE_KEY));
     if (!stored) return undefined;
     // Legacy-Format (vor Sprint 3): nacktes StoryboardProject ohne Bilder.
     if (!isRecord(stored) || !('project' in stored)) {

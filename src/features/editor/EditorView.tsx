@@ -19,16 +19,48 @@ import { MAX_SCENES } from '../../domain/projectCodec';
 import FieldConfigDialog from '../../shared/ui/FieldConfigDialog';
 import SceneNavigator from './SceneNavigator';
 
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useShallow } from 'zustand/react/shallow';
-import { ChevronDown, ChevronUp, LayoutTemplate, Film, Camera } from 'lucide-react';
+import {
+  ChevronDown,
+  ChevronUp,
+  LayoutTemplate,
+  Film,
+  Camera,
+  MonitorPlay,
+  Headphones,
+  Mic,
+  Scissors,
+  PenTool,
+  Smartphone,
+  Users,
+  Sparkles,
+} from 'lucide-react';
+import type { ProductType } from '../../domain/types';
+
+const EMPTY_STATE_ICONS: Record<ProductType, React.ElementType> = {
+  shortFilm: Film,
+  explainerVideo: MonitorPlay,
+  fotostory: Camera,
+  audioPlay: Headphones,
+  podcast: Mic,
+  stopMotion: Scissors,
+  comic: PenTool,
+  socialMediaClip: Smartphone,
+  roleplay: Users,
+  custom: Sparkles,
+};
 import PrePlanningSection from './PrePlanningSection';
 
 export default function EditorView() {
   const { t } = useTranslation();
   const [fieldDialogOpen, setFieldDialogOpen] = useState(false);
-  const closeFieldDialog = useCallback(() => setFieldDialogOpen(false), []);
+  const fieldConfigButtonRef = useRef<HTMLButtonElement | null>(null);
+  const closeFieldDialog = useCallback(() => {
+    setFieldDialogOpen(false);
+    window.setTimeout(() => fieldConfigButtonRef.current?.focus(), 0);
+  }, []);
 
   const sceneIds = useStoryboardStore(useShallow((s) => s.scenes.map((x) => x.id)));
   const numScenes = sceneIds.length;
@@ -91,7 +123,7 @@ export default function EditorView() {
   }, []);
 
   return (
-    <main>
+    <div>
       <A4Page id="storyboard-document">
         {/* Wizard Navigation */}
         <div className="mb-8 flex items-center justify-between print:hidden">
@@ -99,14 +131,14 @@ export default function EditorView() {
             onClick={() => useStoryboardStore.getState().setWizardStep('setup')}
             className="flex items-center text-sm font-medium text-slate-500 hover:text-blue-600 transition-colors"
           >
-            Zurück zu Einstellungen
+            {t('wizard.backToSetup')}
           </button>
 
           <button
             onClick={() => useStoryboardStore.getState().setWizardStep('review')}
             className="rounded-lg bg-blue-600 px-6 py-2 text-sm font-semibold text-white shadow-sm hover:bg-blue-500 transition-colors"
           >
-            Prüfen & Abschließen
+            {t('wizard.review')}
           </button>
         </div>
         {/* Pre-Planning */}
@@ -121,6 +153,7 @@ export default function EditorView() {
             <span className="h-px flex-1 bg-slate-200" aria-hidden="true" />
             <button
               type="button"
+              ref={fieldConfigButtonRef}
               onClick={() => setFieldDialogOpen(true)}
               className="min-h-11 rounded-lg px-3 text-sm font-semibold text-blue-700 transition-colors hover:bg-blue-50 print:hidden"
             >
@@ -160,16 +193,10 @@ export default function EditorView() {
                 {numScenes === 0 && (
                   <>
                     <div className="flex flex-col items-center justify-center gap-3 rounded-xl border border-dashed border-slate-300 bg-slate-50 px-4 py-12 text-center text-slate-500 print:hidden">
-                      {productType === 'shortFilm' && (
-                        <Film className="h-8 w-8 text-slate-400" strokeWidth={1.5} />
-                      )}
-                      {productType === 'fotostory' && (
-                        <Camera className="h-8 w-8 text-slate-400" strokeWidth={1.5} />
-                      )}
-
-                      {productType === 'custom' && (
-                        <LayoutTemplate className="h-8 w-8 text-slate-400" strokeWidth={1.5} />
-                      )}
+                      {(() => {
+                        const Icon = EMPTY_STATE_ICONS[productType] ?? LayoutTemplate;
+                        return <Icon className="h-8 w-8 text-slate-400" strokeWidth={1.5} />;
+                      })()}
                       <p className="text-sm">
                         {t(
                           // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -200,6 +227,6 @@ export default function EditorView() {
         </section>
       </A4Page>
       <FieldConfigDialog open={fieldDialogOpen} onClose={closeFieldDialog} />
-    </main>
+    </div>
   );
 }

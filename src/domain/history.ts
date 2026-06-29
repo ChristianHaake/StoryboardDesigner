@@ -1,8 +1,9 @@
 import type { CustomFieldDefinition, MetaData, PrePlanning, Scene } from './types';
 
 // Generelles Undo/Redo (#6b). Hält Schnappschüsse des Projektinhalts
-// (metaData, prePlanning, fieldDefinitions, scenes). Bilder sind nicht Teil der
-// History — Bild-Hinzufügen/-Entfernen läuft über eigene Flows.
+// (metaData, prePlanning, fieldDefinitions, scenes) plus image references, so
+// scene delete/restore and content snapshots can keep image previews consistent.
+// Direct image add/remove still has its own UI flow.
 //
 // Gespeist vom inhaltsgefilterten Store-Subscribe in App.tsx: recordChange(prev,
 // next) entscheidet, ob ein Schnappschuss auf den Past-Stack kommt. Aufeinander-

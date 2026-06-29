@@ -32,7 +32,7 @@ export default function SetupScreen() {
           className="flex items-center text-sm text-slate-500 hover:text-blue-600 transition-colors"
         >
           <ArrowLeft className="mr-1 h-4 w-4" />
-          Zurück zur Auswahl
+          {t('wizard.setupBack')}
         </button>
       </div>
 
@@ -41,9 +41,11 @@ export default function SetupScreen() {
           <Settings className="h-6 w-6" />
         </div>
         <div>
-          <h1 className="text-3xl font-bold tracking-tight text-slate-900">Projekt einrichten</h1>
+          <h1 className="text-3xl font-bold tracking-tight text-slate-900">
+            {t('wizard.setupTitle')}
+          </h1>
           <p className="mt-1 text-slate-500">
-            {t(`format.${metaData.productType}`)} • Schritt 2 von 5
+            {t(`format.${metaData.productType}`)} · {t('wizard.setupStep')}
           </p>
         </div>
       </div>
@@ -53,7 +55,7 @@ export default function SetupScreen() {
         <div className="space-y-6">
           <div>
             <label htmlFor="projectName" className="block text-sm font-semibold text-slate-900">
-              Projektname <span className="text-red-500">*</span>
+              {t('wizard.projectNameRequired')} <span className="text-red-500">*</span>
             </label>
             <input
               id="projectName"
@@ -61,7 +63,7 @@ export default function SetupScreen() {
               value={metaData.projectName}
               onChange={(e) => updateMetaData({ projectName: e.target.value })}
               className={`mt-2 ${inputClass} text-lg py-3`}
-              placeholder="z.B. Die Plastik-Krise im Ozean"
+              placeholder={t('wizard.projectNameExample')}
               autoFocus
             />
           </div>
@@ -69,7 +71,7 @@ export default function SetupScreen() {
           <div className="grid grid-cols-1 gap-6 sm:grid-cols-2">
             <div>
               <label htmlFor="topic" className="block text-sm font-semibold text-slate-900">
-                Thema (Optional)
+                {t('wizard.topicOptional')}
               </label>
               <input
                 id="topic"
@@ -77,12 +79,12 @@ export default function SetupScreen() {
                 value={metaData.topic}
                 onChange={(e) => updateMetaData({ topic: e.target.value })}
                 className={`mt-2 ${inputClass}`}
-                placeholder="z.B. Umweltschutz"
+                placeholder={t('wizard.topicExample')}
               />
             </div>
             <div>
               <label htmlFor="subject" className="block text-sm font-semibold text-slate-900">
-                Fach (Optional)
+                {t('wizard.subjectOptional')}
               </label>
               <input
                 id="subject"
@@ -90,14 +92,14 @@ export default function SetupScreen() {
                 value={metaData.subject}
                 onChange={(e) => updateMetaData({ subject: e.target.value })}
                 className={`mt-2 ${inputClass}`}
-                placeholder="z.B. Biologie"
+                placeholder={t('wizard.subjectExample')}
               />
             </div>
           </div>
 
           <div>
             <label htmlFor="groupMembers" className="block text-sm font-semibold text-slate-900">
-              Gruppenmitglieder (Optional)
+              {t('wizard.groupMembersOptional')}
             </label>
             <input
               id="groupMembers"
@@ -113,7 +115,7 @@ export default function SetupScreen() {
                 });
               }}
               className={`mt-2 ${inputClass}`}
-              placeholder="Namen kommagetrennt eingeben..."
+              placeholder={t('wizard.groupMembersPlaceholder')}
             />
           </div>
         </div>
@@ -122,13 +124,27 @@ export default function SetupScreen() {
 
         {/* Complexity Selection */}
         <div>
-          <h3 className="text-sm font-semibold text-slate-900 mb-4">Detaillierungsgrad</h3>
+          <h3 className="text-sm font-semibold text-slate-900 mb-4">
+            {t('wizard.complexityHeading')}
+          </h3>
           <div className="grid grid-cols-1 gap-4 sm:grid-cols-3">
             {(
               [
-                { id: 'simple', label: 'Einfach', desc: 'Nur die wichtigsten Felder' },
-                { id: 'standard', label: 'Standard', desc: 'Ideale Balance' },
-                { id: 'advanced', label: 'Profi', desc: 'Alle Details (Kamera, Licht)' },
+                {
+                  id: 'simple',
+                  label: t('wizard.complexitySimple'),
+                  desc: t('wizard.complexitySimpleDesc'),
+                },
+                {
+                  id: 'standard',
+                  label: t('wizard.complexityStandard'),
+                  desc: t('wizard.complexityStandardDesc'),
+                },
+                {
+                  id: 'advanced',
+                  label: t('wizard.complexityAdvanced'),
+                  desc: t('wizard.complexityAdvancedDesc'),
+                },
               ] as const
             ).map((level) => (
               <button
@@ -162,7 +178,7 @@ export default function SetupScreen() {
           disabled={!metaData.projectName.trim()}
           className={`${buttonPrimary} text-lg px-8 py-3 disabled:opacity-50 disabled:cursor-not-allowed`}
         >
-          Zum Editor
+          {t('wizard.toEditor')}
           <ArrowRight className="ml-2 h-5 w-5" />
         </button>
       </div>

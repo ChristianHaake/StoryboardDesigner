@@ -9,7 +9,7 @@ Alte Ziegelei 7
 26197 Großenkneten  
 Deutschland
 
-E-Mail: {mein Vorname}{mein Nachname}@gmail.com
+E-Mail: christianhaake@gmail.com
 
 ## 2. Bereitstellung der Website
 
@@ -40,6 +40,8 @@ Diese Anwendung verwendet keine Analyse- oder Tracking-Dienste.
 Der Storyboard-Creator verarbeitet eingegebene Texte und ausgewählte Bilder lokal im Browser. Projektinhalte werden nicht an den Betreiber übertragen.
 
 Damit die Arbeit bei einem Neuladen der Seite nicht verloren geht, speichert die App das aktuelle Projekt einschließlich der Bilder automatisch in der lokalen Browserdatenbank IndexedDB. Diese Daten verbleiben auf dem verwendeten Gerät und können über die Browser-Einstellungen durch Löschen der Website-Daten entfernt werden.
+
+Zusätzlich speichert die App kleine Einstellungen im `localStorage`: die gewählte Sprache (`storyboard-creator:lang`), das Darstellungsdesign (`storyboard-creator:theme`) und die Schriftgröße (`storyboard-creator:fontScale`). Diese Werte enthalten keine Projektinhalte.
 
 Alternativ entfernt die Schaltfläche **„Zurücksetzen"** in der Aktionsleiste nach einer Bestätigung das aktuelle Projekt samt automatisch gespeichertem Stand und beginnt mit einem leeren Storyboard.
 

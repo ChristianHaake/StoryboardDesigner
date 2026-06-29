@@ -9,7 +9,7 @@ Deutschland
 
 ## Kontakt
 
-E-Mail: {mein Vorname}{mein Nachname}@gmail.com
+E-Mail: christianhaake@gmail.com
 
 ## Verantwortlich für den Inhalt nach § 18 Abs. 2 MStV
 

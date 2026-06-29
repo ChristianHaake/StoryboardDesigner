@@ -1,7 +1,11 @@
 import type { StoryboardCreator, SceneSlice } from '../types';
 import type { Scene, SceneComment } from '../../../domain/types';
 import { generateId } from '../../../shared/utils/idGenerator';
-import { MAX_SCENES } from '../../../domain/projectCodec';
+import {
+  MAX_COMMENT_LENGTH,
+  MAX_COMMENTS_PER_SCENE,
+  MAX_SCENES,
+} from '../../../domain/projectCodec';
 
 export function createEmptyScene(orderIndex: number): Scene {
   return {
@@ -56,8 +60,10 @@ export const createSceneSlice: StoryboardCreator<SceneSlice> = (set) => ({
 
   addComment: (sceneId, text) =>
     set((state) => {
-      const trimmed = text.trim();
+      const trimmed = text.trim().slice(0, MAX_COMMENT_LENGTH);
       if (!trimmed) return state;
+      const target = state.scenes.find((scene) => scene.id === sceneId);
+      if ((target?.comments?.length ?? 0) >= MAX_COMMENTS_PER_SCENE) return state;
       const comment: SceneComment = {
         id: generateId(),
         text: trimmed,
@@ -145,7 +151,9 @@ export const createSceneSlice: StoryboardCreator<SceneSlice> = (set) => ({
         ...original,
         id: generateId(),
         ...(original.customFields ? { customFields: { ...original.customFields } } : {}),
-        comments: undefined,
+        ...(original.comments
+          ? { comments: original.comments.map((comment) => ({ ...comment })) }
+          : {}),
       };
       const scenes = [...state.scenes];
       scenes.splice(index + 1, 0, copy);

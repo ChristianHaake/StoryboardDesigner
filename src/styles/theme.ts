@@ -9,8 +9,10 @@ export type Theme = (typeof THEMES)[number];
 export const FONT_SCALES = ['normal', 'large', 'xlarge'] as const;
 export type FontScale = (typeof FONT_SCALES)[number];
 
-const THEME_KEY = 'theme';
-const FONT_KEY = 'fontScale';
+const THEME_KEY = 'storyboard-creator:theme';
+const FONT_KEY = 'storyboard-creator:fontScale';
+const LEGACY_THEME_KEY = 'theme';
+const LEGACY_FONT_KEY = 'fontScale';
 
 function isTheme(value: unknown): value is Theme {
   return typeof value === 'string' && (THEMES as readonly string[]).includes(value);
@@ -22,7 +24,7 @@ function isFontScale(value: unknown): value is FontScale {
 
 export function readTheme(): Theme {
   try {
-    const stored = localStorage.getItem(THEME_KEY);
+    const stored = localStorage.getItem(THEME_KEY) ?? localStorage.getItem(LEGACY_THEME_KEY);
     if (isTheme(stored)) return stored;
   } catch {
     // localStorage kann blockiert sein (Privatmodus) — Default genügt.
@@ -32,7 +34,7 @@ export function readTheme(): Theme {
 
 export function readFontScale(): FontScale {
   try {
-    const stored = localStorage.getItem(FONT_KEY);
+    const stored = localStorage.getItem(FONT_KEY) ?? localStorage.getItem(LEGACY_FONT_KEY);
     if (isFontScale(stored)) return stored;
   } catch {
     // s. o.

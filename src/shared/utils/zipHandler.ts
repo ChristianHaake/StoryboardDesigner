@@ -8,9 +8,69 @@ const MAX_IMAGE_BYTES = 10 * 1024 * 1024; // 10 MB pro Bild
 const MAX_TOTAL_IMAGE_BYTES = 100 * 1024 * 1024; // 100 MB dekomprimierte Bilder
 const MAX_DATA_JSON_BYTES = 5 * 1024 * 1024; // 5 MB Projektdaten
 const MAX_FILE_BYTES = 100 * 1024 * 1024; // 100 MB Gesamtdatei
+const MAX_IMAGE_PIXELS = 50_000_000;
 
 /** Import-Fehler mit nutzerfreundlicher, übersetzter Meldung. */
-export class ImportError extends Error {}
+export class ImportError extends Error {
+  name = 'ImportError';
+}
+
+type ImageInfo = {
+  type: 'image/jpeg' | 'image/png';
+  width: number;
+  height: number;
+};
+
+function readJpegInfo(bytes: Uint8Array): ImageInfo | null {
+  if (bytes[0] !== 0xff || bytes[1] !== 0xd8) return null;
+  let offset = 2;
+  while (offset + 9 < bytes.length) {
+    if (bytes[offset] !== 0xff) return null;
+    const marker = bytes[offset + 1];
+    offset += 2;
+    while (bytes[offset] === 0xff) offset++;
+    if (marker === 0xd9 || marker === 0xda) break;
+    if (offset + 2 > bytes.length) return null;
+    const length = (bytes[offset] << 8) | bytes[offset + 1];
+    if (length < 2 || offset + length > bytes.length) return null;
+    const isStartOfFrame =
+      (marker >= 0xc0 && marker <= 0xc3) ||
+      (marker >= 0xc5 && marker <= 0xc7) ||
+      (marker >= 0xc9 && marker <= 0xcb) ||
+      (marker >= 0xcd && marker <= 0xcf);
+    if (isStartOfFrame) {
+      const height = (bytes[offset + 3] << 8) | bytes[offset + 4];
+      const width = (bytes[offset + 5] << 8) | bytes[offset + 6];
+      return { type: 'image/jpeg', width, height };
+    }
+    offset += length;
+  }
+  return null;
+}
+
+function readPngInfo(bytes: Uint8Array): ImageInfo | null {
+  const signature = [0x89, 0x50, 0x4e, 0x47, 0x0d, 0x0a, 0x1a, 0x0a];
+  if (bytes.length < 24 || !signature.every((byte, index) => bytes[index] === byte)) return null;
+  const view = new DataView(bytes.buffer, bytes.byteOffset, bytes.byteLength);
+  const chunkType = String.fromCharCode(bytes[12], bytes[13], bytes[14], bytes[15]);
+  if (chunkType !== 'IHDR') return null;
+  return {
+    type: 'image/png',
+    width: view.getUint32(16, false),
+    height: view.getUint32(20, false),
+  };
+}
+
+function validateImportedImage(bytes: Uint8Array, fileName: string): ImageInfo {
+  const info = readPngInfo(bytes) ?? readJpegInfo(bytes);
+  if (!info || info.width <= 0 || info.height <= 0) {
+    throw new ImportError(i18n.t('errors.invalidImageImport', { file: fileName }));
+  }
+  if (info.width * info.height > MAX_IMAGE_PIXELS) {
+    throw new ImportError(i18n.t('errors.imagePixelsTooLarge', { file: fileName }));
+  }
+  return info;
+}
 
 function sanitizeFileName(name: string): string {
   const cleaned = name
@@ -18,6 +78,15 @@ function sanitizeFileName(name: string): string {
     .replace(/[\\/:*?"<>|]/g, '-')
     .slice(0, 80);
   return cleaned || 'storyboard';
+}
+
+function isSafeImageEntryName(name: string): boolean {
+  return (
+    name.startsWith('images/') &&
+    name.length > 'images/'.length &&
+    !name.includes('\\') &&
+    !name.split('/').includes('..')
+  );
 }
 
 export async function exportProject(
@@ -139,10 +208,12 @@ export async function importProject(
       if (entry.uncompressedSize > MAX_DATA_JSON_BYTES) {
         throw new ImportError(i18n.t('errors.importDataTooLarge'));
       }
-    } else if (entry.name.startsWith('images/')) {
+    } else if (isSafeImageEntryName(entry.name)) {
       if (entry.uncompressedSize > MAX_IMAGE_BYTES) {
         throw new ImportError(i18n.t('errors.imagesTooLargeImport', { file: entry.name }));
       }
+    } else {
+      throw new ImportError(i18n.t('errors.notStoryboard'));
     }
   }
 
@@ -155,7 +226,7 @@ export async function importProject(
             throw new ImportError(i18n.t('errors.importDataTooLarge'));
           }
           return true;
-        } else if (file.name.startsWith('images/')) {
+        } else if (isSafeImageEntryName(file.name)) {
           if (file.originalSize > MAX_IMAGE_BYTES) {
             throw new ImportError(i18n.t('errors.imagesTooLargeImport', { file: file.name }));
           }
@@ -216,7 +287,8 @@ export async function importProject(
     }
     const mediaBytes = extracted[scene.imageFileName];
     if (!mediaBytes) continue; // missing image tolerated
-    const blob = new Blob([new Uint8Array(mediaBytes)]);
+    const info = validateImportedImage(mediaBytes, scene.imageFileName);
+    const blob = new Blob([new Uint8Array(mediaBytes)], { type: info.type });
     loadedImages.set(scene.imageFileName, blob);
     images[scene.id] = blob;
   }

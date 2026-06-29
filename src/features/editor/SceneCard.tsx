@@ -5,6 +5,7 @@ import { useSortable } from '@dnd-kit/sortable';
 import { CSS } from '@dnd-kit/utilities';
 import type { Scene } from '../../domain/types';
 import { useStoryboardStore } from '../../app/store/useStoryboardStore';
+import { useShallow } from 'zustand/react/shallow';
 import { resizeImage } from '../../shared/utils/imageResizer';
 import AutoResizeTextarea from '../../shared/ui/AutoResizeTextarea';
 import CommentThread from './CommentThread';
@@ -25,8 +26,12 @@ interface SceneCardProps {
 function SceneCard({ sceneId }: SceneCardProps) {
   const { t } = useTranslation();
 
-  const scene = useStoryboardStore((s) => s.scenes.find((x) => x.id === sceneId));
-  const orderIndex = useStoryboardStore((s) => s.scenes.findIndex((x) => x.id === sceneId));
+  const { scene, orderIndex } = useStoryboardStore(
+    useShallow((s) => {
+      const index = s.scenes.findIndex((x) => x.id === sceneId);
+      return { scene: index >= 0 ? s.scenes[index] : undefined, orderIndex: index };
+    }),
+  );
   const n = orderIndex + 1;
   const productType = useStoryboardStore((s) => s.metaData.productType);
   const features = productType ? FORMAT_FEATURES[productType] : FORMAT_FEATURES.shortFilm;
@@ -195,7 +200,7 @@ function SceneCard({ sceneId }: SceneCardProps) {
               >
                 <div className="mb-1.5 flex items-center justify-between">
                   <span className="text-sm font-medium text-slate-700 print:text-xs">
-                    {t('scene.imageLabel', 'Szenenbild')}
+                    {t('scene.imageLabel')}
                   </span>
                 </div>
                 {imageUrl ? (
@@ -251,10 +256,10 @@ function SceneCard({ sceneId }: SceneCardProps) {
                       ) : (
                         <>
                           <span className="mb-1 block font-semibold text-slate-700">
-                            {t('scene.imageAdd', 'Bild hinzufügen')}
+                            {t('scene.imageAdd')}
                           </span>
                           <span className="text-xs font-normal text-slate-500">
-                            {t('scene.imageInstruction', 'Klicken oder Datei ziehen')}
+                            {t('scene.imageInstruction')}
                           </span>
                         </>
                       )}
@@ -264,7 +269,7 @@ function SceneCard({ sceneId }: SceneCardProps) {
                 <input
                   id={`image-upload-${scene.id}`}
                   type="file"
-                  accept="image/*"
+                  accept="image/png,image/jpeg"
                   className="sr-only"
                   onChange={handleFileChange}
                 />
@@ -288,22 +293,24 @@ function SceneCard({ sceneId }: SceneCardProps) {
               {/* === IMMER SICHTBAR (SIMPLE) === */}
               <div>
                 <label className={labelClass} htmlFor={`action-${scene.id}`}>
-                  {visual ? 'Handlung / Bildbeschreibung' : 'Handlung / Beschreibung'}
+                  {visual ? t('scene.actionLabelVisual') : t('scene.actionLabel')}
                 </label>
                 <AutoResizeTextarea
                   id={`action-${scene.id}`}
-                  placeholder={visual ? 'Was passiert im Bild?' : 'Was passiert?'}
+                  placeholder={
+                    visual ? t('scene.actionPlaceholderVisual') : t('scene.actionPlaceholder')
+                  }
                   value={scene.action}
                   onChange={(e) => updateScene(scene.id, { action: e.target.value })}
                 />
               </div>
               <div>
                 <label className={labelClass} htmlFor={`text-${scene.id}`}>
-                  Sprechtext / Voiceover
+                  {t('scene.speechLabel')}
                 </label>
                 <AutoResizeTextarea
                   id={`text-${scene.id}`}
-                  placeholder="Was wird gesprochen?"
+                  placeholder={t('scene.speechPlaceholder')}
                   value={scene.text}
                   onChange={(e) => updateScene(scene.id, { text: e.target.value })}
                 />
@@ -315,11 +322,11 @@ function SceneCard({ sceneId }: SceneCardProps) {
                   <div className="grid grid-cols-2 gap-4">
                     <div>
                       <label className={labelClass} htmlFor={`dialogue-${scene.id}`}>
-                        Dialog
+                        {t('scene.dialogueLabel')}
                       </label>
                       <AutoResizeTextarea
                         id={`dialogue-${scene.id}`}
-                        placeholder="Wer spricht mit wem?"
+                        placeholder={t('scene.dialoguePlaceholder')}
                         value={scene.audio?.dialogue ?? ''}
                         onChange={(e) =>
                           updateScene(scene.id, {
@@ -331,11 +338,11 @@ function SceneCard({ sceneId }: SceneCardProps) {
                     {features.hasAudioEffects && (
                       <div>
                         <label className={labelClass} htmlFor={`soundEffects-${scene.id}`}>
-                          Soundeffekte / Musik
+                          {t('scene.soundLabel')}
                         </label>
                         <AutoResizeTextarea
                           id={`soundEffects-${scene.id}`}
-                          placeholder="Geräusche oder Musik"
+                          placeholder={t('scene.soundPlaceholder')}
                           value={scene.audio?.soundEffects ?? ''}
                           onChange={(e) =>
                             updateScene(scene.id, {
@@ -349,11 +356,11 @@ function SceneCard({ sceneId }: SceneCardProps) {
                   {features.hasLocation && (
                     <div>
                       <label className={labelClass} htmlFor={`location-${scene.id}`}>
-                        Ort / Location
+                        {t('scene.locationLabel')}
                       </label>
                       <AutoResizeTextarea
                         id={`location-${scene.id}`}
-                        placeholder="Wo findet die Szene statt?"
+                        placeholder={t('scene.locationPlaceholder')}
                         value={scene.location ?? ''}
                         onChange={(e) => updateScene(scene.id, { location: e.target.value })}
                       />
@@ -369,11 +376,11 @@ function SceneCard({ sceneId }: SceneCardProps) {
                     {features.hasCameraSize && (
                       <div>
                         <label className={labelClass} htmlFor={`camera-size-${scene.id}`}>
-                          Einstellungsgröße
+                          {t('scene.shotSizeLabel')}
                         </label>
                         <AutoResizeTextarea
                           id={`camera-size-${scene.id}`}
-                          placeholder="z.B. Halbnah, Totale"
+                          placeholder={t('scene.shotSizePlaceholder')}
                           value={scene.camera?.shotSize ?? ''}
                           onChange={(e) =>
                             updateScene(scene.id, {
@@ -386,11 +393,11 @@ function SceneCard({ sceneId }: SceneCardProps) {
                     {features.hasCameraMovement && (
                       <div>
                         <label className={labelClass} htmlFor={`camera-movement-${scene.id}`}>
-                          Kamerabewegung
+                          {t('scene.cameraMovementLabel')}
                         </label>
                         <AutoResizeTextarea
                           id={`camera-movement-${scene.id}`}
-                          placeholder="z.B. Schwenk, Statisch"
+                          placeholder={t('scene.cameraMovementPlaceholder')}
                           value={scene.camera?.movement ?? ''}
                           onChange={(e) =>
                             updateScene(scene.id, {
@@ -403,11 +410,15 @@ function SceneCard({ sceneId }: SceneCardProps) {
                   </div>
                   <div>
                     <label className={labelClass} htmlFor={`materials-${scene.id}`}>
-                      Requisiten / Material
+                      {t('scene.materialsLabel')}
                     </label>
                     <AutoResizeTextarea
                       id={`materials-${scene.id}`}
-                      placeholder={visual ? 'Was wird für das Bild benötigt?' : 'Was wird benötigt?'}
+                      placeholder={
+                        visual
+                          ? t('scene.materialsPlaceholderVisual')
+                          : t('scene.materialsPlaceholder')
+                      }
                       value={localMaterials}
                       onChange={(e) => setLocalMaterials(e.target.value)}
                       onBlur={() =>

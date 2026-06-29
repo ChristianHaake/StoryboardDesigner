@@ -1,5 +1,5 @@
 import { Suspense, lazy, useEffect } from 'react';
-import { BrowserRouter, Navigate, Route, Routes } from 'react-router-dom';
+import { BrowserRouter, Navigate, Route, Routes, useLocation } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import TopBar from './layout/TopBar';
 import Footer from './layout/Footer';
@@ -96,7 +96,7 @@ export default function App() {
         state.scenes !== prev.scenes ||
         state.images !== prev.images;
       if (!contentChanged) return;
-      
+
       recordChange(toSnapshot(prev), toSnapshot(state));
       scheduleAutosave({ project: selectProject(state), images: state.images });
     });
@@ -144,32 +144,56 @@ export default function App() {
 
   return (
     <BrowserRouter>
-      <div className="flex min-h-screen flex-col bg-slate-100 text-slate-900 print:bg-white">
-        <Suspense fallback={null}>
-          <Routes>
-            <Route
-              path="/"
-              element={
-                <>
-                  <TopBar />
-                  <WizardRouter />
-                  <Notifications />
-                </>
-              }
-            />
-            <Route path="/play" element={<PresentationView />} />
-            <Route path="/hilfe" element={<MarkdownView source={hilfeText} />} />
-            <Route path="/ueber" element={<MarkdownView source={ueberText} />} />
-            <Route
-              path="/datenschutz"
-              element={<MarkdownView source={datenschutzText} germanOnly />}
-            />
-            <Route path="/impressum" element={<MarkdownView source={impressumText} germanOnly />} />
-            <Route path="*" element={<Navigate to="/" replace />} />
-          </Routes>
-        </Suspense>
-        <Footer />
-      </div>
+      <AppShell
+        hilfeText={hilfeText}
+        ueberText={ueberText}
+        datenschutzText={datenschutzText}
+        impressumText={impressumText}
+      />
     </BrowserRouter>
+  );
+}
+
+function AppShell({
+  hilfeText,
+  ueberText,
+  datenschutzText,
+  impressumText,
+}: {
+  hilfeText: string;
+  ueberText: string;
+  datenschutzText: string;
+  impressumText: string;
+}) {
+  const location = useLocation();
+  const hideFooter = location.pathname === '/play';
+
+  return (
+    <div className="flex min-h-screen flex-col bg-slate-100 text-slate-900 print:bg-white">
+      <Suspense fallback={null}>
+        <Routes>
+          <Route
+            path="/"
+            element={
+              <>
+                <TopBar />
+                <WizardRouter />
+                <Notifications />
+              </>
+            }
+          />
+          <Route path="/play" element={<PresentationView />} />
+          <Route path="/hilfe" element={<MarkdownView source={hilfeText} />} />
+          <Route path="/ueber" element={<MarkdownView source={ueberText} />} />
+          <Route
+            path="/datenschutz"
+            element={<MarkdownView source={datenschutzText} germanOnly />}
+          />
+          <Route path="/impressum" element={<MarkdownView source={impressumText} germanOnly />} />
+          <Route path="*" element={<Navigate to="/" replace />} />
+        </Routes>
+      </Suspense>
+      {!hideFooter && <Footer />}
+    </div>
   );
 }
