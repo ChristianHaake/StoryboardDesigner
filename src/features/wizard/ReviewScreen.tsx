@@ -20,7 +20,6 @@ export default function ReviewScreen() {
       !!scene.text?.trim() ||
       !!scene.audio?.dialogue?.trim() ||
       !!scene.audio?.soundEffects?.trim() ||
-      !!scene.audio?.music?.trim() ||
       !!scene.location?.trim() ||
       (scene.materials && scene.materials.length > 0);
 

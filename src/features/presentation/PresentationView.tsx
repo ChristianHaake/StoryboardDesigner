@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { useStoryboardStore } from '../../app/store/useStoryboardStore';
+import { FORMAT_FEATURES } from '../../domain/formatConfig';
 import {
   ChevronLeft,
   ChevronRight,
@@ -19,6 +20,8 @@ export default function PresentationView() {
   const scenes = useStoryboardStore((s) => s.scenes);
   const imageUrls = useStoryboardStore((s) => s.imageUrls);
   const fieldDefinitions = useStoryboardStore((s) => s.fieldDefinitions);
+  const productType = useStoryboardStore((s) => s.metaData.productType);
+  const features = productType ? FORMAT_FEATURES[productType] : FORMAT_FEATURES.shortFilm;
   const [currentIndex, setCurrentIndex] = useState(0);
   const [isPlaying, setIsPlaying] = useState(false);
 
@@ -137,20 +140,22 @@ export default function PresentationView() {
 
       {/* Main Content Area */}
       <div className="flex flex-1 flex-col overflow-hidden">
-        {/* Image Section */}
-        <div className="relative flex flex-1 items-center justify-center p-8 pb-4">
-          {imageUrl ? (
-            <img
-              src={imageUrl}
-              alt={currentScene.altText || ''}
-              className="max-h-full max-w-full rounded-lg object-contain shadow-2xl"
-            />
-          ) : (
-            <div className="flex aspect-video w-full max-w-3xl items-center justify-center rounded-lg border-2 border-dashed border-slate-800 bg-slate-900/50">
-              <span className="text-slate-600">{t('scene.noImage')}</span>
-            </div>
-          )}
-        </div>
+        {/* Image Section — hidden for audio-only formats */}
+        {features.hasImage && (
+          <div className="relative flex flex-1 items-center justify-center p-8 pb-4">
+            {imageUrl ? (
+              <img
+                src={imageUrl}
+                alt={currentScene.altText || ''}
+                className="max-h-full max-w-full rounded-lg object-contain shadow-2xl"
+              />
+            ) : (
+              <div className="flex aspect-video w-full max-w-3xl items-center justify-center rounded-lg border-2 border-dashed border-slate-800 bg-slate-900/50">
+                <span className="text-slate-600">{t('scene.noImage')}</span>
+              </div>
+            )}
+          </div>
+        )}
 
         {/* Text Section */}
         <div className="flex shrink-0 flex-col items-center p-8 pt-4">
@@ -178,12 +183,10 @@ export default function PresentationView() {
             {currentScene.audio?.dialogue && (
               <FieldBlock label={t('presentation.dialogue')} value={currentScene.audio.dialogue} />
             )}
-            {(currentScene.audio?.soundEffects || currentScene.audio?.music) && (
+            {currentScene.audio?.soundEffects && (
               <FieldBlock
                 label={t('presentation.sound')}
-                value={[currentScene.audio.soundEffects, currentScene.audio.music]
-                  .filter(Boolean)
-                  .join(' · ')}
+                value={currentScene.audio.soundEffects}
               />
             )}
             {(currentScene.camera?.shotSize ||

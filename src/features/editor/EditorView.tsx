@@ -22,7 +22,35 @@ import SceneNavigator from './SceneNavigator';
 import { useState, useEffect, useCallback, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useShallow } from 'zustand/react/shallow';
-import { ChevronDown, ChevronUp, LayoutTemplate, Film, Camera } from 'lucide-react';
+import {
+  ChevronDown,
+  ChevronUp,
+  LayoutTemplate,
+  Film,
+  Camera,
+  MonitorPlay,
+  Headphones,
+  Mic,
+  Scissors,
+  PenTool,
+  Smartphone,
+  Users,
+  Sparkles,
+} from 'lucide-react';
+import type { ProductType } from '../../domain/types';
+
+const EMPTY_STATE_ICONS: Record<ProductType, React.ElementType> = {
+  shortFilm: Film,
+  explainerVideo: MonitorPlay,
+  fotostory: Camera,
+  audioPlay: Headphones,
+  podcast: Mic,
+  stopMotion: Scissors,
+  comic: PenTool,
+  socialMediaClip: Smartphone,
+  roleplay: Users,
+  custom: Sparkles,
+};
 import PrePlanningSection from './PrePlanningSection';
 
 export default function EditorView() {
@@ -165,16 +193,10 @@ export default function EditorView() {
                 {numScenes === 0 && (
                   <>
                     <div className="flex flex-col items-center justify-center gap-3 rounded-xl border border-dashed border-slate-300 bg-slate-50 px-4 py-12 text-center text-slate-500 print:hidden">
-                      {productType === 'shortFilm' && (
-                        <Film className="h-8 w-8 text-slate-400" strokeWidth={1.5} />
-                      )}
-                      {productType === 'fotostory' && (
-                        <Camera className="h-8 w-8 text-slate-400" strokeWidth={1.5} />
-                      )}
-
-                      {productType === 'custom' && (
-                        <LayoutTemplate className="h-8 w-8 text-slate-400" strokeWidth={1.5} />
-                      )}
+                      {(() => {
+                        const Icon = EMPTY_STATE_ICONS[productType] ?? LayoutTemplate;
+                        return <Icon className="h-8 w-8 text-slate-400" strokeWidth={1.5} />;
+                      })()}
                       <p className="text-sm">
                         {t(
                           // eslint-disable-next-line @typescript-eslint/no-explicit-any
