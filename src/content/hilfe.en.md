@@ -50,13 +50,12 @@ That is not enough if you switch devices or share the device with others!
 
 **Tip:** Save a file at the end of every work session. The file is your backup.
 
-## Exporting as PDF
+## Exporting as PDF and printing
 
-1. Click “PDF” at the top.
-2. Your device’s print dialog opens.
-3. Choose **“Save as PDF”** there (instead of a printer).
+- **Download PDF:** Click “PDF” at the top. The app creates a `.pdf` file directly in the browser and downloads it.
+- **Print:** Click “Print” at the top. This opens your device’s print dialog.
 
-On iPad: in the print dialog, pinch the preview open with two fingers, then tap Share at the top right and choose “Save to Files”.
+On iPad, browser downloads can vary depending on school device or MDM settings. If the direct PDF download is blocked, use “Print” and save as PDF from the print dialog.
 
 ## Frequently asked questions
 

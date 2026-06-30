@@ -45,18 +45,17 @@ eingetragene Werte bleiben erhalten.
 Dein Browser merkt sich deine Arbeit automatisch auf **diesem Gerät**.
 Das reicht aber nicht, wenn du das Gerät wechselst oder es mit anderen geteilt wird!
 
-- **Lokal speichern:** Klicke oben auf „Lokal speichern". Du erhältst eine `.storyboard`-Datei. Bewahre sie gut auf (z. B. Schul-Cloud, USB-Stick, per Mail an dich selbst).
-- **Projekt laden:** Klicke auf „Projekt laden" und wähle deine `.storyboard`-Datei aus. Achtung: Das ersetzt das aktuell geöffnete Projekt.
+- **Speichern:** Klicke oben auf „Speichern". Du erhältst eine `.storyboard`-Datei. Bewahre sie gut auf (z. B. Schul-Cloud, USB-Stick, per Mail an dich selbst).
+- **Laden:** Klicke auf „Laden" und wähle deine `.storyboard`-Datei aus. Achtung: Das ersetzt das aktuell geöffnete Projekt.
 
 **Tipp:** Speichere am Ende jeder Arbeitsphase eine Datei. Die Datei ist dein Backup.
 
-## Als PDF exportieren
+## Als PDF exportieren und drucken
 
-1. Klicke oben auf „PDF exportieren".
-2. Es öffnet sich das Druckfenster deines Geräts.
-3. Wähle dort **„Als PDF sichern"** (statt eines Druckers).
+- **PDF herunterladen:** Klicke oben auf „PDF". Die App erstellt direkt im Browser eine `.pdf`-Datei und lädt sie herunter.
+- **Drucken:** Klicke oben auf „Drucken". Dann öffnet sich das Druckfenster deines Geräts.
 
-Auf dem iPad: Im Druckfenster die Vorschau mit zwei Fingern aufziehen, dann oben rechts auf Teilen tippen und „In Dateien sichern" wählen.
+Auf dem iPad kann der Browser-Download je nach Schulgerät oder MDM-Einstellung anders aussehen. Falls der direkte PDF-Download blockiert ist, nutze „Drucken" und sichere im Druckdialog als PDF.
 
 ## Häufige Fragen
 

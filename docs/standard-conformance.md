@@ -46,7 +46,9 @@ Review date: n/a
   its own undo snackbar. Keyboard shortcuts defer to native text undo while a
   form field is focused.
 - Planning and design docs are kept under `docs/planning/`.
-- PDF export uses native `window.print()` with print CSS, not a server.
+- PDF export creates a local `.pdf` in the browser via `html-to-image` and
+  `jsPDF`; the separate print action uses native `window.print()` with print
+  CSS. Neither path uses a server.
 - State persists via `idb-keyval` / IndexedDB (autosave) plus `.storyboard`
   ZIP files (`jszip` + `file-saver`) for durable backups.
 - **Theming** (light / dark / high-contrast) is implemented by overriding

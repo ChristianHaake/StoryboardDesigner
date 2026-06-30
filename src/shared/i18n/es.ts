@@ -296,6 +296,8 @@ const es: Translations = {
     title: 'Escena {{n}}',
     titlePodcast: 'Sección {{n}}',
     move: 'Mover la escena {{n}}',
+    moveUp: 'Mover la escena {{n}} hacia arriba',
+    moveDown: 'Mover la escena {{n}} hacia abajo',
     duplicate: 'Duplicar la escena {{n}}',
     delete: 'Eliminar la escena {{n}}',
     imageReplace: 'Sustituir la imagen de la escena {{n}}',

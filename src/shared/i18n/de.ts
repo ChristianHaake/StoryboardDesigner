@@ -288,6 +288,8 @@ const de = {
     title: 'Szene {{n}}',
     titlePodcast: 'Abschnitt {{n}}',
     move: 'Szene {{n}} verschieben',
+    moveUp: 'Szene {{n}} nach oben verschieben',
+    moveDown: 'Szene {{n}} nach unten verschieben',
     duplicate: 'Szene {{n}} duplizieren',
     delete: 'Szene {{n}} löschen',
     imageReplace: 'Bild der Szene {{n}} ersetzen',
