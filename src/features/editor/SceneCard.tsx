@@ -145,7 +145,7 @@ function SceneCard({ sceneId }: SceneCardProps) {
             placeholder={t(productType === 'podcast' ? 'scene.titlePodcast' : 'scene.title', { n })}
             onChange={(e) => updateScene(scene.id, { title: e.target.value })}
             className="flex-1 min-w-0 bg-transparent border-none p-0 focus:ring-0 text-xs font-bold tracking-[0.14em] text-slate-700 uppercase placeholder-slate-400"
-            aria-label={t('scene.titleLabel', { n })}
+            aria-label={t(productType === 'podcast' ? 'scene.titlePodcast' : 'scene.title', { n })}
           />
         </h3>
         <div className="flex shrink-0 items-center gap-1 print:hidden max-sm:w-full max-sm:justify-end">

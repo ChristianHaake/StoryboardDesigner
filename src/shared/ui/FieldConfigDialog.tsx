@@ -39,7 +39,7 @@ function FieldDefinitionRow({
     <div className="rounded-xl border border-slate-200 p-3">
       <div className="mb-1.5 flex items-center justify-between">
         <label htmlFor={`field-${definition.key}`} className="text-xs font-semibold text-slate-700">
-          {t('fieldConfig.rowLabelText', 'Feld konfigurieren')}
+          {t('fieldConfig.rowLabelText')}
         </label>
         {isSelect && (
           <span className="rounded-md bg-blue-50 px-2 py-0.5 text-xs font-semibold text-blue-700">
@@ -411,6 +411,7 @@ export default function FieldConfigDialog({ open, onClose }: FieldConfigDialogPr
                 {t('fieldConfig.apply')}
               </button>
             </div>
+            <p className="mt-3 text-xs text-slate-500">{t('fieldConfig.languageNote')}</p>
           </section>
 
           <section className="mt-6 border-t border-slate-200 pt-5" aria-labelledby="fields-title">

@@ -2,7 +2,8 @@
 
 ## Was ist ein Storyboard?
 
-Ein Storyboard ist ein Plan für deinen Film, deine Fotostory oder deine Rede.
+Ein Storyboard ist ein Plan für dein Medienprodukt — zum Beispiel einen Film,
+eine Fotostory, ein Hörspiel oder einen Podcast.
 Du zerlegst deine Idee in einzelne Szenen und überlegst dir für jede Szene:
 Was sieht man? Was hört man? Was muss das Team wissen?
 
@@ -10,8 +11,8 @@ Mit einem guten Storyboard weiß beim Dreh jede:r, was zu tun ist.
 
 ## Erste Schritte
 
-1. **Projektname eingeben** — klicke oben auf „Projektname" und tippe los.
-2. **Metadaten ausfüllen** — wer ist beteiligt, welches Thema, welches Format (Film, Fotostory oder Rede), welches Datum.
+1. **Format wählen** — tippe auf der Startseite auf dein Medienprodukt. Bei Kurzfilm und Fotostory kannst du auch ein Beispiel laden.
+2. **Projekt einrichten** — gib einen Projektnamen ein (Pflichtfeld). Thema, Fach, Gruppenmitglieder und Detailgrad sind optional.
 3. **Planung ausfüllen:**
    - **Logline:** Worum geht es? Beschreibe deine Idee in einem Satz.
    - **Ziel:** Was soll dein Publikum verstehen oder fühlen?
@@ -23,9 +24,9 @@ Mit einem guten Storyboard weiß beim Dreh jede:r, was zu tun ist.
 - **Szene hinzufügen:** Klicke unten auf „+ Szene hinzufügen".
 - **Bild einfügen:** Tippe auf das gestrichelte Quadrat einer Szene. Du kannst ein Foto aufnehmen oder eine Datei auswählen. Das Bild wird automatisch verkleinert.
 - **Texte ausfüllen:**
-  - **Bildbeschreibung:** Was ist in dieser Szene zu sehen?
-  - **Text / Ton:** Was wird gesagt, welche Musik oder Geräusche?
-  - **Regieanweisung:** Hinweise für die Umsetzung, z. B. Kameraeinstellung.
+  - **Aktion / Bildbeschreibung:** Was passiert in dieser Szene?
+  - **Sprechtext und Ton:** Was wird gesagt, welche Musik oder Geräusche?
+  - **Weitere Felder:** je nach Format z. B. Ort, Einstellungsgröße, Kamerabewegung oder Bildunterschrift.
 - **Sortieren:** Halte das Punkte-Symbol einer Szene gedrückt und ziehe sie an die gewünschte Stelle.
 - **Duplizieren:** Das Kopier-Symbol erstellt eine Kopie der Szene direkt darunter.
 - **Löschen:** Das Papierkorb-Symbol löscht die Szene. Falls das ein Versehen war: Unten erscheint kurz „Rückgängig" — tippe schnell darauf.
@@ -36,8 +37,8 @@ Mit einem guten Storyboard weiß beim Dreh jede:r, was zu tun ist.
 20 Zusatzfelder für alle Szenen hinzufügen, umbenennen oder löschen. Beim
 Löschen verschwinden auch die zugehörigen Einträge aus allen Szenen.
 
-Die Formate Film, Fotostory und Rede besitzen passende Feldvorlagen. Ein
-Formatwechsel ergänzt nur fehlende Vorlagenfelder. Eigene Felder und bereits
+Jedes Format bringt eine passende Feldvorlage mit. Über „Ergänzen" im Dialog
+fügst du fehlende Vorlagenfelder wieder hinzu. Eigene Felder und bereits
 eingetragene Werte bleiben erhalten.
 
 ## Speichern und Laden

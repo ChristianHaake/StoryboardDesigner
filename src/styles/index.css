@@ -112,6 +112,15 @@ html[data-theme='dark'] .text-white {
   color: #f8fafc;
 }
 
+/* Logo-Variante je Theme: das helle Logo trägt einen weißen Hintergrund und
+ * wirkt im Dark-Modus wie ein Fremdkörper — dort die invertierte Variante. */
+html[data-theme='dark'] .brand-logo-default {
+  display: none;
+}
+html[data-theme='dark'] .brand-logo-inverted {
+  display: block;
+}
+
 /* ---- High-Contrast: helle Flächen, maximaler Textkontrast ---- */
 html[data-theme='contrast'] {
   color-scheme: light;

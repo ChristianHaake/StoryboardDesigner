@@ -231,4 +231,32 @@ describe('useStoryboardStore', () => {
     expect(original!.customFields?.['custom:light']).toBe('Warm');
     expect(useStoryboardStore.getState().scenes[1]?.customFields?.['custom:light']).toBe('Kalt');
   });
+
+  it('clears imported image metadata when removing a scene image', () => {
+    const scene = {
+      id: 'scene-1',
+      orderIndex: 0,
+      imageFileName: 'images/imported.png',
+
+      title: '',
+      action: '',
+      text: '',
+      audio: { dialogue: '', soundEffects: '', music: '' },
+      camera: { shotSize: '', angle: '', movement: '' },
+      location: '',
+      materials: [],
+    };
+    useStoryboardStore.setState({
+      scenes: [scene],
+      images: { [scene.id]: new Blob(['image']) },
+      imageUrls: {},
+    });
+
+    useStoryboardStore.getState().removeSceneImage(scene.id);
+    const state = useStoryboardStore.getState();
+
+    expect(state.images).toEqual({});
+    expect(state.scenes[0]?.imageFileName).toBeNull();
+    expect(selectProject(state).scenes[0]?.imageFileName).toBeNull();
+  });
 });

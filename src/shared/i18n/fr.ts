@@ -377,6 +377,7 @@ const fr: Translations = {
     activeHeading: 'Champs supplémentaires actifs',
     empty: 'Aucun champ supplémentaire créé pour l’instant.',
     done: 'Terminé',
+    rowLabelText: 'Configurer le champ',
     rowLabel: 'Nom du champ {{label}}',
     saveRow: 'Enregistrer',
     deleteField: 'Supprimer le champ {{label}}',
@@ -388,6 +389,8 @@ const fr: Translations = {
     presetAdded_one: '{{count}} champ de modèle ajouté.',
     presetAdded_other: '{{count}} champs de modèle ajoutés.',
     presetComplete: 'Tous les champs du modèle de format actuel sont déjà présents.',
+    languageNote:
+      'Les noms de champs et les options sont enregistrés avec le projet et conservent la langue dans laquelle ils ont été créés.',
   },
   notifications: {
     sceneDeleted: 'Scène {{n}} supprimée',

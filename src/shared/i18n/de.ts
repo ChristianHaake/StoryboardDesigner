@@ -262,7 +262,7 @@ const de = {
     podcast: 'Podcast',
     stopMotion: 'Stop-Motion',
     comic: 'Comic',
-    socialMediaClip: 'Social Media Clip',
+    socialMediaClip: 'Social-Media-Clip',
     roleplay: 'Rollenspiel/Theater',
     custom: 'Eigene Idee',
   },
@@ -368,6 +368,7 @@ const de = {
     activeHeading: 'Aktive Zusatzfelder',
     empty: 'Noch keine Zusatzfelder angelegt.',
     done: 'Fertig',
+    rowLabelText: 'Feld konfigurieren',
     rowLabel: 'Feldbezeichnung {{label}}',
     saveRow: 'Speichern',
     deleteField: 'Feld {{label}} löschen',
@@ -379,6 +380,8 @@ const de = {
     presetAdded_one: '{{count}} Vorlagenfeld ergänzt.',
     presetAdded_other: '{{count}} Vorlagenfelder ergänzt.',
     presetComplete: 'Alle Felder der aktuellen Formatvorlage sind bereits vorhanden.',
+    languageNote:
+      'Feldnamen und Auswahloptionen werden mit dem Projekt gespeichert und behalten die Sprache, in der sie angelegt wurden.',
   },
   notifications: {
     sceneDeleted: 'Szene {{n}} gelöscht',

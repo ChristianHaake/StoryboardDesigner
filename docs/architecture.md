@@ -1,6 +1,6 @@
 # Architektur
 
-Technischer Überblick für Entwickler:innen. Ist-Zustand nach Version 1.4.
+Technischer Überblick für Entwickler:innen. Ist-Zustand nach Version 1.5.
 Detailplanung: [Codingplan.md](planning/Codingplan.md) (Architektur-Soll), [UIX-Codingplan.md](planning/UIX-Codingplan.md) (UI-Konzept), [Sprint-Planung.md](planning/Sprint-Planung.md) (Roadmap).
 
 ## Kontext und Ziele

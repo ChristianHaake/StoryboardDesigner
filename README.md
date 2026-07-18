@@ -10,7 +10,7 @@ Eine rein clientseitige Web-App für Lernende zum Erstellen von Storyboards (Fil
 - **Drag & Drop:** @dnd-kit
 - **Dateiformat:** jszip + file-saver (`.storyboard` ZIP)
 - **Autosave:** idb-keyval / IndexedDB
-- **PDF-Export:** native Druckfunktion (`window.print()`) mit Print-CSS
+- **PDF-Export:** lokaler PDF-Download via `html-to-image` + `jsPDF`; separater Druckpfad über `window.print()`
 - **Feldsystem:** projektweite Zusatzfelder und Formatvorlagen
 - **Mehrsprachigkeit:** i18next + react-i18next (DE/EN, Browser-Erkennung)
 
@@ -22,6 +22,8 @@ npm run dev      # Dev-Server (Vite)
 npm run build    # Produktions-Build nach dist/
 npm run preview  # Produktions-Build lokal testen
 npm test         # Automatisierte Tests einmalig ausführen
+npm run test:e2e # Browser-Regression in Chromium und WebKit
+npm run typecheck
 npm run lint     # ESLint
 npm run format   # Prettier
 ```

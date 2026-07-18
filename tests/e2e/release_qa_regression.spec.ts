@@ -51,6 +51,27 @@ test.describe('Release QA regression smoke', () => {
       .poll(() => page.evaluate(() => (window as unknown as { __printCalled: boolean }).__printCalled))
       .toBe(true);
 
+    await page.evaluate(() => {
+      (window as unknown as { __printCalled: boolean }).__printCalled = false;
+    });
+    await page.locator('button', { hasText: 'Prüfen & Abschließen' }).click();
+    await page.locator('button', { hasText: 'Weiter zum Export' }).click();
+    await page
+      .locator('main')
+      .locator('div', { has: page.locator('h3', { hasText: 'Direkt drucken' }) })
+      .locator('button', { hasText: 'Drucken' })
+      .click();
+    await expect
+      .poll(() => page.evaluate(() => (window as unknown as { __printCalled: boolean }).__printCalled))
+      .toBe(true);
+
+    await page.locator('button', { hasText: 'Prüfen & Abschließen' }).click();
+    await page.locator('button', { hasText: 'Weiter zum Export' }).click();
+    const exportScreenPdfDownloadPromise = page.waitForEvent('download');
+    await page.locator('button', { hasText: 'Als PDF herunterladen' }).click();
+    const exportScreenPdfDownload = await exportScreenPdfDownloadPromise;
+    expect(exportScreenPdfDownload.suggestedFilename()).toBe('Release QA Roundtrip.pdf');
+
     await page.locator('summary', { hasText: 'Datei' }).click();
     page.once('dialog', async (dialog) => {
       expect(dialog.message()).toContain('Alle lokal gespeicherten Daten löschen');

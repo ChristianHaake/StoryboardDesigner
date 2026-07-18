@@ -1,13 +1,16 @@
-import { beforeEach, describe, expect, it, vi } from 'vitest';
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import type { StoryboardProject } from '../../domain/types';
 
 const getMock = vi.hoisted(() => vi.fn());
+const setMock = vi.hoisted(() => vi.fn());
+const delMock = vi.hoisted(() => vi.fn());
 vi.mock('idb-keyval', () => ({
   get: getMock,
-  set: vi.fn(),
+  set: setMock,
+  del: delMock,
 }));
 
-import { loadAutosave } from './persistence';
+import { clearAutosave, loadAutosave, scheduleAutosave } from './persistence';
 
 function project(): StoryboardProject {
   return {
@@ -41,7 +44,24 @@ function project(): StoryboardProject {
   };
 }
 
-beforeEach(() => getMock.mockReset());
+beforeEach(() => {
+  getMock.mockReset();
+  setMock.mockReset();
+  delMock.mockReset();
+  setMock.mockResolvedValue(undefined);
+  delMock.mockResolvedValue(undefined);
+  vi.useFakeTimers();
+  vi.stubGlobal('window', {
+    setTimeout: globalThis.setTimeout,
+    clearTimeout: globalThis.clearTimeout,
+  });
+});
+
+afterEach(async () => {
+  await clearAutosave();
+  vi.unstubAllGlobals();
+  vi.useRealTimers();
+});
 
 describe('loadAutosave', () => {
   it('validates legacy project payloads', async () => {
@@ -84,5 +104,60 @@ describe('loadAutosave', () => {
   it('ignores malformed autosaves', async () => {
     getMock.mockResolvedValue({ version: '2.0' });
     await expect(loadAutosave()).resolves.toBeUndefined();
+  });
+});
+
+describe('scheduleAutosave', () => {
+  it('serializes writes so stale autosaves cannot overwrite newer payloads', async () => {
+    const first = project();
+    first.metaData.projectName = 'Alt';
+    const second = project();
+    second.metaData.projectName = 'Neu';
+
+    let releaseFirst!: () => void;
+    setMock.mockImplementationOnce(
+      () =>
+        new Promise<void>((resolve) => {
+          releaseFirst = resolve;
+        }),
+    );
+    setMock.mockResolvedValue(undefined);
+
+    scheduleAutosave({ project: first, images: {} });
+    await vi.advanceTimersByTimeAsync(1000);
+    expect(setMock).toHaveBeenCalledTimes(1);
+    expect(setMock.mock.calls[0]?.[1].project.metaData.projectName).toBe('Alt');
+
+    scheduleAutosave({ project: second, images: {} });
+    await vi.advanceTimersByTimeAsync(1000);
+    expect(setMock).toHaveBeenCalledTimes(1);
+
+    releaseFirst();
+    await vi.runAllTimersAsync();
+
+    expect(setMock).toHaveBeenCalledTimes(2);
+    expect(setMock.mock.calls[1]?.[1].project.metaData.projectName).toBe('Neu');
+  });
+
+  it('does not repopulate autosave after reset while a write is pending', async () => {
+    let releaseWrite!: () => void;
+    setMock.mockImplementationOnce(
+      () =>
+        new Promise<void>((resolve) => {
+          releaseWrite = resolve;
+        }),
+    );
+
+    scheduleAutosave({ project: project(), images: {} });
+    await vi.advanceTimersByTimeAsync(1000);
+    expect(setMock).toHaveBeenCalledTimes(1);
+
+    const clearPromise = clearAutosave();
+    releaseWrite();
+    await clearPromise;
+
+    expect(delMock).toHaveBeenCalledWith('storyboard-creator:v1:currentProject');
+    expect(delMock).toHaveBeenCalledWith('currentProject');
+    expect(setMock).toHaveBeenCalledTimes(1);
   });
 });
