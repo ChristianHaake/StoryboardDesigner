@@ -11,11 +11,20 @@ interface LocalBrandLogoProps {
 export default function BrandLogo({ className = '', inverted = false }: LocalBrandLogoProps) {
   const { t } = useTranslation();
 
-  const wideLogo = inverted ? logoWideInverted : logoWideDefault;
-
+  // Beide Varianten rendern; CSS in index.css blendet je nach data-theme die
+  // passende ein (Theme-State lebt nicht in React, sondern auf <html>).
   return (
     <div className={`flex items-center gap-3 ${className}`}>
-      <img src={wideLogo} alt={t('brand.name')} className="h-9 w-auto object-contain" />
+      <img
+        src={inverted ? logoWideInverted : logoWideDefault}
+        alt={t('brand.name')}
+        className="brand-logo-default h-9 w-auto object-contain"
+      />
+      <img
+        src={logoWideInverted}
+        alt={t('brand.name')}
+        className="brand-logo-inverted hidden h-9 w-auto object-contain"
+      />
     </div>
   );
 }

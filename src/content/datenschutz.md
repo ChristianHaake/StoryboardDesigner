@@ -45,7 +45,7 @@ Zusätzlich speichert die App kleine Einstellungen im `localStorage`: die gewäh
 
 Alternativ entfernt die Schaltfläche **„Zurücksetzen"** in der Aktionsleiste nach einer Bestätigung das aktuelle Projekt samt automatisch gespeichertem Stand und beginnt mit einem leeren Storyboard.
 
-Beim lokalen Speichern wird eine `.storyboard`-Datei auf dem Gerät erzeugt. Beim PDF-Export wird die native Druckfunktion des Browsers verwendet. Die App überträgt diese Dateien nicht an einen Server und hat nach dem Speichern keinen Zugriff darauf.
+Beim lokalen Speichern wird eine `.storyboard`-Datei auf dem Gerät erzeugt. Beim PDF-Export rendert die App die sichtbaren Storyboard-Seiten lokal im Browser und erzeugt daraus eine `.pdf`-Datei. Die separate Druckfunktion öffnet die native Druckfunktion des Browsers. Die App überträgt diese Dateien nicht an einen Server und hat nach dem Speichern keinen Zugriff darauf.
 
 ## 5. Cookies
 

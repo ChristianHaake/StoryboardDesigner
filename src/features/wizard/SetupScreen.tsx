@@ -149,6 +149,8 @@ export default function SetupScreen() {
             ).map((level) => (
               <button
                 key={level.id}
+                type="button"
+                aria-pressed={metaData.complexity === level.id}
                 onClick={() => updateMetaData({ complexity: level.id as Complexity })}
                 className={`relative flex flex-col items-start rounded-xl border p-4 text-left transition-all ${
                   metaData.complexity === level.id

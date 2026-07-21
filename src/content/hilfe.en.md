@@ -2,7 +2,8 @@
 
 ## What is a storyboard?
 
-A storyboard is a plan for your film, your photo story or your speech.
+A storyboard is a plan for your media product — for example a film, a photo
+story, an audio play or a podcast.
 You break your idea down into individual scenes and think about each one:
 What do you see? What do you hear? What does the team need to know?
 
@@ -10,8 +11,8 @@ With a good storyboard, everyone knows what to do during the shoot.
 
 ## First steps
 
-1. **Enter a project name** — click “Project name” at the top and start typing.
-2. **Fill in the metadata** — who is involved, which topic, which format (film, photo story or speech), which date.
+1. **Choose a format** — tap your media product on the start screen. For Short Film and Photo Story you can also load an example.
+2. **Set up the project** — enter a project name (required). Topic, subject, group members and level of detail are optional.
 3. **Fill in the planning:**
    - **Logline:** What is it about? Describe your idea in one sentence.
    - **Objective:** What should your audience understand or feel?
@@ -23,9 +24,9 @@ With a good storyboard, everyone knows what to do during the shoot.
 - **Add a scene:** Click “+ Add scene” at the bottom.
 - **Insert an image:** Tap the dashed square of a scene. You can take a photo or choose a file. The image is resized automatically.
 - **Fill in the text:**
-  - **Visual description:** What is shown in this scene?
-  - **Text / audio:** What is said, what music or sounds?
-  - **Director’s notes:** Notes for the realization, e.g. the shot size.
+  - **Action / image description:** What happens in this scene?
+  - **Speech and sound:** What is said, what music or sounds?
+  - **More fields:** depending on the format, e.g. location, shot size, camera movement or caption.
 - **Reorder:** Hold the dots icon of a scene and drag it to the desired position.
 - **Duplicate:** The copy icon creates a copy of the scene right below it.
 - **Delete:** The trash icon deletes the scene. If that was a mistake: an “Undo” appears briefly at the bottom — tap it quickly.
@@ -36,9 +37,9 @@ Using **Configure fields** next to the storyboard heading you can add, rename
 or delete up to 20 additional fields for all scenes. Deleting a field also
 removes its entries from all scenes.
 
-The formats film, photo story and speech come with matching field templates. A
-format switch only adds missing template fields. Your own fields and any values
-already entered are kept.
+Every format comes with a matching field template. Use “Add” in the dialog to
+restore missing template fields. Your own fields and any values already entered
+are kept.
 
 ## Saving and loading
 
@@ -50,13 +51,12 @@ That is not enough if you switch devices or share the device with others!
 
 **Tip:** Save a file at the end of every work session. The file is your backup.
 
-## Exporting as PDF
+## Exporting as PDF and printing
 
-1. Click “PDF” at the top.
-2. Your device’s print dialog opens.
-3. Choose **“Save as PDF”** there (instead of a printer).
+- **Download PDF:** Click “PDF” at the top. The app creates a `.pdf` file directly in the browser and downloads it.
+- **Print:** Click “Print” at the top. This opens your device’s print dialog.
 
-On iPad: in the print dialog, pinch the preview open with two fingers, then tap Share at the top right and choose “Save to Files”.
+On iPad, browser downloads can vary depending on school device or MDM settings. If the direct PDF download is blocked, use “Print” and save as PDF from the print dialog.
 
 ## Frequently asked questions
 

@@ -12,6 +12,46 @@ const TINY_PNG = Uint8Array.from(
   (char) => char.charCodeAt(0),
 );
 
+function patchCentralUncompressedSizes(
+  archive: Uint8Array,
+  sizes: Record<string, number>,
+): Uint8Array {
+  const patched = new Uint8Array(archive);
+  const view = new DataView(patched.buffer, patched.byteOffset, patched.byteLength);
+  const decoder = new TextDecoder();
+  const minimumEocdSize = 22;
+  const start = Math.max(0, patched.length - 65_557);
+  let eocd = -1;
+
+  for (let offset = patched.length - minimumEocdSize; offset >= start; offset--) {
+    if (view.getUint32(offset, true) === 0x06054b50) {
+      eocd = offset;
+      break;
+    }
+  }
+  if (eocd < 0) throw new Error('EOCD not found');
+
+  const entryCount = view.getUint16(eocd + 10, true);
+  let offset = view.getUint32(eocd + 16, true);
+
+  for (let index = 0; index < entryCount; index++) {
+    if (view.getUint32(offset, true) !== 0x02014b50) {
+      throw new Error('central directory entry not found');
+    }
+
+    const nameLength = view.getUint16(offset + 28, true);
+    const extraLength = view.getUint16(offset + 30, true);
+    const commentLength = view.getUint16(offset + 32, true);
+    const name = decoder.decode(patched.subarray(offset + 46, offset + 46 + nameLength));
+    if (name in sizes) {
+      view.setUint32(offset + 24, sizes[name], true);
+    }
+    offset += 46 + nameLength + extraLength + commentLength;
+  }
+
+  return patched;
+}
+
 function project(): StoryboardProject {
   return {
     version: '1.1',
@@ -27,6 +67,22 @@ function project(): StoryboardProject {
     },
     prePlanning: { logline: '', objective: '', roles: '', resources: '' },
     scenes: [],
+  };
+}
+
+function sceneWithImage(id: string, imageFileName: string) {
+  return {
+    id,
+    orderIndex: 0,
+    imageFileName,
+
+    title: '',
+    action: '',
+    text: '',
+    audio: { dialogue: '', soundEffects: '', music: '' },
+    camera: { shotSize: '', angle: '', movement: '' },
+    location: '',
+    materials: [],
   };
 }
 
@@ -145,6 +201,84 @@ describe('zipHandler', () => {
 
     await expect(importProject(new Blob([archive]))).rejects.toThrow(
       'Bilder überschreiten das erlaubte Limit',
+    );
+  });
+
+  it('rejects aggregate inflated image size before unzipping', async () => {
+    const data = project();
+    const imageNames = Array.from({ length: 11 }, (_, index) => `images/${index}.png`);
+    data.scenes = imageNames.map((imageFileName, orderIndex) => ({
+      id: `scene-${orderIndex}`,
+      orderIndex,
+      imageFileName,
+
+      title: '',
+      action: '',
+      text: '',
+      audio: { dialogue: '', soundEffects: '', music: '' },
+      camera: { shotSize: '', angle: '', movement: '' },
+      location: '',
+      materials: [],
+    }));
+
+    const archive = zipSync(
+      Object.fromEntries([
+        ['data.json', strToU8(JSON.stringify(data))],
+        ...imageNames.map((name) => [name, TINY_PNG] as const),
+      ]),
+    );
+    const patchedArchive = patchCentralUncompressedSizes(
+      archive,
+      Object.fromEntries(imageNames.map((name) => [name, 10 * 1024 * 1024])),
+    );
+
+    const patchedBuffer = new ArrayBuffer(patchedArchive.byteLength);
+    new Uint8Array(patchedBuffer).set(patchedArchive);
+
+    await expect(importProject(new Blob([patchedBuffer]))).rejects.toThrow(
+      'Bilder überschreiten das erlaubte Limit',
+    );
+  });
+
+  it('rejects unsafe archive entry names', async () => {
+    const data = project();
+    const archive = zipSync({
+      'data.json': strToU8(JSON.stringify(data)),
+      'images/../evil.png': TINY_PNG,
+    });
+
+    await expect(importProject(new Blob([archive]))).rejects.toThrow(
+      'Das ist keine gültige .storyboard-Datei',
+    );
+  });
+
+  it('rejects invalid image signatures during import', async () => {
+    const data = project();
+    data.scenes = [sceneWithImage('scene-1', 'images/invalid.png')];
+    const archive = zipSync({
+      'data.json': strToU8(JSON.stringify(data)),
+      'images/invalid.png': strToU8('not an image'),
+    });
+
+    await expect(importProject(new Blob([archive]))).rejects.toThrow(
+      'Bilddatei ist ungültig oder nicht lesbar',
+    );
+  });
+
+  it('rejects decoded image pixel dimensions above the import limit', async () => {
+    const data = project();
+    data.scenes = [sceneWithImage('scene-1', 'images/huge.png')];
+    const hugePng = new Uint8Array(TINY_PNG);
+    const view = new DataView(hugePng.buffer, hugePng.byteOffset, hugePng.byteLength);
+    view.setUint32(16, 100_000, false);
+    view.setUint32(20, 100_000, false);
+    const archive = zipSync({
+      'data.json': strToU8(JSON.stringify(data)),
+      'images/huge.png': hugePng,
+    });
+
+    await expect(importProject(new Blob([archive]))).rejects.toThrow(
+      'Bild ist zu groß in Pixeln',
     );
   });
 });

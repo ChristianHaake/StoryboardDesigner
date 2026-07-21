@@ -16,6 +16,8 @@ export interface AutosavePayload {
 let timer: number | undefined;
 let pending = false;
 let saveSeq = 0;
+let latestPayload: AutosavePayload | null = null;
+let writeQueue: Promise<void> = Promise.resolve();
 
 export type SaveStatus = 'saving' | 'saved' | 'error';
 let statusListener: ((status: SaveStatus) => void) | null = null;
@@ -40,18 +42,26 @@ export function hasPendingAutosave(): boolean {
 
 export function scheduleAutosave(payload: AutosavePayload): void {
   pending = true;
+  latestPayload = payload;
   // Sequenznummer: ein noch laufender älterer Save darf pending nicht
-  // zurücksetzen, wenn inzwischen neuere Änderungen anstehen.
+  // zurücksetzen, wenn inzwischen neuere Änderungen anstehen. Die Schreibkette
+  // verhindert zusätzlich, dass alte IndexedDB-Writes neuere Daten überschreiben.
   const seq = ++saveSeq;
   window.clearTimeout(timer);
   timer = window.setTimeout(() => {
     emitStatus('saving');
-    void set(AUTOSAVE_KEY, payload)
+    writeQueue = writeQueue
+      .catch(() => undefined)
       .then(() => {
-        if (seq === saveSeq) {
-          pending = false;
-          emitStatus('saved');
+        if (!latestPayload) {
+          return Promise.all([del(AUTOSAVE_KEY), del(LEGACY_AUTOSAVE_KEY)]).then(() => undefined);
         }
+        return set(AUTOSAVE_KEY, latestPayload);
+      })
+      .then(() => {
+        if (seq !== saveSeq) return;
+        pending = false;
+        emitStatus('saved');
       })
       .catch((error: unknown) => {
         // Autosave ist Sicherheitsnetz, kein Speichern — Fehler nicht eskalieren,
@@ -67,8 +77,12 @@ export function scheduleAutosave(payload: AutosavePayload): void {
 export async function clearAutosave(): Promise<void> {
   window.clearTimeout(timer);
   pending = false;
+  latestPayload = null;
   saveSeq++;
-  await Promise.all([del(AUTOSAVE_KEY), del(LEGACY_AUTOSAVE_KEY)]);
+  writeQueue = writeQueue
+    .catch(() => undefined)
+    .then(() => Promise.all([del(AUTOSAVE_KEY), del(LEGACY_AUTOSAVE_KEY)]).then(() => undefined));
+  await writeQueue;
 }
 
 export async function loadAutosave(): Promise<AutosavePayload | undefined> {

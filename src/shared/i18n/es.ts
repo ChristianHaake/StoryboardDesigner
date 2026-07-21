@@ -296,6 +296,8 @@ const es: Translations = {
     title: 'Escena {{n}}',
     titlePodcast: 'Sección {{n}}',
     move: 'Mover la escena {{n}}',
+    moveUp: 'Mover la escena {{n}} hacia arriba',
+    moveDown: 'Mover la escena {{n}} hacia abajo',
     duplicate: 'Duplicar la escena {{n}}',
     delete: 'Eliminar la escena {{n}}',
     imageReplace: 'Sustituir la imagen de la escena {{n}}',
@@ -374,6 +376,7 @@ const es: Translations = {
     activeHeading: 'Campos adicionales activos',
     empty: 'Aún no se han creado campos adicionales.',
     done: 'Listo',
+    rowLabelText: 'Configurar campo',
     rowLabel: 'Nombre del campo {{label}}',
     saveRow: 'Guardar',
     deleteField: 'Eliminar el campo {{label}}',
@@ -384,6 +387,8 @@ const es: Translations = {
     presetAdded_one: '{{count}} campo de plantilla añadido.',
     presetAdded_other: '{{count}} campos de plantilla añadidos.',
     presetComplete: 'Ya existen todos los campos de la plantilla de formato actual.',
+    languageNote:
+      'Los nombres de campo y las opciones se guardan con el proyecto y conservan el idioma en el que se crearon.',
   },
   notifications: {
     sceneDeleted: 'Escena {{n}} eliminada',

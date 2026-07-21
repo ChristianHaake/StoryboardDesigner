@@ -7,14 +7,14 @@ Record release-specific results below.
 
 ## Release
 
-- Version: `1.4.0`
+- Version: `1.5.0`
 - Review date: `YYYY-MM-DD`
 - Reviewer: `NAME`
 
 ## Results
 
 - [ ] Shared checklist completed.
-- [ ] Automated verification passed (`npm run lint`, `npm test`, build).
+- [ ] Automated verification passed (`npm run typecheck`, `npm run lint`, `npm test`, `npm run build`, `npm run test:e2e`).
 - [ ] Mobile and tablet (iPad) workflow tested.
 - [ ] Import, export, reset, and recovery tested (`.storyboard` round-trip).
 - [ ] Legal and privacy content reviewed (Datenschutz, Impressum).

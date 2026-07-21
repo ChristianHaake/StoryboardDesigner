@@ -22,7 +22,11 @@ export function SharedTopBar({
   const [collapsed, setCollapsed] = useState(false);
 
   useEffect(() => {
-    const onScroll = () => setCollapsed(window.scrollY > 80);
+    // Hysterese statt einzelner Schwelle: Das Einklappen ändert die Kopfhöhe
+    // und damit scrollY selbst — mit nur einer Schwelle oszilliert die Zeile
+    // nahe dem Schwellwert (sichtbares Flackern, instabile Klickziele).
+    const onScroll = () =>
+      setCollapsed((prev) => (prev ? window.scrollY > 40 : window.scrollY > 120));
     onScroll();
     window.addEventListener('scroll', onScroll, { passive: true });
     return () => window.removeEventListener('scroll', onScroll);

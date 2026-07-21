@@ -12,7 +12,16 @@ import CommentThread from './CommentThread';
 import { FORMAT_FEATURES } from '../../domain/formatConfig';
 import { inputClass, labelClass } from '../../shared/ui/fieldStyles';
 import { MAX_SCENES } from '../../domain/projectCodec';
-import { GripVertical, Copy, Trash2, X, ChevronUp, ChevronDown } from 'lucide-react';
+import {
+  GripVertical,
+  Copy,
+  Trash2,
+  X,
+  ChevronUp,
+  ChevronDown,
+  ArrowUp,
+  ArrowDown,
+} from 'lucide-react';
 
 const EMPTY_FIELD_DEFINITIONS: NonNullable<
   ReturnType<typeof useStoryboardStore.getState>['fieldDefinitions']
@@ -26,10 +35,15 @@ interface SceneCardProps {
 function SceneCard({ sceneId }: SceneCardProps) {
   const { t } = useTranslation();
 
-  const { scene, orderIndex } = useStoryboardStore(
+  const { scene, orderIndex, previousSceneId, nextSceneId } = useStoryboardStore(
     useShallow((s) => {
       const index = s.scenes.findIndex((x) => x.id === sceneId);
-      return { scene: index >= 0 ? s.scenes[index] : undefined, orderIndex: index };
+      return {
+        scene: index >= 0 ? s.scenes[index] : undefined,
+        orderIndex: index,
+        previousSceneId: index > 0 ? s.scenes[index - 1]?.id : null,
+        nextSceneId: index >= 0 && index < s.scenes.length - 1 ? s.scenes[index + 1]?.id : null,
+      };
     }),
   );
   const n = orderIndex + 1;
@@ -49,6 +63,7 @@ function SceneCard({ sceneId }: SceneCardProps) {
   const updateCustomField = useStoryboardStore((s) => s.updateCustomField);
   const duplicateScene = useStoryboardStore((s) => s.duplicateScene);
   const deleteScene = useStoryboardStore((s) => s.deleteScene);
+  const moveScene = useStoryboardStore((s) => s.moveScene);
   const setSceneImage = useStoryboardStore((s) => s.setSceneImage);
   const removeSceneImage = useStoryboardStore((s) => s.removeSceneImage);
   const sceneLimitReached = useStoryboardStore((s) => s.scenes.length >= MAX_SCENES);
@@ -116,8 +131,8 @@ function SceneCard({ sceneId }: SceneCardProps) {
         isDragging ? 'z-10 border-blue-300 bg-white opacity-95 shadow-xl' : ''
       }`}
     >
-      <div className="mb-3 flex min-h-11 items-center justify-between gap-3 print:min-h-0">
-        <h3 className="flex items-center gap-2.5 text-xs font-bold tracking-[0.14em] text-slate-700 uppercase">
+      <div className="mb-3 flex min-h-11 flex-wrap items-center justify-between gap-3 print:min-h-0">
+        <h3 className="flex min-w-0 flex-1 basis-40 items-center gap-2.5 text-xs font-bold tracking-[0.14em] text-slate-700 uppercase">
           <span
             aria-hidden="true"
             className="inline-flex size-6 items-center justify-center rounded-md bg-blue-50 text-xs font-bold text-blue-700 tabular-nums print:bg-transparent print:text-slate-700"
@@ -130,10 +145,10 @@ function SceneCard({ sceneId }: SceneCardProps) {
             placeholder={t(productType === 'podcast' ? 'scene.titlePodcast' : 'scene.title', { n })}
             onChange={(e) => updateScene(scene.id, { title: e.target.value })}
             className="flex-1 min-w-0 bg-transparent border-none p-0 focus:ring-0 text-xs font-bold tracking-[0.14em] text-slate-700 uppercase placeholder-slate-400"
-            aria-label={t('scene.titleLabel', { n })}
+            aria-label={t(productType === 'podcast' ? 'scene.titlePodcast' : 'scene.title', { n })}
           />
         </h3>
-        <div className="flex items-center gap-1 print:hidden">
+        <div className="flex shrink-0 items-center gap-1 print:hidden max-sm:w-full max-sm:justify-end">
           <button
             type="button"
             {...attributes}
@@ -145,6 +160,26 @@ function SceneCard({ sceneId }: SceneCardProps) {
             <GripVertical className="w-[18px] h-[18px]" strokeWidth={1.5} aria-hidden="true" />
           </button>
           <div className="flex items-center gap-1 opacity-0 transition-opacity group-focus-within:opacity-100 group-hover:opacity-100 max-sm:opacity-100 pointer-coarse:opacity-100">
+            <button
+              type="button"
+              onClick={() => previousSceneId && moveScene(scene.id, previousSceneId)}
+              disabled={!previousSceneId}
+              aria-label={t('scene.moveUp', { n })}
+              title={t('scene.moveUp', { n })}
+              className="inline-flex size-11 items-center justify-center rounded-lg text-slate-500 transition-colors hover:bg-slate-100 hover:text-slate-800 disabled:cursor-not-allowed disabled:opacity-40"
+            >
+              <ArrowUp className="w-[18px] h-[18px]" strokeWidth={1.5} aria-hidden="true" />
+            </button>
+            <button
+              type="button"
+              onClick={() => nextSceneId && moveScene(scene.id, nextSceneId)}
+              disabled={!nextSceneId}
+              aria-label={t('scene.moveDown', { n })}
+              title={t('scene.moveDown', { n })}
+              className="inline-flex size-11 items-center justify-center rounded-lg text-slate-500 transition-colors hover:bg-slate-100 hover:text-slate-800 disabled:cursor-not-allowed disabled:opacity-40"
+            >
+              <ArrowDown className="w-[18px] h-[18px]" strokeWidth={1.5} aria-hidden="true" />
+            </button>
             <button
               type="button"
               onClick={() => duplicateScene(scene.id)}
@@ -319,7 +354,7 @@ function SceneCard({ sceneId }: SceneCardProps) {
               {/* === STANDARD & ADVANCED === */}
               {(complexity === 'standard' || complexity === 'advanced') && (
                 <>
-                  <div className="grid grid-cols-2 gap-4">
+                  <div className="grid grid-cols-2 gap-4 max-sm:grid-cols-1">
                     <div>
                       <label className={labelClass} htmlFor={`dialogue-${scene.id}`}>
                         {t('scene.dialogueLabel')}
@@ -372,7 +407,7 @@ function SceneCard({ sceneId }: SceneCardProps) {
               {/* === ADVANCED ONLY === */}
               {complexity === 'advanced' && (
                 <>
-                  <div className="grid grid-cols-2 gap-4">
+                  <div className="grid grid-cols-2 gap-4 max-sm:grid-cols-1">
                     {features.hasCameraSize && (
                       <div>
                         <label className={labelClass} htmlFor={`camera-size-${scene.id}`}>

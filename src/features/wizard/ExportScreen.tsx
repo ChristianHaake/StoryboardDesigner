@@ -29,6 +29,9 @@ export default function ExportScreen() {
     }
   }
 
+  // PDF und Druck brauchen das gemountete #storyboard-document aus dem Editor.
+  // Deshalb kurz in den Editor wechseln und danach zum Export-Schritt zurück,
+  // damit Nutzende nicht ohne Rückmeldung im Editor stranden.
   async function handlePdf() {
     if (pdfBusy) return;
     const state = useStoryboardStore.getState();
@@ -38,6 +41,7 @@ export default function ExportScreen() {
     const element = document.getElementById('storyboard-document');
     if (!element) {
       state.setErrorMessage(t('topbar.documentMissing'));
+      setWizardStep('export');
       return;
     }
     const rawName = state.metaData.projectName.trim() || t('topbar.pdfFallbackName');
@@ -52,14 +56,22 @@ export default function ExportScreen() {
       state.setErrorMessage(t('topbar.pdfFailed'));
     } finally {
       setPdfBusy(false);
+      setWizardStep('export');
     }
   }
 
   async function handlePrint() {
+    const state = useStoryboardStore.getState();
     setWizardStep('editor');
     await new Promise(requestAnimationFrame);
     await new Promise(requestAnimationFrame);
+    if (!document.getElementById('storyboard-document')) {
+      state.setErrorMessage(t('topbar.documentMissing'));
+      setWizardStep('export');
+      return;
+    }
     window.print();
+    setWizardStep('export');
   }
 
   return (

@@ -57,11 +57,16 @@ export default function TopBar() {
     }
   }
 
+  // PDF und Druck brauchen das gemountete #storyboard-document aus dem Editor.
+  // Falls dafür der Schritt gewechselt werden muss, danach zurückwechseln,
+  // damit Nutzende nicht ohne Rückmeldung im Editor stranden.
   async function handlePdf() {
     if (pdfBusy) return;
     const state = useStoryboardStore.getState();
+    const previousStep = state.activeStep;
     let element = document.getElementById('storyboard-document');
-    if (!element) {
+    const mustSwitch = !element;
+    if (mustSwitch) {
       setWizardStep('editor');
       await new Promise(requestAnimationFrame);
       await new Promise(requestAnimationFrame);
@@ -69,6 +74,7 @@ export default function TopBar() {
     }
     if (!element) {
       state.setErrorMessage(t('topbar.documentMissing'));
+      if (mustSwitch) setWizardStep(previousStep);
       return;
     }
     const rawName = state.metaData.projectName.trim() || t('topbar.pdfFallbackName');
@@ -84,16 +90,28 @@ export default function TopBar() {
       state.setErrorMessage(t('topbar.pdfFailed'));
     } finally {
       setPdfBusy(false);
+      if (mustSwitch) setWizardStep(previousStep);
     }
   }
 
   async function handlePrint() {
-    if (!document.getElementById('storyboard-document')) {
+    const state = useStoryboardStore.getState();
+    const previousStep = state.activeStep;
+    let element = document.getElementById('storyboard-document');
+    const mustSwitch = !element;
+    if (mustSwitch) {
       setWizardStep('editor');
       await new Promise(requestAnimationFrame);
       await new Promise(requestAnimationFrame);
+      element = document.getElementById('storyboard-document');
+    }
+    if (!element) {
+      state.setErrorMessage(t('topbar.documentMissing'));
+      if (mustSwitch) setWizardStep(previousStep);
+      return;
     }
     window.print();
+    if (mustSwitch) setWizardStep(previousStep);
   }
 
   function handleReset() {

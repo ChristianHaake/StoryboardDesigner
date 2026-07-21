@@ -1,6 +1,6 @@
 # Architektur
 
-Technischer Überblick für Entwickler:innen. Ist-Zustand nach Version 1.4.
+Technischer Überblick für Entwickler:innen. Ist-Zustand nach Version 1.5.
 Detailplanung: [Codingplan.md](planning/Codingplan.md) (Architektur-Soll), [UIX-Codingplan.md](planning/UIX-Codingplan.md) (UI-Konzept), [Sprint-Planung.md](planning/Sprint-Planung.md) (Roadmap).
 
 ## Kontext und Ziele
@@ -88,7 +88,7 @@ Storyboard-Creator folgt der visuellen Sprache von smc.haak3.de:
 | Entscheidung                                           | Begründung                                                     | Trade-off                                                                                       |
 | ------------------------------------------------------ | -------------------------------------------------------------- | ----------------------------------------------------------------------------------------------- |
 | Editor-Ansicht = Druckansicht (kein separater Preview) | Eine Wahrheit, WYSIWYG-Nähe; Print-CSS blendet nur UI aus      | A4-Optik ist Orientierung, keine exakte Paginierung — Seitenumbrüche bestimmt der Druckdialog   |
-| `window.print()` statt PDF-Library                     | ~0 kB statt >500 kB Bundle; OS-Dialog vertraut                 | iPad-Bedienung umständlich; Layout-Hoheit beim Browser                                          |
+| PDF-Download lazy (jspdf + html-to-image) plus separater Druck | Echte `.pdf`-Datei für Download/Weitergabe; `window.print()` bleibt als Fallback vertraut | DOM→Bild→PDF ist Raster, kein selektierbarer Text; iPad/MDM muss separat getestet werden |
 | IndexedDB-Autosave zusätzlich zur Datei                | Geteilte Schulgeräte, ständige Unterbrechungen                 | Autosave ist gerätegebunden — Datei bleibt das echte Backup (so auch in der Hilfe kommuniziert) |
 | ZIP (`.storyboard`) als Dateiformat                    | Bilder + JSON in einer Datei, portabel, inspizierbar           | Import validiert Schema, Anzahl sowie Einzel- und Gesamtgröße                                   |
 | Object URLs statt Base64 im State                      | RAM-schonend auf Tablets                                       | Store verwaltet `createObjectURL`/`revokeObjectURL`                                             |
@@ -98,7 +98,7 @@ Storyboard-Creator folgt der visuellen Sprache von smc.haak3.de:
 | i18next-Singleton statt React-Context                  | Nutzbar in Store-Aktionen und Utils ohne Komponenten-Kontext   | Sprache ändert sich global; kein selektives Übersetzen einzelner Teile                          |
 | SMC-Chrome vollständig `print:hidden`                  | Druck zeigt nur A4-Inhalt, kein UI-Overhead                    | Markenelemente nicht im PDF sichtbar                                                            |
 | Select-Feldtyp über `CustomFieldDefinition.type` (v1.3)| Dropdowns (z. B. Kameraeinstellung) ohne Kernfeld-Umbau        | Werte außerhalb der Optionen bleiben erhalten, sind aber nur als Altwert wählbar                |
-| PDF-Export lazy (jspdf + html-to-image, eigener Chunk) | Echte .pdf-Datei (iPad-tauglich) ohne Main-Bundle-Bloat        | DOM→Bild→PDF ist Raster, kein selektierbarer Text; `window.print()` bleibt als Alternative      |
+| PDF-Export als eigener Chunk                           | `jspdf` und `html-to-image` belasten das Start-Bundle nicht    | Exportpfad braucht Browser-Regressionstests                                                     |
 | Feedback dateibasiert in `Scene.comments` (v1.4)       | Kein Backend/Accounts — Lehrkraft kommentiert die `.storyboard` und gibt sie zurück | Kein Live-Austausch; Feedback-Modus ist reine Ansicht (nicht im Projekt persistiert)            |
 
 ## Bekannte Grenzen / offene Punkte

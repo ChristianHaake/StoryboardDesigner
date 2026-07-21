@@ -127,7 +127,15 @@ export const createSceneSlice: StoryboardCreator<SceneSlice> = (set) => ({
       const imageUrls = { ...state.imageUrls };
       delete images[id];
       delete imageUrls[id];
-      return { touched: true, hasContent: true, images, imageUrls };
+      return {
+        touched: true,
+        hasContent: true,
+        images,
+        imageUrls,
+        scenes: state.scenes.map((scene) =>
+          scene.id === id ? { ...scene, imageFileName: null } : scene,
+        ),
+      };
     }),
 
   addScene: () =>
