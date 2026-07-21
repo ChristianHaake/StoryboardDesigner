@@ -64,13 +64,14 @@ test.describe('Release QA regression smoke', () => {
     await expect
       .poll(() => page.evaluate(() => (window as unknown as { __printCalled: boolean }).__printCalled))
       .toBe(true);
+    // Nach Druck/PDF kehrt die App automatisch zum Export-Schritt zurück.
+    await expect(page.locator('h1', { hasText: 'Dein Storyboard ist fertig!' })).toBeVisible();
 
-    await page.locator('button', { hasText: 'Prüfen & Abschließen' }).click();
-    await page.locator('button', { hasText: 'Weiter zum Export' }).click();
     const exportScreenPdfDownloadPromise = page.waitForEvent('download');
     await page.locator('button', { hasText: 'Als PDF herunterladen' }).click();
     const exportScreenPdfDownload = await exportScreenPdfDownloadPromise;
     expect(exportScreenPdfDownload.suggestedFilename()).toBe('Release QA Roundtrip.pdf');
+    await expect(page.locator('h1', { hasText: 'Dein Storyboard ist fertig!' })).toBeVisible();
 
     await page.locator('summary', { hasText: 'Datei' }).click();
     page.once('dialog', async (dialog) => {
