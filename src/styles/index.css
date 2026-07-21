@@ -8,15 +8,25 @@
  * unter html[data-theme], statt jede Komponenten-Klasse zu ändern (#2).
  */
 :root {
-  --app-bg: #f1f5f9;
+  /* Design-Tokens exakt an SMC (Referenz-App / haak3-Standard) angeglichen. */
+  --app-bg: #f3f5f8;
   --surface: #ffffff;
   --surface-subtle: #f8fafc;
   --text: #111827;
-  --text-muted: #667085;
+  --text-muted: #475467;
   --border: #dfe3e8;
-  --primary: #2563eb;
-  --primary-hover: #1d4ed8;
-  --focus: rgb(59 130 246 / 0.35);
+  --primary: #245dcc;
+  --primary-hover: #1949a4;
+  --primary-soft: #eaf0ff;
+  --focus: rgb(36 93 204 / 0.35);
+
+  /* Tailwind-Farb-Utilities (bg-blue-600 etc.) auf die SMC-Rampe ziehen,
+     damit die Akzentfarbe ohne Klassenänderung überall greift. */
+  --color-blue-50: #eaf0ff;
+  --color-blue-600: #245dcc;
+  --color-blue-700: #1949a4;
+  --color-slate-100: #f3f5f8;
+  --color-slate-500: #475467;
 
   color: var(--text);
   background: var(--app-bg);
@@ -74,6 +84,9 @@ html[data-theme='dark'] {
   --text-muted: #94a3b8;
   --border: #334155;
   --focus: rgb(96 165 250 / 0.45);
+  --primary: #3b82f6;
+  --primary-hover: #60a5fa;
+  --primary-soft: #1e3a5f;
 
   --color-white: #1e293b;
   --color-slate-50: #0f172a;
@@ -153,6 +166,9 @@ html[data-theme='contrast'] {
   --text-muted: #1f2937;
   --border: #1f2937;
   --focus: rgb(0 0 0 / 0.6);
+  --primary: #1d4ed8;
+  --primary-hover: #1e3a8a;
+  --primary-soft: #dbeafe;
 
   --color-white: #ffffff;
   --color-slate-50: #ffffff;

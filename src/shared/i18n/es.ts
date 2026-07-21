@@ -512,6 +512,7 @@ const es: Translations = {
     privacy: 'Privacidad',
     imprint: 'Aviso legal',
     repository: 'Código fuente',
+    coffee: 'Invítame a un café',
     localNote: 'Storyboard-Creator · El contenido permanece en tu dispositivo',
   },
   fields: {

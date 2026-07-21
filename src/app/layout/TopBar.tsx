@@ -8,7 +8,8 @@ import { redo as historyRedo, undo as historyUndo } from '../../domain/history';
 import { exportElementToPdf } from '../../shared/utils/pdfExport';
 import BrandLogo from './BrandLogo';
 import SaveIndicator from './SaveIndicator';
-import DisplaySettings from './DisplaySettings';
+import StatusPill from './StatusPill';
+import LanguageToggle from './LanguageToggle';
 import { buttonPrimary, buttonSecondary } from '../../shared/ui/fieldStyles';
 import {
   MessageSquare,
@@ -21,6 +22,7 @@ import {
   Trash2,
   Folder,
   Play,
+  GraduationCap,
 } from 'lucide-react';
 
 import { SharedTopBar } from '@haak3/ui';
@@ -153,8 +155,15 @@ export default function TopBar() {
         controlsArea={
           <>
             <SaveIndicator />
-            <DisplaySettings />
-            <div className="h-5 w-px bg-slate-200 max-sm:hidden" aria-hidden="true" />
+            <StatusPill label={t('brand.localPill')} className="max-md:hidden" />
+            <LanguageToggle />
+            <Link
+              to="/lehrkraefte"
+              className="inline-flex min-h-10 items-center gap-1.5 rounded-lg px-2.5 text-sm font-semibold text-slate-600 transition-colors hover:bg-slate-100 hover:text-slate-900"
+            >
+              <GraduationCap className="w-[18px] h-[18px]" strokeWidth={1.8} aria-hidden="true" />
+              <span className="max-lg:hidden">{t('brand.forEducators')}</span>
+            </Link>
             <button
               type="button"
               onClick={toggleFeedbackMode}

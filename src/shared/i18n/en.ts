@@ -510,6 +510,7 @@ const en: Translations = {
     privacy: 'Privacy',
     imprint: 'Imprint',
     repository: 'Source code',
+    coffee: 'Buy me a coffee',
     localNote: 'Storyboard-Creator · Content stays on your device',
   },
   fields: {
