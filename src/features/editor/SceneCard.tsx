@@ -160,7 +160,7 @@ function SceneCard({ sceneId }: SceneCardProps) {
           >
             <GripVertical className="w-[18px] h-[18px]" strokeWidth={1.5} aria-hidden="true" />
           </button>
-          <div className="flex items-center gap-1 opacity-0 transition-opacity group-focus-within:opacity-100 group-hover:opacity-100 max-sm:opacity-100 pointer-coarse:opacity-100">
+          <div className="flex items-center gap-1 opacity-60 transition-opacity group-focus-within:opacity-100 group-hover:opacity-100 max-sm:opacity-100 pointer-coarse:opacity-100">
             <button
               type="button"
               onClick={() => previousSceneId && moveScene(scene.id, previousSceneId)}

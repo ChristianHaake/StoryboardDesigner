@@ -14,6 +14,9 @@ import {
   Video,
 } from 'lucide-react';
 
+// Wählbare Anzeigedauer je Bild im Autoplay (ms).
+const SLIDE_DURATIONS = [3000, 5000, 8000] as const;
+
 export default function PresentationView() {
   const { t } = useTranslation();
   const navigate = useNavigate();
@@ -24,6 +27,7 @@ export default function PresentationView() {
   const features = productType ? FORMAT_FEATURES[productType] : FORMAT_FEATURES.shortFilm;
   const [currentIndex, setCurrentIndex] = useState(0);
   const [isPlaying, setIsPlaying] = useState(false);
+  const [durationMs, setDurationMs] = useState<number>(SLIDE_DURATIONS[0]);
 
   const totalScenes = scenes.length;
   const currentScene = scenes[currentIndex];
@@ -31,7 +35,6 @@ export default function PresentationView() {
   useEffect(() => {
     let timer: number;
     if (isPlaying && currentScene) {
-      const durationMs = 3000;
       timer = window.setTimeout(() => {
         if (currentIndex < totalScenes - 1) {
           setCurrentIndex((prev) => prev + 1);
@@ -41,7 +44,7 @@ export default function PresentationView() {
       }, durationMs);
     }
     return () => clearTimeout(timer);
-  }, [isPlaying, currentIndex, currentScene, totalScenes]);
+  }, [isPlaying, currentIndex, currentScene, totalScenes, durationMs]);
 
   useEffect(() => {
     if (currentIndex >= totalScenes && totalScenes > 0) {
@@ -114,6 +117,20 @@ export default function PresentationView() {
         </div>
 
         <div className="flex gap-4">
+          <button
+            type="button"
+            onClick={() =>
+              setDurationMs((d) => {
+                const list = SLIDE_DURATIONS as readonly number[];
+                return list[(list.indexOf(d) + 1) % list.length];
+              })
+            }
+            className="flex h-10 items-center justify-center rounded-full bg-slate-900/60 px-3 text-sm font-medium tabular-nums text-slate-300 backdrop-blur-sm transition-colors hover:bg-slate-800 hover:text-white"
+            aria-label={t('presentation.speedLabel', { s: durationMs / 1000 })}
+            title={t('presentation.speedLabel', { s: durationMs / 1000 })}
+          >
+            {durationMs / 1000}&nbsp;s
+          </button>
           <button
             type="button"
             onClick={() => setIsPlaying(!isPlaying)}

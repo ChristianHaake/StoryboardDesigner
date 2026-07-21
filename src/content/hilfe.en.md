@@ -11,7 +11,7 @@ With a good storyboard, everyone knows what to do during the shoot.
 
 ## First steps
 
-1. **Choose a format** — tap your media product on the start screen. For Short Film and Photo Story you can also load an example.
+1. **Choose a format** — tap your media product on the start screen. You can also load an example for any format.
 2. **Set up the project** — enter a project name (required). Topic, subject, group members and level of detail are optional.
 3. **Fill in the planning:**
    - **Logline:** What is it about? Describe your idea in one sentence.

@@ -8,6 +8,7 @@ import { redo as historyRedo, undo as historyUndo } from '../../domain/history';
 import { exportElementToPdf } from '../../shared/utils/pdfExport';
 import BrandLogo from './BrandLogo';
 import SaveIndicator from './SaveIndicator';
+import DisplaySettings from './DisplaySettings';
 import { buttonPrimary, buttonSecondary } from '../../shared/ui/fieldStyles';
 import {
   MessageSquare,
@@ -35,6 +36,7 @@ export default function TopBar() {
   const canRedo = useStoryboardStore((s) => s.canRedo);
   const activeStep = useStoryboardStore((s) => s.activeStep);
   const setWizardStep = useStoryboardStore((s) => s.setWizardStep);
+  const hasScenes = useStoryboardStore((s) => s.scenes.length > 0);
   const showDocumentActions =
     activeStep === 'editor' || activeStep === 'review' || activeStep === 'export';
 
@@ -151,6 +153,8 @@ export default function TopBar() {
         controlsArea={
           <>
             <SaveIndicator />
+            <DisplaySettings />
+            <div className="h-5 w-px bg-slate-200 max-sm:hidden" aria-hidden="true" />
             <button
               type="button"
               onClick={toggleFeedbackMode}
@@ -259,19 +263,31 @@ export default function TopBar() {
 
                 {/* Export / Print */}
                 <div className="flex gap-2">
-                  <Link
-                    to="/play"
-                    className={`${buttonSecondary} min-h-11 flex items-center justify-center max-sm:px-3`}
-                    title={t('topbar.present')}
-                  >
-                    <Play className="w-[18px] h-[18px]" strokeWidth={1.8} aria-hidden="true" />
-                    <span className="max-sm:hidden">{t('topbar.present')}</span>
-                  </Link>
+                  {hasScenes ? (
+                    <Link
+                      to="/play"
+                      className={`${buttonSecondary} min-h-11 flex items-center justify-center max-sm:px-3`}
+                      title={t('topbar.present')}
+                    >
+                      <Play className="w-[18px] h-[18px]" strokeWidth={1.8} aria-hidden="true" />
+                      <span className="max-sm:hidden">{t('topbar.present')}</span>
+                    </Link>
+                  ) : (
+                    <span
+                      aria-disabled="true"
+                      title={t('topbar.needScenes')}
+                      className={`${buttonSecondary} min-h-11 flex cursor-not-allowed items-center justify-center opacity-50 max-sm:px-3`}
+                    >
+                      <Play className="w-[18px] h-[18px]" strokeWidth={1.8} aria-hidden="true" />
+                      <span className="max-sm:hidden">{t('topbar.present')}</span>
+                    </span>
+                  )}
                   <button
                     type="button"
                     onClick={handlePrint}
+                    disabled={!hasScenes}
                     className={`${buttonSecondary} min-h-11 max-sm:px-3`}
-                    title={t('topbar.print')}
+                    title={hasScenes ? t('topbar.print') : t('topbar.needScenes')}
                   >
                     <Printer className="w-[18px] h-[18px]" strokeWidth={1.8} aria-hidden="true" />
                     <span className="max-sm:hidden">{t('topbar.print')}</span>
@@ -279,10 +295,10 @@ export default function TopBar() {
                   <button
                     type="button"
                     onClick={handlePdf}
-                    disabled={pdfBusy}
+                    disabled={pdfBusy || !hasScenes}
                     aria-busy={pdfBusy}
                     className={`${buttonPrimary} min-h-11 max-sm:px-3`}
-                    title={t('topbar.pdf')}
+                    title={hasScenes ? t('topbar.pdf') : t('topbar.needScenes')}
                   >
                     <FileText className="w-[18px] h-[18px]" strokeWidth={1.8} aria-hidden="true" />
                     <span className="max-sm:hidden">

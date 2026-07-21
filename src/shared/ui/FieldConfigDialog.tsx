@@ -1,7 +1,12 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useStoryboardStore } from '../../app/store/useStoryboardStore';
-import { MAX_CUSTOM_FIELDS, MAX_CUSTOM_FIELD_LABEL_LENGTH } from '../../domain/customFields';
+import {
+  MAX_CUSTOM_FIELDS,
+  MAX_CUSTOM_FIELD_LABEL_LENGTH,
+  COMPLEXITY_RANK,
+  presetFieldMinComplexity,
+} from '../../domain/customFields';
 import { buttonPrimary, buttonSecondary } from './fieldStyles';
 import type { CustomFieldDefinition, CustomFieldType, ProductType } from '../../domain/types';
 import { Trash2, X } from 'lucide-react';
@@ -20,10 +25,12 @@ function FieldDefinitionRow({
   definition,
   onSave,
   onDelete,
+  minComplexityHint,
 }: {
   definition: CustomFieldDefinition;
   onSave: (key: string, label: string, options?: string[], description?: string) => void;
   onDelete: (key: string, label: string) => void;
+  minComplexityHint?: string;
 }) {
   const { t } = useTranslation();
   const isSelect = definition.type === 'select';
@@ -41,11 +48,18 @@ function FieldDefinitionRow({
         <label htmlFor={`field-${definition.key}`} className="text-xs font-semibold text-slate-700">
           {t('fieldConfig.rowLabelText')}
         </label>
-        {isSelect && (
-          <span className="rounded-md bg-blue-50 px-2 py-0.5 text-xs font-semibold text-blue-700">
-            {t('fieldConfig.typeSelect')}
-          </span>
-        )}
+        <div className="flex items-center gap-2">
+          {minComplexityHint && (
+            <span className="rounded-md bg-amber-50 px-2 py-0.5 text-xs font-medium text-amber-700">
+              {minComplexityHint}
+            </span>
+          )}
+          {isSelect && (
+            <span className="rounded-md bg-blue-50 px-2 py-0.5 text-xs font-semibold text-blue-700">
+              {t('fieldConfig.typeSelect')}
+            </span>
+          )}
+        </div>
       </div>
       <div className="flex flex-col gap-2">
         <div className="flex items-center gap-2 max-sm:flex-wrap">
@@ -135,6 +149,7 @@ export default function FieldConfigDialog({ open, onClose }: FieldConfigDialogPr
   const [newDescription, setNewDescription] = useState('');
   const definitions = useStoryboardStore((state) => state.fieldDefinitions ?? EMPTY_DEFINITIONS);
   const productType = useStoryboardStore((state) => state.metaData.productType);
+  const complexity = useStoryboardStore((state) => state.metaData.complexity);
   const addCustomField = useStoryboardStore((state) => state.addCustomField);
   const renameCustomField = useStoryboardStore((state) => state.renameCustomField);
   const updateCustomFieldOptions = useStoryboardStore((state) => state.updateCustomFieldOptions);
@@ -424,14 +439,26 @@ export default function FieldConfigDialog({ open, onClose }: FieldConfigDialogPr
               </p>
             ) : (
               <div className="mt-3 space-y-2">
-                {definitions.map((definition) => (
-                  <FieldDefinitionRow
-                    key={definition.key}
-                    definition={definition}
-                    onSave={handleSave}
-                    onDelete={handleDelete}
-                  />
-                ))}
+                {definitions.map((definition) => {
+                  const min = presetFieldMinComplexity(definition.key);
+                  const belowActive = min && COMPLEXITY_RANK[complexity] < COMPLEXITY_RANK[min];
+                  const levelLabel =
+                    min === 'advanced'
+                      ? t('wizard.complexityAdvanced')
+                      : t('wizard.complexityStandard');
+                  const hint = belowActive
+                    ? t('fieldConfig.presetMinNote', { level: levelLabel })
+                    : undefined;
+                  return (
+                    <FieldDefinitionRow
+                      key={definition.key}
+                      definition={definition}
+                      onSave={handleSave}
+                      onDelete={handleDelete}
+                      minComplexityHint={hint}
+                    />
+                  );
+                })}
               </div>
             )}
           </section>

@@ -18,6 +18,7 @@ import { useStoryboardStore } from '../../app/store/useStoryboardStore';
 import { MAX_SCENES } from '../../domain/projectCodec';
 import FieldConfigDialog from '../../shared/ui/FieldConfigDialog';
 import SceneNavigator from './SceneNavigator';
+import WizardSteps from '../wizard/WizardSteps';
 
 import { useState, useEffect, useCallback, useRef } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -66,6 +67,7 @@ export default function EditorView() {
   const numScenes = sceneIds.length;
 
   const productType = useStoryboardStore((state) => state.metaData.productType);
+  const metaData = useStoryboardStore((state) => state.metaData);
   const collapseAllScenes = useStoryboardStore((state) => state.collapseAllScenes);
   const isAllCollapsed = useStoryboardStore((state) => {
     if (state.scenes.length === 0) return false;
@@ -125,6 +127,7 @@ export default function EditorView() {
   return (
     <div>
       <A4Page id="storyboard-document">
+        <WizardSteps />
         {/* Wizard Navigation */}
         <div className="mb-8 flex items-center justify-between print:hidden">
           <button
@@ -141,6 +144,41 @@ export default function EditorView() {
             {t('wizard.review')}
           </button>
         </div>
+        {/* Dokument-Kopf: Projektkontext auf Bildschirm, Druck und PDF */}
+        <header className="mb-8 border-b border-slate-200 pb-5">
+          <div className="flex flex-wrap items-center gap-x-3 gap-y-2">
+            <h1 className="text-2xl font-bold tracking-tight text-slate-900 print:text-xl">
+              {metaData.projectName.trim() || t('editor.docUntitled')}
+            </h1>
+            <span className="inline-flex items-center rounded-md bg-blue-50 px-2 py-0.5 text-xs font-semibold uppercase tracking-wider text-blue-700 print:bg-transparent print:px-0 print:text-slate-600">
+              {t(`format.${metaData.productType}`)}
+            </span>
+          </div>
+          {(metaData.topic.trim() ||
+            metaData.subject.trim() ||
+            metaData.groupMembers.length > 0) && (
+            <dl className="mt-2.5 flex flex-wrap gap-x-6 gap-y-1 text-sm text-slate-600">
+              {metaData.topic.trim() && (
+                <div className="flex gap-1.5">
+                  <dt className="font-medium text-slate-500">{t('editor.docTopic')}:</dt>
+                  <dd>{metaData.topic}</dd>
+                </div>
+              )}
+              {metaData.subject.trim() && (
+                <div className="flex gap-1.5">
+                  <dt className="font-medium text-slate-500">{t('editor.docSubject')}:</dt>
+                  <dd>{metaData.subject}</dd>
+                </div>
+              )}
+              {metaData.groupMembers.length > 0 && (
+                <div className="flex gap-1.5">
+                  <dt className="font-medium text-slate-500">{t('editor.docGroup')}:</dt>
+                  <dd>{metaData.groupMembers.join(', ')}</dd>
+                </div>
+              )}
+            </dl>
+          )}
+        </header>
         {/* Pre-Planning */}
         <PrePlanningSection />
 

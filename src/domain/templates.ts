@@ -9,7 +9,17 @@ import i18n from '../shared/i18n';
 // i18n, damit die Vorlage in der aktiven Sprache erscheint.
 
 export type StarterFormat = Exclude<MetaData['productType'], 'custom'>;
-export const STARTER_FORMATS: StarterFormat[] = ['shortFilm', 'fotostory'];
+export const STARTER_FORMATS: StarterFormat[] = [
+  'shortFilm',
+  'explainerVideo',
+  'fotostory',
+  'audioPlay',
+  'podcast',
+  'stopMotion',
+  'comic',
+  'socialMediaClip',
+  'roleplay',
+];
 
 // Welche Text-Preset-Felder je Format mit Beispielwerten befüllt werden, plus
 // der zugehörige (flache) i18n-Key-Teil. Select-Felder bleiben leer — ihre
