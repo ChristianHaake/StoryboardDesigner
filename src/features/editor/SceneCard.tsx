@@ -10,6 +10,7 @@ import { resizeImage } from '../../shared/utils/imageResizer';
 import AutoResizeTextarea from '../../shared/ui/AutoResizeTextarea';
 import CommentThread from './CommentThread';
 import { FORMAT_FEATURES } from '../../domain/formatConfig';
+import { COMPLEXITY_RANK, presetFieldMinComplexity } from '../../domain/customFields';
 import { inputClass, labelClass } from '../../shared/ui/fieldStyles';
 import { MAX_SCENES } from '../../domain/projectCodec';
 import {
@@ -328,12 +329,20 @@ function SceneCard({ sceneId }: SceneCardProps) {
               {/* === IMMER SICHTBAR (SIMPLE) === */}
               <div>
                 <label className={labelClass} htmlFor={`action-${scene.id}`}>
-                  {visual ? t('scene.actionLabelVisual') : t('scene.actionLabel')}
+                  {visual
+                    ? t('scene.actionLabelVisual')
+                    : productType === 'podcast'
+                      ? t('scene.actionLabelTopic')
+                      : t('scene.actionLabel')}
                 </label>
                 <AutoResizeTextarea
                   id={`action-${scene.id}`}
                   placeholder={
-                    visual ? t('scene.actionPlaceholderVisual') : t('scene.actionPlaceholder')
+                    visual
+                      ? t('scene.actionPlaceholderVisual')
+                      : productType === 'podcast'
+                        ? t('scene.actionPlaceholderTopic')
+                        : t('scene.actionPlaceholder')
                   }
                   value={scene.action}
                   onChange={(e) => updateScene(scene.id, { action: e.target.value })}
@@ -472,6 +481,10 @@ function SceneCard({ sceneId }: SceneCardProps) {
               {/* Custom Fields (aus v1 für Legacy-Projekte/Vorlagen) */}
               {fieldDefinitions.map((definition) => {
                 const value = scene.customFields?.[definition.key] ?? '';
+                // Format-Presets erst ab ihrer Mindeststufe zeigen, damit „Einfach"
+                // schlank bleibt. Nutzerfelder (kein min) immer sichtbar.
+                const min = presetFieldMinComplexity(definition.key);
+                if (min && COMPLEXITY_RANK[complexity] < COMPLEXITY_RANK[min]) return null;
                 const fieldId = `custom-${definition.key}-${scene.id}`;
                 const isSelect = definition.type === 'select' && definition.options;
                 // Altwert, der nicht (mehr) in den Optionen liegt, bleibt wählbar.

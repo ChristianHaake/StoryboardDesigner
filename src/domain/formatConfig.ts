@@ -10,10 +10,13 @@ export interface FormatFeatures {
 
 export const FORMAT_FEATURES: Record<ProductType, FormatFeatures> = {
   // Video-based formats
+  // shortFilm: Kameraeinstellung/-bewegung kommen aus den Format-Presets
+  // (Dropdown mit Fachbegriffen), daher hier die generischen Einbaufelder aus,
+  // sonst erscheint jedes Feld doppelt.
   shortFilm: {
     hasImage: true,
-    hasCameraSize: true,
-    hasCameraMovement: true,
+    hasCameraSize: false,
+    hasCameraMovement: false,
     hasAudioEffects: true,
     hasLocation: true,
   },
@@ -31,10 +34,12 @@ export const FORMAT_FEATURES: Record<ProductType, FormatFeatures> = {
     hasAudioEffects: true,
     hasLocation: true,
   },
+  // stopMotion: Kamera steht fest, Objekte bewegen sich. Statt „Kamerabewegung"
+  // liefert das Preset ein Einzelbilder-Feld; Einstellungsgröße kommt als Preset.
   stopMotion: {
     hasImage: true,
-    hasCameraSize: true,
-    hasCameraMovement: true,
+    hasCameraSize: false,
+    hasCameraMovement: false,
     hasAudioEffects: true,
     hasLocation: true,
   },
@@ -46,17 +51,18 @@ export const FORMAT_FEATURES: Record<ProductType, FormatFeatures> = {
     hasLocation: true,
   },
 
-  // Static visual formats
+  // Static visual formats: Bildausschnitt/Sprechblase kommen als Presets,
+  // daher generisches Einstellungsgrößen-Einbaufeld aus (sonst Dopplung).
   fotostory: {
     hasImage: true,
-    hasCameraSize: true,
+    hasCameraSize: false,
     hasCameraMovement: false,
     hasAudioEffects: false,
     hasLocation: true,
   },
   comic: {
     hasImage: true,
-    hasCameraSize: true,
+    hasCameraSize: false,
     hasCameraMovement: false,
     hasAudioEffects: false,
     hasLocation: true,
