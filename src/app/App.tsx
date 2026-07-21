@@ -26,6 +26,8 @@ import {
 } from '../domain/history';
 import hilfeDe from '../content/hilfe.md?raw';
 import hilfeEn from '../content/hilfe.en.md?raw';
+import lehrkraefteDe from '../content/lehrkraefte.md?raw';
+import lehrkraefteEn from '../content/lehrkraefte.en.md?raw';
 import ueberDe from '../content/ueber.md?raw';
 import ueberEn from '../content/ueber.en.md?raw';
 import datenschutzText from '../content/datenschutz.md?raw';
@@ -35,6 +37,7 @@ export default function App() {
   const { t, i18n } = useTranslation();
   const language = i18n.resolvedLanguage ?? i18n.language;
   const hilfeText = language === 'en' ? hilfeEn : hilfeDe;
+  const lehrkraefteText = language === 'en' ? lehrkraefteEn : lehrkraefteDe;
   const ueberText = language === 'en' ? ueberEn : ueberDe;
 
   // Dokument-Sprache und Titel an die UI-Sprache koppeln.
@@ -146,6 +149,7 @@ export default function App() {
     <BrowserRouter>
       <AppShell
         hilfeText={hilfeText}
+        lehrkraefteText={lehrkraefteText}
         ueberText={ueberText}
         datenschutzText={datenschutzText}
         impressumText={impressumText}
@@ -156,11 +160,13 @@ export default function App() {
 
 function AppShell({
   hilfeText,
+  lehrkraefteText,
   ueberText,
   datenschutzText,
   impressumText,
 }: {
   hilfeText: string;
+  lehrkraefteText: string;
   ueberText: string;
   datenschutzText: string;
   impressumText: string;
@@ -184,6 +190,7 @@ function AppShell({
           />
           <Route path="/play" element={<PresentationView />} />
           <Route path="/hilfe" element={<MarkdownView source={hilfeText} />} />
+          <Route path="/lehrkraefte" element={<MarkdownView source={lehrkraefteText} />} />
           <Route path="/ueber" element={<MarkdownView source={ueberText} />} />
           <Route
             path="/datenschutz"

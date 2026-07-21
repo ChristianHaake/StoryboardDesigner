@@ -3,6 +3,7 @@ import { ArrowLeft, ArrowRight, CheckCircle2, AlertCircle } from 'lucide-react';
 import { buttonPrimary } from '../../shared/ui/fieldStyles';
 import type { Scene } from '../../domain/types';
 import { useTranslation } from 'react-i18next';
+import WizardSteps from './WizardSteps';
 
 export default function ReviewScreen() {
   const { t } = useTranslation();
@@ -34,6 +35,7 @@ export default function ReviewScreen() {
 
   return (
     <div className="mx-auto max-w-3xl py-8 px-4 sm:px-6 lg:px-8 fade-in">
+      <WizardSteps />
       <div className="mb-8">
         <button
           onClick={() => setWizardStep('editor')}

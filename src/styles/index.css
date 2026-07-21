@@ -121,6 +121,28 @@ html[data-theme='dark'] .brand-logo-inverted {
   display: block;
 }
 
+/* Typografie (prose) nutzt eigene --tw-prose-*-Variablen, die nicht von der
+ * Neutral-Rampe oben erfasst werden. Im Dark-Modus daher explizit auf helle
+ * Werte setzen, damit Hilfe-/Info-Seiten lesbar bleiben. */
+html[data-theme='dark'] .prose {
+  --tw-prose-body: #e2e8f0;
+  --tw-prose-headings: #f8fafc;
+  --tw-prose-lead: #cbd5e1;
+  --tw-prose-links: #93c5fd;
+  --tw-prose-bold: #f8fafc;
+  --tw-prose-counters: #cbd5e1;
+  --tw-prose-bullets: #64748b;
+  --tw-prose-hr: #334155;
+  --tw-prose-quotes: #e2e8f0;
+  --tw-prose-quote-borders: #334155;
+  --tw-prose-captions: #94a3b8;
+  --tw-prose-code: #f8fafc;
+  --tw-prose-pre-code: #e2e8f0;
+  --tw-prose-pre-bg: #0f172a;
+  --tw-prose-th-borders: #475569;
+  --tw-prose-td-borders: #334155;
+}
+
 /* ---- High-Contrast: helle Flächen, maximaler Textkontrast ---- */
 html[data-theme='contrast'] {
   color-scheme: light;
@@ -152,6 +174,15 @@ html[data-theme='contrast'] {
 
 html[data-theme='contrast'] :focus-visible {
   outline-width: 4px;
+}
+
+html[data-theme='contrast'] .prose {
+  --tw-prose-body: #000000;
+  --tw-prose-headings: #000000;
+  --tw-prose-bold: #000000;
+  --tw-prose-links: #1e3a8a;
+  --tw-prose-bullets: #1f2937;
+  --tw-prose-counters: #1f2937;
 }
 
 /* Bewegung respektieren (#2, A11y-MUST) */

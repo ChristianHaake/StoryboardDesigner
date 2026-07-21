@@ -14,7 +14,8 @@ export default function Footer() {
             aria-label={t('footer.nav')}
             className="flex flex-wrap items-center justify-center gap-x-6 gap-y-2 text-sm font-medium text-slate-600 [&_a]:transition-colors [&_a]:hover:text-blue-600"
           >
-            <Link to="/hilfe">{t('brand.forEducators')}</Link>
+            <Link to="/hilfe">{t('footer.help')}</Link>
+            <Link to="/lehrkraefte">{t('brand.forEducators')}</Link>
             <Link to="/ueber">{t('footer.about')}</Link>
             <Link to="/datenschutz">{t('footer.privacy')}</Link>
             <Link to="/impressum">{t('footer.imprint')}</Link>

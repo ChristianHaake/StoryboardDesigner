@@ -12,7 +12,7 @@ Eine rein clientseitige Web-App für Lernende zum Erstellen von Storyboards (Fil
 - **Autosave:** idb-keyval / IndexedDB
 - **PDF-Export:** lokaler PDF-Download via `html-to-image` + `jsPDF`; separater Druckpfad über `window.print()`
 - **Feldsystem:** projektweite Zusatzfelder und Formatvorlagen
-- **Mehrsprachigkeit:** i18next + react-i18next (DE/EN, Browser-Erkennung)
+- **Mehrsprachigkeit:** i18next + react-i18next (DE/EN/ES/FR, Browser-Erkennung, Fallback Deutsch)
 
 ## Lokales Setup
 

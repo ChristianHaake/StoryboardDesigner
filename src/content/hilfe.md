@@ -11,7 +11,7 @@ Mit einem guten Storyboard weiß beim Dreh jede:r, was zu tun ist.
 
 ## Erste Schritte
 
-1. **Format wählen** — tippe auf der Startseite auf dein Medienprodukt. Bei Kurzfilm und Fotostory kannst du auch ein Beispiel laden.
+1. **Format wählen** — tippe auf der Startseite auf dein Medienprodukt. Zu jedem Format kannst du auch ein Beispiel laden.
 2. **Projekt einrichten** — gib einen Projektnamen ein (Pflichtfeld). Thema, Fach, Gruppenmitglieder und Detailgrad sind optional.
 3. **Planung ausfüllen:**
    - **Logline:** Worum geht es? Beschreibe deine Idee in einem Satz.

@@ -5,6 +5,7 @@ import { useStoryboardStore, selectProject } from '../../app/store/useStoryboard
 import { ArrowLeft, Download, Printer, FileText, Play, CheckCircle2 } from 'lucide-react';
 import { exportElementToPdf } from '../../shared/utils/pdfExport';
 import { buttonPrimary, buttonSecondary } from '../../shared/ui/fieldStyles';
+import WizardSteps from './WizardSteps';
 
 export default function ExportScreen() {
   const { t } = useTranslation();
@@ -76,6 +77,7 @@ export default function ExportScreen() {
 
   return (
     <div className="mx-auto max-w-3xl py-8 px-4 sm:px-6 lg:px-8 fade-in">
+      <WizardSteps />
       <div className="mb-8">
         <button
           onClick={() => setWizardStep('review')}

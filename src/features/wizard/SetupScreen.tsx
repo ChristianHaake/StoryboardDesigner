@@ -4,6 +4,7 @@ import { ArrowLeft, ArrowRight, Settings } from 'lucide-react';
 import { useState } from 'react';
 import type { Complexity } from '../../domain/types';
 import { buttonPrimary, inputClass } from '../../shared/ui/fieldStyles';
+import WizardSteps from './WizardSteps';
 
 export default function SetupScreen() {
   const { t } = useTranslation();
@@ -26,6 +27,7 @@ export default function SetupScreen() {
 
   return (
     <div className="mx-auto max-w-3xl py-8 px-4 sm:px-6 lg:px-8 fade-in">
+      <WizardSteps />
       <div className="mb-8">
         <button
           onClick={() => setWizardStep('start')}

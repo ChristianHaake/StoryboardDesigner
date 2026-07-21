@@ -57,7 +57,7 @@ App ─ Autosave-Wiring (Effect), beforeunload, html-lang + document.title (i18n
 ├── TopBar            2-reihiger SMC-Header (sticky, print:hidden)
 │   ├── BrandLogo     Marken-Logo mit Tagline
 │   ├── StatusPill    „Inhalte bleiben lokal"-Pill
-│   ├── LanguageToggle DE/EN-Segmentschalter
+│   ├── LanguageToggle DE/EN/ES/FR-Segmentschalter
 │   └── Aktionsbuttons  Laden / Speichern / PDF
 ├── InfoBanner        Amber-Bildungshinweis (print:hidden)
 ├── HeroIntro         Kicker + Headline + Subline (print:hidden)
