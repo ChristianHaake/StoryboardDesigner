@@ -2,6 +2,21 @@
   "name": "storyboard-creator",
   "private": true,
   "version": "1.5.0",
+  "description": "Eine rein clientseitige Web-App für Lernende zum Erstellen von Storyboards (Film, Fotostory, Rede).",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/ChristianHaake/Storyboard-Creator.git"
+  },
+  "author": "Christian Haake",
+  "keywords": [
+    "storyboard",
+    "education",
+    "react",
+    "vite",
+    "dnd-kit",
+    "pdf-export",
+    "offline-first"
+  ],
   "license": "GPL-3.0-only",
   "type": "module",
   "workspaces": [
