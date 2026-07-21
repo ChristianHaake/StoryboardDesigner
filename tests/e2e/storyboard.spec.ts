@@ -104,7 +104,9 @@ test.describe('Storyboard Creator E2E Browser Click Test Suite', () => {
     await page.locator('textarea[placeholder="Wer spricht mit wem?"]').fill('Sprecher aus dem Off.');
     await page.locator('textarea[placeholder="Geräusche oder Musik"]').fill('Meeresrauschen im Hintergrund.');
     await page.locator('textarea[placeholder="Wo findet die Szene statt?"]').fill('Pazifischer Ozean.');
-    await page.locator('textarea[placeholder="z.B. Halbnah, Totale"]').fill('Totale');
+    // Einstellungsgröße kommt bei Kurzfilm aus dem Format-Preset (Dropdown), nicht
+    // mehr als generisches Freitextfeld.
+    await page.getByLabel('Kameraeinstellung').first().selectOption({ label: 'Totale' });
 
     // Add Scene 2
     await addSceneButton.click();

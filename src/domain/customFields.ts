@@ -1,4 +1,10 @@
-import type { CustomFieldDefinition, CustomFieldType, MetaData, ProductType } from './types';
+import type {
+  Complexity,
+  CustomFieldDefinition,
+  CustomFieldType,
+  MetaData,
+  ProductType,
+} from './types';
 import { generateId } from '../shared/utils/idGenerator';
 import i18n from '../shared/i18n';
 
@@ -7,16 +13,39 @@ export const MAX_CUSTOM_FIELD_LABEL_LENGTH = 60;
 export const MAX_SELECT_OPTIONS = 20;
 export const MAX_SELECT_OPTION_LENGTH = 40;
 
+// Rangfolge der Detailstufen; höher = mehr Felder sichtbar.
+export const COMPLEXITY_RANK: Record<Complexity, number> = {
+  simple: 0,
+  standard: 1,
+  advanced: 2,
+};
+
 interface PresetField {
   key: string;
   labelKey: string;
   type?: CustomFieldType;
   optionKeys?: string[]; // i18n-Keys der Auswahloptionen (nur bei type 'select')
   descriptionKey?: string; // i18n-Key für den Hilfstext
+  // Ab welcher Detailstufe das Feld im Editor erscheint. Ohne Angabe: immer.
+  // Verhindert, dass Format-Presets die „Einfach"-Stufe überfrachten (#UIX).
+  minComplexity?: Complexity;
 }
+
+const SHOT_SIZE_OPTION_KEYS = [
+  'presets.shotWide',
+  'presets.shotFull',
+  'presets.shotMedium',
+  'presets.shotCloseUp',
+  'presets.shotDetail',
+  'presets.shotAmerican',
+  'presets.shotBird',
+  'presets.shotWorm',
+];
 
 // Stabile Keys; Labels und Optionen werden zur Aufruf-Zeit übersetzt. Bereits in
 // eine .storyboard gespeicherte Werte bleiben unverändert (Projektinhalt).
+// Kamera-Presets ersetzen die generischen Einbau-Kamerafelder (FORMAT_FEATURES)
+// für diese Formate, damit kein Feld doppelt erscheint.
 const FORMAT_FIELD_PRESETS: Partial<Record<ProductType, PresetField[]>> = {
   shortFilm: [
     {
@@ -24,26 +53,84 @@ const FORMAT_FIELD_PRESETS: Partial<Record<ProductType, PresetField[]>> = {
       labelKey: 'presets.filmShotSize',
       descriptionKey: 'presets.filmShotSizeDesc',
       type: 'select',
-      optionKeys: [
-        'presets.shotWide',
-        'presets.shotFull',
-        'presets.shotMedium',
-        'presets.shotCloseUp',
-        'presets.shotDetail',
-        'presets.shotAmerican',
-        'presets.shotBird',
-        'presets.shotWorm',
-      ],
+      optionKeys: SHOT_SIZE_OPTION_KEYS,
+      minComplexity: 'advanced',
     },
-    { key: 'preset:shortFilm:camera-movement', labelKey: 'presets.filmCameraMovement' },
-    { key: 'preset:shortFilm:caption', labelKey: 'presets.caption' },
+    {
+      key: 'preset:shortFilm:camera-movement',
+      labelKey: 'presets.filmCameraMovement',
+      minComplexity: 'advanced',
+    },
+    { key: 'preset:shortFilm:caption', labelKey: 'presets.caption', minComplexity: 'standard' },
   ],
   fotostory: [
-    { key: 'preset:fotostory:framing', labelKey: 'presets.fotostoryFraming' },
-    { key: 'preset:fotostory:caption', labelKey: 'presets.fotostoryCaption' },
+    {
+      key: 'preset:fotostory:framing',
+      labelKey: 'presets.fotostoryFraming',
+      minComplexity: 'standard',
+    },
+    {
+      key: 'preset:fotostory:caption',
+      labelKey: 'presets.fotostoryCaption',
+      minComplexity: 'standard',
+    },
+  ],
+  comic: [
+    { key: 'preset:comic:framing', labelKey: 'presets.fotostoryFraming', minComplexity: 'standard' },
+    { key: 'preset:comic:caption', labelKey: 'presets.fotostoryCaption', minComplexity: 'standard' },
+  ],
+  stopMotion: [
+    {
+      key: 'preset:stopMotion:frames',
+      labelKey: 'presets.stopMotionFrames',
+      descriptionKey: 'presets.stopMotionFramesDesc',
+      minComplexity: 'standard',
+    },
+    {
+      key: 'preset:stopMotion:shot-size',
+      labelKey: 'presets.filmShotSize',
+      descriptionKey: 'presets.filmShotSizeDesc',
+      type: 'select',
+      optionKeys: SHOT_SIZE_OPTION_KEYS,
+      minComplexity: 'advanced',
+    },
+  ],
+  socialMediaClip: [
+    {
+      key: 'preset:socialMediaClip:hook',
+      labelKey: 'presets.socialHook',
+      descriptionKey: 'presets.socialHookDesc',
+      minComplexity: 'standard',
+    },
+    {
+      key: 'preset:socialMediaClip:format',
+      labelKey: 'presets.socialFormat',
+      type: 'select',
+      optionKeys: [
+        'presets.socialFormatPortrait',
+        'presets.socialFormatLandscape',
+        'presets.socialFormatSquare',
+      ],
+      minComplexity: 'standard',
+    },
+    { key: 'preset:socialMediaClip:caption', labelKey: 'presets.caption', minComplexity: 'standard' },
   ],
   custom: [],
 };
+
+// Render-Zeit-Lookup: Key → Mindeststufe. Wird nicht persistiert (Codec verwirft
+// Zusatzfelder ohnehin), daher pro Render aus den Preset-Definitionen abgeleitet.
+const PRESET_MIN_COMPLEXITY: Record<string, Complexity> = {};
+for (const preset of Object.values(FORMAT_FIELD_PRESETS)) {
+  for (const field of preset ?? []) {
+    if (field.minComplexity) PRESET_MIN_COMPLEXITY[field.key] = field.minComplexity;
+  }
+}
+
+/** Mindest-Detailstufe eines Preset-Feldes; undefined für Nutzerfelder (immer sichtbar). */
+export function presetFieldMinComplexity(key: string): Complexity | undefined {
+  return PRESET_MIN_COMPLEXITY[key];
+}
 
 function normalizedLabel(label: string): string {
   return label.trim().toLocaleLowerCase('de');
