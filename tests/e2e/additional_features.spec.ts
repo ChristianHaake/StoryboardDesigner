@@ -86,7 +86,7 @@ test.describe('Storyboard Creator Additional Features E2E Suite', () => {
     await page.locator('button', { hasText: 'Szene hinzufügen' }).click();
 
     // Turn on Feedback Mode
-    await page.locator('button[title="Feedback"]').click();
+    await page.locator('button[title="Kommentare"]').click();
 
     // Verify comment thread is visible on Scene Card 1
     const commentThread = page.locator('section[aria-label="Feedback zu Szene 1"]');
