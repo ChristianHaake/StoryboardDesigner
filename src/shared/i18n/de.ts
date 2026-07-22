@@ -505,6 +505,7 @@ const de = {
     privacy: 'Datenschutz',
     imprint: 'Impressum',
     repository: 'Quellcode',
+    coffee: 'Spendier mir einen Kaffee',
     localNote: 'Storyboard-Creator · Inhalte bleiben auf deinem Gerät',
   },
   fields: {

@@ -1,8 +1,7 @@
 import { Link } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
-import LanguageToggle from './LanguageToggle';
 import DisplaySettings from './DisplaySettings';
-import { Code2 } from 'lucide-react';
+import { Code2, Coffee } from 'lucide-react';
 
 export default function Footer() {
   const { t } = useTranslation();
@@ -15,7 +14,6 @@ export default function Footer() {
             className="flex flex-wrap items-center justify-center gap-x-6 gap-y-2 text-sm font-medium text-slate-600 [&_a]:transition-colors [&_a]:hover:text-blue-600"
           >
             <Link to="/hilfe">{t('footer.help')}</Link>
-            <Link to="/lehrkraefte">{t('brand.forEducators')}</Link>
             <Link to="/ueber">{t('footer.about')}</Link>
             <Link to="/datenschutz">{t('footer.privacy')}</Link>
             <Link to="/impressum">{t('footer.imprint')}</Link>
@@ -25,8 +23,16 @@ export default function Footer() {
 
         <div className="flex items-center gap-4">
           <DisplaySettings />
-          <LanguageToggle />
           <div className="h-4 w-px bg-slate-200" aria-hidden="true" />
+          <a
+            href="https://buymeacoffee.com/Haake"
+            target="_blank"
+            rel="noreferrer"
+            className="inline-flex items-center gap-1.5 rounded-full border border-black bg-[#ffdd00] px-3 py-1.5 text-xs font-bold text-black transition-colors hover:bg-[#ffe838]"
+          >
+            <Coffee className="h-4 w-4" strokeWidth={1.8} aria-hidden="true" />
+            {t('footer.coffee')}
+          </a>
           <a
             href="https://github.com/ChristianHaake/Storyboard-Creator"
             target="_blank"

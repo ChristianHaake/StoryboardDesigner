@@ -514,6 +514,7 @@ const fr: Translations = {
     privacy: 'Confidentialité',
     imprint: 'Mentions légales',
     repository: 'Code source',
+    coffee: 'Offre-moi un café',
     localNote: 'Storyboard-Creator · Le contenu reste sur ton appareil',
   },
   fields: {
