@@ -7,6 +7,34 @@ import { fileURLToPath } from 'url';
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
+// Reads the raw autosave payload straight from IndexedDB (idb-keyval store) as
+// a JSON string, so tests can wait for a debounced write to land instead of
+// racing the (steady) "Gespeichert" status indicator.
+async function readAutosaveRaw(page: import('@playwright/test').Page): Promise<string> {
+  return page.evaluate(async () => {
+    const raw = await new Promise<unknown>((resolve, reject) => {
+      const open = indexedDB.open('keyval-store', 1);
+      open.onsuccess = () => {
+        const db = open.result;
+        const tx = db.transaction('keyval', 'readonly');
+        const req = tx.objectStore('keyval').get('storyboard-creator:v1:currentProject');
+        req.onsuccess = () => resolve(req.result);
+        req.onerror = () => reject(req.error);
+      };
+      open.onerror = () => reject(open.error);
+    });
+    return JSON.stringify(raw ?? null);
+  });
+}
+
+// The sticky header's top row (with the "Kommentare" toggle) collapses to zero
+// height once scrolled past ~120px, letting the actions row overlap it. Scroll
+// to the top first so the toggle is a stable, unobstructed click target
+// (otherwise flaky on CI WebKit).
+async function revealHeader(page: import('@playwright/test').Page): Promise<void> {
+  await page.evaluate(() => window.scrollTo(0, 0));
+}
+
 test.describe('Storyboard Creator Additional Features E2E Suite', () => {
 
   test.beforeEach(async ({ page }) => {
@@ -86,10 +114,11 @@ test.describe('Storyboard Creator Additional Features E2E Suite', () => {
     await page.locator('button', { hasText: 'Szene hinzufügen' }).click();
 
     // Turn on Feedback Mode
-    await page.locator('button[title="Feedback"]').click();
+    await revealHeader(page);
+    await page.locator('button[title="Kommentare"]').click();
 
     // Verify comment thread is visible on Scene Card 1
-    const commentThread = page.locator('section[aria-label="Feedback zu Szene 1"]');
+    const commentThread = page.locator('section[aria-label="Kommentare zu Szene 1"]');
     await expect(commentThread).toBeVisible();
 
     // Add a comment
@@ -110,7 +139,8 @@ test.describe('Storyboard Creator Additional Features E2E Suite', () => {
     await expect(commentThread.locator('span', { hasText: 'Das Bild sollte dramatischer wirken.' })).not.toBeVisible();
 
     // Turn feedback mode off
-    await page.locator('button[title="Feedback"]').click();
+    await revealHeader(page);
+    await page.locator('button[title="Kommentare"]').click();
     await expect(commentThread).not.toBeVisible();
   });
 
@@ -160,8 +190,14 @@ test.describe('Storyboard Creator Additional Features E2E Suite', () => {
     await select.selectOption('Vogel');
     await select.blur();
 
-    // Wait for save
+    // Wait for the debounced autosave of the values above to actually reach
+    // IndexedDB before reloading. The status indicator stays on "Gespeichert"
+    // from earlier saves, so asserting on it can race the pending write and
+    // reload before the last edit is persisted (flaky on WebKit).
     await expect(page.locator('span[role="status"]')).toContainText('Gespeichert');
+    await expect
+      .poll(() => readAutosaveRaw(page), { timeout: 10000 })
+      .toMatch(/Kaffeetasse[\s\S]*Vogel|Vogel[\s\S]*Kaffeetasse/);
     await page.reload();
 
     await expect(page.locator('textarea[placeholder="Requisite eingeben"]')).toHaveValue('Kaffeetasse');

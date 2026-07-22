@@ -1,5 +1,14 @@
 import { test, expect } from '@playwright/test';
 
+// The sticky header's top row (brand + feedback toggle) collapses to zero
+// height once the page is scrolled past ~120px, and the actions row (PDF etc.)
+// then overlaps its former position. Clicking the collapsed "Kommentare" toggle
+// races that overlap (flaky on CI WebKit). Scroll back to the top first so the
+// row is expanded and the toggle is a stable, unobstructed click target.
+async function revealHeader(page: import('@playwright/test').Page): Promise<void> {
+  await page.evaluate(() => window.scrollTo(0, 0));
+}
+
 test.describe('Storyboard Creator E2E Browser Click Test Suite', () => {
 
   test.beforeEach(async ({ page }) => {
@@ -156,10 +165,11 @@ test.describe('Storyboard Creator E2E Browser Click Test Suite', () => {
 
     // G. Feedback / Comments Mode
     // Toggle Feedback Mode
-    await page.locator('button[title="Feedback"]').click();
+    await revealHeader(page);
+    await page.locator('button[title="Kommentare"]').click();
 
     // Verify comment thread is visible on Scene Card 1
-    const commentThread = page.locator('section[aria-label="Feedback zu Szene 1"]');
+    const commentThread = page.locator('section[aria-label="Kommentare zu Szene 1"]');
     await expect(commentThread).toBeVisible();
 
     // Add a comment
@@ -179,7 +189,8 @@ test.describe('Storyboard Creator E2E Browser Click Test Suite', () => {
     await expect(commentThread.locator('span', { hasText: 'Das Bild sollte dramatischer wirken.' })).not.toBeVisible();
 
     // Turn feedback mode off
-    await page.locator('button[title="Feedback"]').click();
+    await revealHeader(page);
+    await page.locator('button[title="Kommentare"]').click();
     await expect(commentThread).not.toBeVisible();
 
     // H. Move to Step 4: Review Screen
