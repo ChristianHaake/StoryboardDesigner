@@ -9,9 +9,34 @@ async function revealHeader(page: import('@playwright/test').Page): Promise<void
   await page.evaluate(() => window.scrollTo(0, 0));
 }
 
+// Test-environment layout/timing hardening, applied on every load (survives
+// page.reload()):
+//   * disable CSS transitions/animations + smooth scroll — the sticky header's
+//     collapse/expand animation otherwise makes click targets "not stable".
+//   * make the header non-sticky — while sticky (z-10) it overlaps body content
+//     after Playwright auto-scrolls a target to the top, so the header's buttons
+//     intercept the click. Static, it scrolls away with the content and never
+//     covers a target. Header controls are still reached via revealHeader().
+// Both symptoms were CI-WebKit-only (different scroll metrics than local).
+async function stabilizeForTests(page: import('@playwright/test').Page): Promise<void> {
+  await page.addInitScript(() => {
+    const css =
+      '*,*::before,*::after{transition:none!important;animation:none!important;scroll-behavior:auto!important}' +
+      'header{position:static!important}';
+    const apply = () => {
+      const style = document.createElement('style');
+      style.textContent = css;
+      document.head.appendChild(style);
+    };
+    if (document.head) apply();
+    else document.addEventListener('DOMContentLoaded', apply);
+  });
+}
+
 test.describe('Storyboard Creator E2E Browser Click Test Suite', () => {
 
   test.beforeEach(async ({ page }) => {
+    await stabilizeForTests(page);
     // Open the local development server URL configured in playwright.config.ts
     await page.goto('/');
     // Check that we are on the landing page
