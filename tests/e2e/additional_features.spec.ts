@@ -35,9 +35,34 @@ async function revealHeader(page: import('@playwright/test').Page): Promise<void
   await page.evaluate(() => window.scrollTo(0, 0));
 }
 
+// Test-environment layout/timing hardening, applied on every load (survives
+// page.reload()):
+//   * disable CSS transitions/animations + smooth scroll — the sticky header's
+//     collapse/expand animation otherwise makes click targets "not stable".
+//   * make the header non-sticky — while sticky (z-10) it overlaps body content
+//     after Playwright auto-scrolls a target to the top, so the header's buttons
+//     intercept the click. Static, it scrolls away with the content and never
+//     covers a target. Header controls are still reached via revealHeader().
+// Both symptoms were CI-WebKit-only (different scroll metrics than local).
+async function stabilizeForTests(page: import('@playwright/test').Page): Promise<void> {
+  await page.addInitScript(() => {
+    const css =
+      '*,*::before,*::after{transition:none!important;animation:none!important;scroll-behavior:auto!important}' +
+      'header{position:static!important}';
+    const apply = () => {
+      const style = document.createElement('style');
+      style.textContent = css;
+      document.head.appendChild(style);
+    };
+    if (document.head) apply();
+    else document.addEventListener('DOMContentLoaded', apply);
+  });
+}
+
 test.describe('Storyboard Creator Additional Features E2E Suite', () => {
 
   test.beforeEach(async ({ page }) => {
+    await stabilizeForTests(page);
     await page.goto('/');
     await expect(page.locator('h1')).toContainText('Was möchtest du');
   });
@@ -86,8 +111,14 @@ test.describe('Storyboard Creator Additional Features E2E Suite', () => {
     await sceneTitle.fill('Gesicherte Szene');
     await sceneTitle.blur();
 
-    // Wait for autosave to propagate to IndexedDB (wait for saved status)
+    // Wait for autosave to propagate to IndexedDB. The status indicator stays
+    // on "Gespeichert" from the earlier metadata save, so poll the stored
+    // payload until the scene title has actually landed before reloading —
+    // otherwise the reload races the debounced write (flaky on WebKit).
     await expect(page.locator('span[role="status"]')).toContainText('Gespeichert');
+    await expect
+      .poll(() => readAutosaveRaw(page), { timeout: 10000 })
+      .toContain('Gesicherte Szene');
 
     // Reload page
     await page.reload();
