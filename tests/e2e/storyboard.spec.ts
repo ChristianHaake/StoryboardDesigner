@@ -159,7 +159,7 @@ test.describe('Storyboard Creator E2E Browser Click Test Suite', () => {
     await page.locator('button[title="Kommentare"]').click();
 
     // Verify comment thread is visible on Scene Card 1
-    const commentThread = page.locator('section[aria-label="Feedback zu Szene 1"]');
+    const commentThread = page.locator('section[aria-label="Kommentare zu Szene 1"]');
     await expect(commentThread).toBeVisible();
 
     // Add a comment
@@ -179,7 +179,7 @@ test.describe('Storyboard Creator E2E Browser Click Test Suite', () => {
     await expect(commentThread.locator('span', { hasText: 'Das Bild sollte dramatischer wirken.' })).not.toBeVisible();
 
     // Turn feedback mode off
-    await page.locator('button[title="Feedback"]').click();
+    await page.locator('button[title="Kommentare"]').click();
     await expect(commentThread).not.toBeVisible();
 
     // H. Move to Step 4: Review Screen
