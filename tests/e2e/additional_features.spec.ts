@@ -27,6 +27,14 @@ async function readAutosaveRaw(page: import('@playwright/test').Page): Promise<s
   });
 }
 
+// The sticky header's top row (with the "Kommentare" toggle) collapses to zero
+// height once scrolled past ~120px, letting the actions row overlap it. Scroll
+// to the top first so the toggle is a stable, unobstructed click target
+// (otherwise flaky on CI WebKit).
+async function revealHeader(page: import('@playwright/test').Page): Promise<void> {
+  await page.evaluate(() => window.scrollTo(0, 0));
+}
+
 test.describe('Storyboard Creator Additional Features E2E Suite', () => {
 
   test.beforeEach(async ({ page }) => {
@@ -106,6 +114,7 @@ test.describe('Storyboard Creator Additional Features E2E Suite', () => {
     await page.locator('button', { hasText: 'Szene hinzufügen' }).click();
 
     // Turn on Feedback Mode
+    await revealHeader(page);
     await page.locator('button[title="Kommentare"]').click();
 
     // Verify comment thread is visible on Scene Card 1
@@ -130,6 +139,7 @@ test.describe('Storyboard Creator Additional Features E2E Suite', () => {
     await expect(commentThread.locator('span', { hasText: 'Das Bild sollte dramatischer wirken.' })).not.toBeVisible();
 
     // Turn feedback mode off
+    await revealHeader(page);
     await page.locator('button[title="Kommentare"]').click();
     await expect(commentThread).not.toBeVisible();
   });
