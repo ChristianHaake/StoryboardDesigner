@@ -126,53 +126,80 @@ export default function SetupScreen() {
 
         {/* Complexity Selection */}
         <div>
-          <h3 className="text-sm font-semibold text-slate-900 mb-4">
+          <h3 className="text-sm font-semibold text-slate-900 mb-3">
             {t('wizard.complexityHeading')}
           </h3>
-          <div className="grid grid-cols-1 gap-4 sm:grid-cols-3">
-            {(
-              [
-                {
-                  id: 'simple',
-                  label: t('wizard.complexitySimple'),
-                  desc: t('wizard.complexitySimpleDesc'),
-                },
-                {
-                  id: 'standard',
-                  label: t('wizard.complexityStandard'),
-                  desc: t('wizard.complexityStandardDesc'),
-                },
-                {
-                  id: 'advanced',
-                  label: t('wizard.complexityAdvanced'),
-                  desc: t('wizard.complexityAdvancedDesc'),
-                },
-              ] as const
-            ).map((level) => (
-              <button
-                key={level.id}
-                type="button"
-                aria-pressed={metaData.complexity === level.id}
-                onClick={() => updateMetaData({ complexity: level.id as Complexity })}
-                className={`relative flex flex-col items-start rounded-xl border p-4 text-left transition-all ${
-                  metaData.complexity === level.id
-                    ? 'border-blue-500 bg-blue-50 ring-1 ring-blue-500'
-                    : 'border-slate-200 bg-white hover:border-blue-300 hover:bg-slate-50'
-                }`}
+          <button
+            type="button"
+            aria-pressed={metaData.complexity === 'simple'}
+            onClick={() => updateMetaData({ complexity: 'simple' as Complexity })}
+            className={`relative flex min-h-20 w-full flex-col items-start rounded-xl border p-4 text-left transition-all ${
+              metaData.complexity === 'simple'
+                ? 'border-blue-500 bg-blue-50 ring-1 ring-blue-500'
+                : 'border-slate-200 bg-white hover:border-blue-300 hover:bg-slate-50'
+            }`}
+          >
+            <span className="flex w-full items-center justify-between gap-3">
+              <span
+                className={`text-sm font-semibold ${metaData.complexity === 'simple' ? 'text-blue-700' : 'text-slate-900'}`}
               >
-                <span
-                  className={`text-sm font-semibold ${metaData.complexity === level.id ? 'text-blue-700' : 'text-slate-900'}`}
+                {t('wizard.complexitySimple')}
+              </span>
+              <span className="rounded-md bg-emerald-50 px-2 py-1 text-xs font-semibold text-emerald-700">
+                {t('wizard.complexityRecommended')}
+              </span>
+            </span>
+            <span
+              className={`mt-1 text-xs ${metaData.complexity === 'simple' ? 'text-blue-600' : 'text-slate-500'}`}
+            >
+              {t('wizard.complexitySimpleDesc')}
+            </span>
+          </button>
+
+          <details className="mt-4" open={metaData.complexity !== 'simple' || undefined}>
+            <summary className="flex min-h-11 cursor-pointer items-center text-sm font-semibold text-slate-700">
+              {t('wizard.complexityMore')}
+            </summary>
+            <div className="mt-2 grid grid-cols-1 gap-4 sm:grid-cols-2">
+              {(
+                [
+                  {
+                    id: 'standard',
+                    label: t('wizard.complexityStandard'),
+                    desc: t('wizard.complexityStandardDesc'),
+                  },
+                  {
+                    id: 'advanced',
+                    label: t('wizard.complexityAdvanced'),
+                    desc: t('wizard.complexityAdvancedDesc'),
+                  },
+                ] as const
+              ).map((level) => (
+                <button
+                  key={level.id}
+                  type="button"
+                  aria-pressed={metaData.complexity === level.id}
+                  onClick={() => updateMetaData({ complexity: level.id as Complexity })}
+                  className={`relative flex min-h-20 flex-col items-start rounded-xl border p-4 text-left transition-all ${
+                    metaData.complexity === level.id
+                      ? 'border-blue-500 bg-blue-50 ring-1 ring-blue-500'
+                      : 'border-slate-200 bg-white hover:border-blue-300 hover:bg-slate-50'
+                  }`}
                 >
-                  {level.label}
-                </span>
-                <span
-                  className={`mt-1 text-xs ${metaData.complexity === level.id ? 'text-blue-600' : 'text-slate-500'}`}
-                >
-                  {level.desc}
-                </span>
-              </button>
-            ))}
-          </div>
+                  <span
+                    className={`text-sm font-semibold ${metaData.complexity === level.id ? 'text-blue-700' : 'text-slate-900'}`}
+                  >
+                    {level.label}
+                  </span>
+                  <span
+                    className={`mt-1 text-xs ${metaData.complexity === level.id ? 'text-blue-600' : 'text-slate-500'}`}
+                  >
+                    {level.desc}
+                  </span>
+                </button>
+              ))}
+            </div>
+          </details>
         </div>
       </div>
 

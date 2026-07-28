@@ -1,5 +1,6 @@
 import { beforeEach, describe, expect, it } from 'vitest';
 import { MAX_SCENES } from '../../domain/projectCodec';
+import { isPresetVisible } from '../../domain/customFields';
 import { selectProject, useStoryboardStore } from './useStoryboardStore';
 
 beforeEach(() => {
@@ -156,17 +157,55 @@ describe('useStoryboardStore', () => {
       ],
     });
 
-    expect(useStoryboardStore.getState().setFormatType('shortFilm')).toBe(3);
+    expect(useStoryboardStore.getState().setFormatType('shortFilm')).toBe(2);
     const state = useStoryboardStore.getState();
     expect(state.metaData.productType).toBe('shortFilm');
     expect(state.fieldDefinitions?.map((field) => field.label)).toEqual([
       'Licht',
       'Kameraeinstellung',
       'Kamerabewegung',
-      'Bildunterschrift',
     ]);
     expect(state.scenes[0]?.customFields?.['custom:light']).toBe('Warm');
     expect(useStoryboardStore.getState().setFormatType('shortFilm')).toBe(0);
+  });
+
+  it('preserves foreign preset values while hiding and restoring them across format switches', () => {
+    const key = 'preset:fotostory:framing';
+    useStoryboardStore.setState({
+      metaData: {
+        ...useStoryboardStore.getState().metaData,
+        productType: 'fotostory',
+      },
+      hasContent: true,
+      fieldDefinitions: [{ key, label: 'Bildausschnitt' }],
+      scenes: [
+        {
+          id: 'scene-1',
+          orderIndex: 0,
+          imageFileName: null,
+          title: '',
+          action: '',
+          text: '',
+          audio: { dialogue: '', soundEffects: '', music: '' },
+          camera: { shotSize: '', angle: '', movement: '' },
+          location: '',
+          materials: [],
+          customFields: { [key]: 'Nahaufnahme der Figur' },
+        },
+      ],
+    });
+
+    useStoryboardStore.getState().setFormatType('podcast');
+    expect(isPresetVisible(key, 'podcast', 'standard')).toBe(false);
+    expect(useStoryboardStore.getState().scenes[0]?.customFields?.[key]).toBe(
+      'Nahaufnahme der Figur',
+    );
+
+    useStoryboardStore.getState().setFormatType('fotostory');
+    expect(isPresetVisible(key, 'fotostory', 'standard')).toBe(true);
+    expect(useStoryboardStore.getState().scenes[0]?.customFields?.[key]).toBe(
+      'Nahaufnahme der Figur',
+    );
   });
 
   it('validates adding and renaming custom fields', () => {

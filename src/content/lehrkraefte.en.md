@@ -9,14 +9,17 @@ an educator. A student-facing guide is available under **Help**.
 
 The app suits project and group work from about grade 5 upwards and works across
 subjects (language, art, civics, science, computing, foreign languages). The
-level of detail is selectable:
+level of detail is selectable. New projects deliberately start at **Simple**;
+the higher levels sit under **More details**:
 
 - **Simple** — only the essential fields. For younger groups or a quick start.
 - **Standard** — a balanced set of fields. Suitable for most projects.
 - **Pro** — all fields including shot size, camera movement and materials. For
   in-depth media work and older grades.
 
-This lets you match the cognitive load to the group without switching tools.
+Scene fields are also format-specific: a podcast receives different inputs from
+a comic or short film. This lets you match the cognitive load to the group
+without switching tools.
 
 ## Suggested workflow
 

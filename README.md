@@ -6,7 +6,8 @@ Eine rein clientseitige Web-App für Lernende zum Erstellen von Storyboards (Kur
 
 ## ✨ Features
 
-- **Format-Vorlagen & Detailgrade:** Vordefinierte, zielgruppengerechte Felder je nach Format (z.B. Kameraperspektive, Requisite) sowie anpassbare Detailgrade (Einfach, Standard, Erweitert).
+- **Reduzierter Einstieg:** Formate sind nach Video, Bild, Audio und Bühne gruppiert. Neue Projekte starten mit „Einfach“; Standard und Profi liegen unter „Weitere Details“.
+- **Formatbezogene Felder:** Jede Produktart zeigt nur passende Szenenfelder. Technische Kamera- und Materialangaben erscheinen erst in den dafür vorgesehenen Detailstufen.
 - **Lehrkräfte-Ansicht:** Spezielle Informationsseite mit didaktischen Hinweisen und Einsatzszenarien für den Unterricht.
 - **Offline-First & Autosave:** IndexedDB-basiertes automatisches Speichern und vollständige Offline-Nutzbarkeit nach dem ersten Laden.
 - **Mehrsprachigkeit:** Unterstützt Deutsch, Englisch, Spanisch und Französisch (automatische Browser-Erkennung mit Fallback auf Deutsch).
@@ -47,7 +48,7 @@ Das Deployment erfolgt auf **Cloudflare** (Workers-Flow, statische Assets):
 2. **CI-Workflow:** GitHub Actions (`ci.yml`) prüft bei jedem Push und Pull Request Typen, Linting und Tests.
 3. **Deployment:** Ein Push/Merge in den `main`-Branch löst das Cloudflare-Deployment automatisch aus.
 
-*Hinweis: Vor Veröffentlichung müssen die Rechtstexte durch den Betreiber rechtlich geprüft sowie Druck/PDF auf den eingesetzten iPads getestet werden.*
+_Hinweis: Vor Veröffentlichung müssen die Rechtstexte durch den Betreiber rechtlich geprüft sowie Druck/PDF auf den eingesetzten iPads getestet werden._
 
 ## 📚 Dokumentation
 

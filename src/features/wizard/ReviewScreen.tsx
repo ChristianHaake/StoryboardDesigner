@@ -4,29 +4,44 @@ import { buttonPrimary } from '../../shared/ui/fieldStyles';
 import type { Scene } from '../../domain/types';
 import { useTranslation } from 'react-i18next';
 import WizardSteps from './WizardSteps';
+import { FORMAT_FEATURES, isSceneDetailFieldVisible } from '../../domain/formatConfig';
+import { isPresetVisible } from '../../domain/customFields';
 
 export default function ReviewScreen() {
   const { t } = useTranslation();
   const setWizardStep = useStoryboardStore((s) => s.setWizardStep);
   const scenes = useStoryboardStore((s) => s.scenes);
   const imageUrls = useStoryboardStore((s) => s.imageUrls);
-
   const productType = useStoryboardStore((s) => s.metaData.productType);
+  const complexity = useStoryboardStore((s) => s.metaData.complexity);
+  const fieldDefinitions = useStoryboardStore((s) => s.fieldDefinitions);
 
   const getSceneStatus = (scene: Scene) => {
     const hasImage = !!imageUrls[scene.id];
+    const hasVisibleCustomContent = (fieldDefinitions ?? []).some((definition) => {
+      return (
+        isPresetVisible(definition.key, productType, complexity) &&
+        !!scene.customFields?.[definition.key]?.trim()
+      );
+    });
     const hasContent =
       !!scene.title?.trim() ||
       !!scene.action?.trim() ||
       !!scene.text?.trim() ||
       !!scene.audio?.dialogue?.trim() ||
-      !!scene.audio?.soundEffects?.trim() ||
-      !!scene.location?.trim() ||
-      (scene.materials && scene.materials.length > 0);
+      (isSceneDetailFieldVisible(productType, complexity, 'soundEffects') &&
+        !!scene.audio?.soundEffects?.trim()) ||
+      (isSceneDetailFieldVisible(productType, complexity, 'location') &&
+        !!scene.location?.trim()) ||
+      (isSceneDetailFieldVisible(productType, complexity, 'cameraSize') &&
+        !!(scene.camera?.shotSize?.trim() || scene.camera?.angle?.trim())) ||
+      (isSceneDetailFieldVisible(productType, complexity, 'cameraMovement') &&
+        !!scene.camera?.movement?.trim()) ||
+      (isSceneDetailFieldVisible(productType, complexity, 'materials') &&
+        !!scene.materials?.length) ||
+      hasVisibleCustomContent;
 
-    const isAudioOnly = productType === 'podcast' || productType === 'audioPlay';
-
-    if (hasContent && (hasImage || isAudioOnly)) return 'complete';
+    if (hasContent && (hasImage || !FORMAT_FEATURES[productType].hasImage)) return 'complete';
     if (hasImage || hasContent) return 'partial';
     return 'empty';
   };

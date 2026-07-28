@@ -10,6 +10,7 @@ import i18n from '../shared/i18n';
 
 export const MAX_CUSTOM_FIELDS = 20;
 export const MAX_CUSTOM_FIELD_LABEL_LENGTH = 60;
+export const MAX_CUSTOM_FIELD_DESCRIPTION_LENGTH = 100;
 export const MAX_SELECT_OPTIONS = 20;
 export const MAX_SELECT_OPTION_LENGTH = 40;
 
@@ -26,6 +27,7 @@ interface PresetField {
   type?: CustomFieldType;
   optionKeys?: string[]; // i18n-Keys der Auswahloptionen (nur bei type 'select')
   descriptionKey?: string; // i18n-Key für den Hilfstext
+  retired?: boolean; // Legacy-Feld: Daten bleiben erhalten, UI bietet es nicht mehr an.
   // Ab welcher Detailstufe das Feld im Editor erscheint. Ohne Angabe: immer.
   // Verhindert, dass Format-Presets die „Einfach"-Stufe überfrachten (#UIX).
   minComplexity?: Complexity;
@@ -38,8 +40,6 @@ const SHOT_SIZE_OPTION_KEYS = [
   'presets.shotCloseUp',
   'presets.shotDetail',
   'presets.shotAmerican',
-  'presets.shotBird',
-  'presets.shotWorm',
 ];
 
 // Stabile Keys; Labels und Optionen werden zur Aufruf-Zeit übersetzt. Bereits in
@@ -59,25 +59,46 @@ const FORMAT_FIELD_PRESETS: Partial<Record<ProductType, PresetField[]>> = {
     {
       key: 'preset:shortFilm:camera-movement',
       labelKey: 'presets.filmCameraMovement',
+      descriptionKey: 'presets.filmCameraMovementDesc',
       minComplexity: 'advanced',
     },
-    { key: 'preset:shortFilm:caption', labelKey: 'presets.caption', minComplexity: 'standard' },
+    {
+      key: 'preset:shortFilm:caption',
+      labelKey: 'presets.caption',
+      descriptionKey: 'presets.captionDesc',
+      minComplexity: 'standard',
+      retired: true,
+    },
   ],
   fotostory: [
     {
       key: 'preset:fotostory:framing',
       labelKey: 'presets.fotostoryFraming',
+      descriptionKey: 'presets.fotostoryFramingDesc',
       minComplexity: 'standard',
     },
     {
       key: 'preset:fotostory:caption',
       labelKey: 'presets.fotostoryCaption',
+      descriptionKey: 'presets.fotostoryCaptionDesc',
       minComplexity: 'standard',
+      retired: true,
     },
   ],
   comic: [
-    { key: 'preset:comic:framing', labelKey: 'presets.fotostoryFraming', minComplexity: 'standard' },
-    { key: 'preset:comic:caption', labelKey: 'presets.fotostoryCaption', minComplexity: 'standard' },
+    {
+      key: 'preset:comic:framing',
+      labelKey: 'presets.fotostoryFraming',
+      descriptionKey: 'presets.fotostoryFramingDesc',
+      minComplexity: 'standard',
+    },
+    {
+      key: 'preset:comic:caption',
+      labelKey: 'presets.fotostoryCaption',
+      descriptionKey: 'presets.fotostoryCaptionDesc',
+      minComplexity: 'standard',
+      retired: true,
+    },
   ],
   stopMotion: [
     {
@@ -105,6 +126,7 @@ const FORMAT_FIELD_PRESETS: Partial<Record<ProductType, PresetField[]>> = {
     {
       key: 'preset:socialMediaClip:format',
       labelKey: 'presets.socialFormat',
+      descriptionKey: 'presets.socialFormatDesc',
       type: 'select',
       optionKeys: [
         'presets.socialFormatPortrait',
@@ -113,7 +135,13 @@ const FORMAT_FIELD_PRESETS: Partial<Record<ProductType, PresetField[]>> = {
       ],
       minComplexity: 'standard',
     },
-    { key: 'preset:socialMediaClip:caption', labelKey: 'presets.caption', minComplexity: 'standard' },
+    {
+      key: 'preset:socialMediaClip:caption',
+      labelKey: 'presets.caption',
+      descriptionKey: 'presets.captionDesc',
+      minComplexity: 'standard',
+      retired: true,
+    },
   ],
   custom: [],
 };
@@ -121,9 +149,16 @@ const FORMAT_FIELD_PRESETS: Partial<Record<ProductType, PresetField[]>> = {
 // Render-Zeit-Lookup: Key → Mindeststufe. Wird nicht persistiert (Codec verwirft
 // Zusatzfelder ohnehin), daher pro Render aus den Preset-Definitionen abgeleitet.
 const PRESET_MIN_COMPLEXITY: Record<string, Complexity> = {};
-for (const preset of Object.values(FORMAT_FIELD_PRESETS)) {
+const PRESET_PRODUCT_TYPE: Partial<Record<string, ProductType>> = {};
+const RETIRED_PRESETS = new Set<string>();
+for (const [productType, preset] of Object.entries(FORMAT_FIELD_PRESETS) as [
+  ProductType,
+  PresetField[] | undefined,
+][]) {
   for (const field of preset ?? []) {
     if (field.minComplexity) PRESET_MIN_COMPLEXITY[field.key] = field.minComplexity;
+    PRESET_PRODUCT_TYPE[field.key] = productType;
+    if (field.retired) RETIRED_PRESETS.add(field.key);
   }
 }
 
@@ -132,12 +167,37 @@ export function presetFieldMinComplexity(key: string): Complexity | undefined {
   return PRESET_MIN_COMPLEXITY[key];
 }
 
+/** Besitzer eines bekannten Format-Presets; unbekannte/importierte Keys gelten als Nutzerfelder. */
+export function presetProductType(key: string): ProductType | undefined {
+  return PRESET_PRODUCT_TYPE[key];
+}
+
+/** Ehemaliges Preset, dessen Daten erhalten bleiben, das aber nicht mehr gerendert wird. */
+export function isRetiredPreset(key: string): boolean {
+  return RETIRED_PRESETS.has(key);
+}
+
+/** Sichtbarkeit eines Presets im aktuell gewählten Format und Detailgrad. */
+export function isPresetVisible(
+  key: string,
+  activeProductType: ProductType,
+  complexity: Complexity,
+): boolean {
+  if (isRetiredPreset(key)) return false;
+  const owner = presetProductType(key);
+  if (owner && owner !== activeProductType) return false;
+  const minimum = presetFieldMinComplexity(key);
+  return !minimum || COMPLEXITY_RANK[complexity] >= COMPLEXITY_RANK[minimum];
+}
+
 function normalizedLabel(label: string): string {
   return label.trim().toLocaleLowerCase('de');
 }
 
 export function getFormatPreset(productType: ProductType): CustomFieldDefinition[] {
-  const presets = FORMAT_FIELD_PRESETS[productType] || [];
+  const presets = (FORMAT_FIELD_PRESETS[productType] || []).filter((definition) => {
+    return !definition.retired;
+  });
   return presets.map((definition) => {
     const base: CustomFieldDefinition = {
       key: definition.key,

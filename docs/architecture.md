@@ -38,6 +38,7 @@ Vite · React 19 · TypeScript (strict) · Tailwind CSS 4 · Zustand 5 · @dnd-k
 
 - **`selectProject(state)`** serialisiert den Store als `StoryboardProject` — dieselbe Struktur landet im Autosave und als `data.json` im ZIP.
 - **`decodeProject(raw)`** ist der gemeinsame Validierungs- und Migrationspfad für ZIP und IndexedDB. Neuere Major-Versionen werden abgewiesen; v1.0- und v1.1-Daten werden normalisiert.
+- **Format- und Detailmatrix:** `formatConfig.ts` definiert zentral, welche zusätzlichen Szenenfelder pro Produktart und Detailstufe sichtbar sind. `customFields.ts` ordnet Formatvorlagen ihrem Produkt und ihrer Mindeststufe zu.
 - **Autosave** ([src/utils/persistence.ts](src/utils/persistence.ts)): debounced, Sequenz-Guard verhindert, dass ein noch laufender älterer Save das `pending`-Flag löscht. `pending` speist die `beforeunload`-Warnung.
 - **Restore-Guard:** `touched` wird von jeder mutierenden Store-Aktion gesetzt. Der asynchrone Restore beim App-Start schreibt nur in einen unberührten Store.
 
@@ -75,35 +76,36 @@ App ─ Autosave-Wiring (Effect), beforeunload, html-lang + document.title (i18n
 
 Storyboard-Creator folgt der visuellen Sprache von smc.haak3.de:
 
-| Token         | Wert                                 |
-| ------------- | ------------------------------------ |
-| Akzent        | `blue-600` (#2563EB)                 |
-| Hintergrund   | `slate-100` (#f1f5f9)                |
-| Arbeitsfläche | Weiß, `rounded-xl`, weicher Schatten |
+| Token         | Wert                                     |
+| ------------- | ---------------------------------------- |
+| Akzent        | `blue-600` (#2563EB)                     |
+| Hintergrund   | `slate-100` (#f1f5f9)                    |
+| Arbeitsfläche | Weiß, `rounded-xl`, weicher Schatten     |
 | Sekundär      | `emerald-*` (lokal), `amber-*` (Hinweis) |
-| Chrome        | Vollständig `print:hidden`           |
+| Chrome        | Vollständig `print:hidden`               |
 
 ## Entscheidungen und Trade-offs
 
-| Entscheidung                                           | Begründung                                                     | Trade-off                                                                                       |
-| ------------------------------------------------------ | -------------------------------------------------------------- | ----------------------------------------------------------------------------------------------- |
-| Editor-Ansicht = Druckansicht (kein separater Preview) | Eine Wahrheit, WYSIWYG-Nähe; Print-CSS blendet nur UI aus      | A4-Optik ist Orientierung, keine exakte Paginierung — Seitenumbrüche bestimmt der Druckdialog   |
-| PDF-Download lazy (jspdf + html-to-image) plus separater Druck | Echte `.pdf`-Datei für Download/Weitergabe; `window.print()` bleibt als Fallback vertraut | DOM→Bild→PDF ist Raster, kein selektierbarer Text; iPad/MDM muss separat getestet werden |
-| IndexedDB-Autosave zusätzlich zur Datei                | Geteilte Schulgeräte, ständige Unterbrechungen                 | Autosave ist gerätegebunden — Datei bleibt das echte Backup (so auch in der Hilfe kommuniziert) |
-| ZIP (`.storyboard`) als Dateiformat                    | Bilder + JSON in einer Datei, portabel, inspizierbar           | Import validiert Schema, Anzahl sowie Einzel- und Gesamtgröße                                   |
-| Object URLs statt Base64 im State                      | RAM-schonend auf Tablets                                       | Store verwaltet `createObjectURL`/`revokeObjectURL`                                             |
-| Undo-Puffer (`lastDeleted`) statt Lösch-Dialog         | Touch-Fehltipps häufig; Dialog nervt bei absichtlichem Löschen | Nur einstufiges Undo, nur für Szenen-Löschung                                                   |
-| Formatvorlagen ergänzen nur fehlende Felder            | Formatwechsel bleibt nicht destruktiv                          | Nicht mehr benötigte Vorlagenfelder müssen bewusst gelöscht werden                              |
-| Zusatzfelder besitzen stabile Schlüssel                | Umbenennen erhält alle Szenenwerte                             | Schlüssel sind technische, dauerhaft reservierte Projektbestandteile                            |
-| i18next-Singleton statt React-Context                  | Nutzbar in Store-Aktionen und Utils ohne Komponenten-Kontext   | Sprache ändert sich global; kein selektives Übersetzen einzelner Teile                          |
-| SMC-Chrome vollständig `print:hidden`                  | Druck zeigt nur A4-Inhalt, kein UI-Overhead                    | Markenelemente nicht im PDF sichtbar                                                            |
-| Select-Feldtyp über `CustomFieldDefinition.type` (v1.3)| Dropdowns (z. B. Kameraeinstellung) ohne Kernfeld-Umbau        | Werte außerhalb der Optionen bleiben erhalten, sind aber nur als Altwert wählbar                |
-| PDF-Export als eigener Chunk                           | `jspdf` und `html-to-image` belasten das Start-Bundle nicht    | Exportpfad braucht Browser-Regressionstests                                                     |
-| Feedback dateibasiert in `Scene.comments` (v1.4)       | Kein Backend/Accounts — Lehrkraft kommentiert die `.storyboard` und gibt sie zurück | Kein Live-Austausch; Feedback-Modus ist reine Ansicht (nicht im Projekt persistiert)            |
+| Entscheidung                                                   | Begründung                                                                                | Trade-off                                                                                       |
+| -------------------------------------------------------------- | ----------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------- |
+| Editor-Ansicht = Druckansicht (kein separater Preview)         | Eine Wahrheit, WYSIWYG-Nähe; Print-CSS blendet nur UI aus                                 | A4-Optik ist Orientierung, keine exakte Paginierung — Seitenumbrüche bestimmt der Druckdialog   |
+| PDF-Download lazy (jspdf + html-to-image) plus separater Druck | Echte `.pdf`-Datei für Download/Weitergabe; `window.print()` bleibt als Fallback vertraut | DOM→Bild→PDF ist Raster, kein selektierbarer Text; iPad/MDM muss separat getestet werden        |
+| IndexedDB-Autosave zusätzlich zur Datei                        | Geteilte Schulgeräte, ständige Unterbrechungen                                            | Autosave ist gerätegebunden — Datei bleibt das echte Backup (so auch in der Hilfe kommuniziert) |
+| ZIP (`.storyboard`) als Dateiformat                            | Bilder + JSON in einer Datei, portabel, inspizierbar                                      | Import validiert Schema, Anzahl sowie Einzel- und Gesamtgröße                                   |
+| Object URLs statt Base64 im State                              | RAM-schonend auf Tablets                                                                  | Store verwaltet `createObjectURL`/`revokeObjectURL`                                             |
+| Undo-Puffer (`lastDeleted`) statt Lösch-Dialog                 | Touch-Fehltipps häufig; Dialog nervt bei absichtlichem Löschen                            | Nur einstufiges Undo, nur für Szenen-Löschung                                                   |
+| Formatbezogene Progressive Disclosure                          | Neue Projekte starten einfach; Standard und Profi ergänzen nur relevante Felder           | Lehrkräfte müssen den höheren Detailgrad bewusst öffnen                                         |
+| Fremde Formatvorlagen beim Wechsel ausblenden                  | Formatwechsel bleibt nicht destruktiv; vorhandene Werte bleiben erhalten                  | Ausgeblendete Vorlagen sind unter „Felder konfigurieren“ als erhaltene Felder sichtbar          |
+| Zusatzfelder besitzen stabile Schlüssel                        | Umbenennen erhält alle Szenenwerte                                                        | Schlüssel sind technische, dauerhaft reservierte Projektbestandteile                            |
+| i18next-Singleton statt React-Context                          | Nutzbar in Store-Aktionen und Utils ohne Komponenten-Kontext                              | Sprache ändert sich global; kein selektives Übersetzen einzelner Teile                          |
+| SMC-Chrome vollständig `print:hidden`                          | Druck zeigt nur A4-Inhalt, kein UI-Overhead                                               | Markenelemente nicht im PDF sichtbar                                                            |
+| Select-Feldtyp über `CustomFieldDefinition.type` (v1.3)        | Dropdowns (z. B. Kameraeinstellung) ohne Kernfeld-Umbau                                   | Werte außerhalb der Optionen bleiben erhalten, sind aber nur als Altwert wählbar                |
+| PDF-Export als eigener Chunk                                   | `jspdf` und `html-to-image` belasten das Start-Bundle nicht                               | Exportpfad braucht Browser-Regressionstests                                                     |
+| Feedback dateibasiert in `Scene.comments` (v1.4)               | Kein Backend/Accounts — Lehrkraft kommentiert die `.storyboard` und gibt sie zurück       | Kein Live-Austausch; Feedback-Modus ist reine Ansicht (nicht im Projekt persistiert)            |
 
 ## Bekannte Grenzen / offene Punkte
 
 - Drucktest auf echten Zielgeräten (iPad Safari, MDM) steht aus.
 - Rechtstexte (Impressum, Datenschutz) benötigen finale Prüfung durch den Betreiber.
 - ZIP-Import bleibt sicherheitsrelevant: Limits und Codec sind automatisiert getestet und müssen bei Schemaänderungen mitgepflegt werden.
-- Vitest deckt Codec, i18n-Parität und zentrale Store-Übergänge ab; Browser-/Drucktests bleiben manuell.
+- Vitest deckt Codec, Formatmatrix, i18n-Parität und zentrale Store-Übergänge ab. Playwright prüft die Kernabläufe automatisiert in Chromium und WebKit; Druck und PDF auf realen Zielgeräten bleiben manuell.

@@ -3,8 +3,11 @@ import {
   MAX_CUSTOM_FIELDS,
   createCustomFieldDefinition,
   getFormatPreset,
+  isPresetVisible,
+  isRetiredPreset,
   mergeFormatPreset,
   normalizeSelectOptions,
+  presetProductType,
   validateCustomFieldLabel,
   validateSelectOptions,
 } from './customFields';
@@ -15,25 +18,36 @@ describe('customFields', () => {
     expect(film.map((definition) => definition.key)).toEqual([
       'preset:shortFilm:shot-size',
       'preset:shortFilm:camera-movement',
-      'preset:shortFilm:caption',
     ]);
     const shotSize = film[0];
     expect(shotSize.type).toBe('select');
     expect(shotSize.options).toContain('Totale');
     expect(shotSize.options).toContain('Nahaufnahme');
+    expect(shotSize.options).not.toContain('Vogelperspektive');
+    expect(shotSize.options).not.toContain('Froschperspektive');
+    expect(shotSize.options).toContain('Amerikanische Einstellung');
+    expect(film.every((definition) => definition.description)).toBe(true);
     expect(getFormatPreset('custom')).toEqual([]);
+  });
+
+  it('shows known presets only for their owner format and minimum detail level', () => {
+    expect(presetProductType('preset:shortFilm:caption')).toBe('shortFilm');
+    expect(isRetiredPreset('preset:shortFilm:caption')).toBe(true);
+    expect(isPresetVisible('preset:shortFilm:caption', 'shortFilm', 'simple')).toBe(false);
+    expect(isPresetVisible('preset:shortFilm:caption', 'shortFilm', 'standard')).toBe(false);
+    expect(isPresetVisible('preset:shortFilm:caption', 'fotostory', 'advanced')).toBe(false);
+    expect(isPresetVisible('custom:teacher-note', 'fotostory', 'simple')).toBe(true);
   });
 
   it('merges missing presets without duplicate keys or labels', () => {
     const existing = [{ key: 'custom:camera', label: 'Kameraeinstellung' }];
     const merged = mergeFormatPreset(existing, 'shortFilm');
 
-    // shot-size wird wegen Label-Dublette übersprungen; Bewegung + Bildunterschrift kommen dazu.
-    expect(merged.added).toBe(2);
+    // shot-size wird wegen Label-Dublette übersprungen; nur Bewegung kommt dazu.
+    expect(merged.added).toBe(1);
     expect(merged.definitions.map((definition) => definition.label)).toEqual([
       'Kameraeinstellung',
       'Kamerabewegung',
-      'Bildunterschrift',
     ]);
   });
 

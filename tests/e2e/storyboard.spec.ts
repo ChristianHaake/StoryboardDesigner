@@ -34,7 +34,6 @@ async function stabilizeForTests(page: import('@playwright/test').Page): Promise
 }
 
 test.describe('Storyboard Creator E2E Browser Click Test Suite', () => {
-
   test.beforeEach(async ({ page }) => {
     await stabilizeForTests(page);
     // Open the local development server URL configured in playwright.config.ts
@@ -103,6 +102,7 @@ test.describe('Storyboard Creator E2E Browser Click Test Suite', () => {
     await page.locator('#groupMembers').blur();
 
     // Switch Complexity / Details Level to Profi (advanced)
+    await page.locator('summary', { hasText: 'Weitere Details' }).click();
     await page.locator('button', { hasText: 'Profi' }).click();
 
     // Click "Zum Editor" to enter editor mode
@@ -133,11 +133,18 @@ test.describe('Storyboard Creator E2E Browser Click Test Suite', () => {
 
     // Fill Scene 1 details
     await page.locator('input[placeholder="Szene 1"]').fill('Einführung Plastikflasche');
-    await page.locator('textarea[placeholder="Was passiert im Bild?"]').fill('Eine Plastikflasche schwimmt im Meer.');
-    await page.locator('textarea[placeholder="Was wird gesprochen?"]').fill('Täglich werfen wir Tonnen von Plastik weg.');
-    await page.locator('textarea[placeholder="Wer spricht mit wem?"]').fill('Sprecher aus dem Off.');
-    await page.locator('textarea[placeholder="Geräusche oder Musik"]').fill('Meeresrauschen im Hintergrund.');
-    await page.locator('textarea[placeholder="Wo findet die Szene statt?"]').fill('Pazifischer Ozean.');
+    await page
+      .locator('textarea[placeholder="Was passiert im Bild?"]')
+      .fill('Eine Plastikflasche schwimmt im Meer.');
+    await page
+      .locator('textarea[placeholder="Was wird gesprochen?"]')
+      .fill('Täglich werfen wir Tonnen von Plastik weg.');
+    await page
+      .locator('textarea[placeholder="Geräusche oder Musik"]')
+      .fill('Meeresrauschen im Hintergrund.');
+    await page
+      .locator('textarea[placeholder="Wo findet die Szene statt?"]')
+      .fill('Pazifischer Ozean.');
     // Einstellungsgröße kommt bei Kurzfilm aus dem Format-Preset (Dropdown), nicht
     // mehr als generisches Freitextfeld.
     await page.getByLabel('Kameraeinstellung').first().selectOption({ label: 'Totale' });
@@ -165,7 +172,9 @@ test.describe('Storyboard Creator E2E Browser Click Test Suite', () => {
     await page.locator('button', { hasText: /^Hinzufügen$/ }).click();
 
     // Verify it appeared in active list
-    await expect(page.locator('input[aria-label="Feldbezeichnung Lichtstimmung"]')).toHaveValue('Lichtstimmung');
+    await expect(page.locator('input[aria-label="Feldbezeichnung Lichtstimmung"]')).toHaveValue(
+      'Lichtstimmung',
+    );
 
     // Close Dialog
     await page.locator('button[aria-label="Dialog schließen"]').click();
@@ -173,7 +182,10 @@ test.describe('Storyboard Creator E2E Browser Click Test Suite', () => {
 
     // Verify the new custom field input is displayed in the scene card
     await expect(page.locator('label', { hasText: 'Lichtstimmung' }).first()).toBeVisible();
-    await page.locator('textarea[placeholder="Lichtstimmung eingeben"]').first().fill('Sonnenschein hell');
+    await page
+      .locator('textarea[placeholder="Lichtstimmung eingeben"]')
+      .first()
+      .fill('Sonnenschein hell');
 
     // F. Scene Duplicate & Delete
     // Duplicate Scene 1 (becomes Scene 2, moving former Scene 2 to index 3)
@@ -203,15 +215,21 @@ test.describe('Storyboard Creator E2E Browser Click Test Suite', () => {
     await commentThread.locator('button', { hasText: 'Senden' }).click();
 
     // Verify comment is added
-    await expect(commentThread.locator('span', { hasText: 'Das Bild sollte dramatischer wirken.' })).toBeVisible();
+    await expect(
+      commentThread.locator('span', { hasText: 'Das Bild sollte dramatischer wirken.' }),
+    ).toBeVisible();
 
     // Check it done (strike-through)
     await commentThread.locator('input[type="checkbox"]').click();
-    await expect(commentThread.locator('span', { hasText: 'Das Bild sollte dramatischer wirken.' })).toHaveClass(/line-through/);
+    await expect(
+      commentThread.locator('span', { hasText: 'Das Bild sollte dramatischer wirken.' }),
+    ).toHaveClass(/line-through/);
 
     // Delete the comment
     await commentThread.locator('button[aria-label^="Kommentar"]').click();
-    await expect(commentThread.locator('span', { hasText: 'Das Bild sollte dramatischer wirken.' })).not.toBeVisible();
+    await expect(
+      commentThread.locator('span', { hasText: 'Das Bild sollte dramatischer wirken.' }),
+    ).not.toBeVisible();
 
     // Turn feedback mode off
     await revealHeader(page);
@@ -223,7 +241,9 @@ test.describe('Storyboard Creator E2E Browser Click Test Suite', () => {
 
     // Verify we are on review screen
     await expect(page.locator('h1')).toContainText('Projekt prüfen');
-    await expect(page.locator('span', { hasText: 'Einführung Plastikflasche' }).first()).toBeVisible();
+    await expect(
+      page.locator('span', { hasText: 'Einführung Plastikflasche' }).first(),
+    ).toBeVisible();
 
     // I. Move to Step 5: Export Screen
     await page.locator('button', { hasText: 'Weiter zum Export' }).click();

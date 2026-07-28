@@ -9,8 +9,8 @@ import { useShallow } from 'zustand/react/shallow';
 import { resizeImage } from '../../shared/utils/imageResizer';
 import AutoResizeTextarea from '../../shared/ui/AutoResizeTextarea';
 import CommentThread from './CommentThread';
-import { FORMAT_FEATURES } from '../../domain/formatConfig';
-import { COMPLEXITY_RANK, presetFieldMinComplexity } from '../../domain/customFields';
+import { FORMAT_FEATURES, isSceneDetailFieldVisible } from '../../domain/formatConfig';
+import { isPresetVisible } from '../../domain/customFields';
 import { inputClass, labelClass } from '../../shared/ui/fieldStyles';
 import { MAX_SCENES } from '../../domain/projectCodec';
 import {
@@ -101,6 +101,13 @@ function SceneCard({ sceneId }: SceneCardProps) {
   });
 
   if (!scene) return null;
+
+  const showDialogue = Boolean(scene.audio?.dialogue?.trim());
+  const showSoundEffects = isSceneDetailFieldVisible(productType, complexity, 'soundEffects');
+  const showLocation = isSceneDetailFieldVisible(productType, complexity, 'location');
+  const showCameraSize = isSceneDetailFieldVisible(productType, complexity, 'cameraSize');
+  const showCameraMovement = isSceneDetailFieldVisible(productType, complexity, 'cameraMovement');
+  const showMaterials = isSceneDetailFieldVisible(productType, complexity, 'materials');
 
   async function handleFileChange(event: ChangeEvent<HTMLInputElement>) {
     const file = event.target.files?.[0];
@@ -350,7 +357,19 @@ function SceneCard({ sceneId }: SceneCardProps) {
               </div>
               <div>
                 <label className={labelClass} htmlFor={`text-${scene.id}`}>
-                  {t('scene.speechLabel')}
+                  {productType === 'fotostory' || productType === 'comic'
+                    ? t('scene.bubbleTextLabel')
+                    : productType === 'audioPlay' || productType === 'roleplay'
+                      ? t('scene.spokenDialogueLabel')
+                      : productType === 'podcast'
+                        ? t('scene.podcastTextLabel')
+                        : productType === 'explainerVideo'
+                          ? t('scene.voiceoverLabel')
+                          : productType === 'stopMotion'
+                            ? t('scene.optionalAudioTextLabel')
+                            : productType === 'socialMediaClip'
+                              ? t('scene.socialTextLabel')
+                              : t('scene.speechLabel')}
                 </label>
                 <AutoResizeTextarea
                   id={`text-${scene.id}`}
@@ -360,44 +379,50 @@ function SceneCard({ sceneId }: SceneCardProps) {
                 />
               </div>
 
-              {/* === STANDARD & ADVANCED === */}
-              {(complexity === 'standard' || complexity === 'advanced') && (
+              {(showDialogue || showSoundEffects || showLocation) && (
                 <>
-                  <div className="grid grid-cols-2 gap-4 max-sm:grid-cols-1">
-                    <div>
-                      <label className={labelClass} htmlFor={`dialogue-${scene.id}`}>
-                        {t('scene.dialogueLabel')}
-                      </label>
-                      <AutoResizeTextarea
-                        id={`dialogue-${scene.id}`}
-                        placeholder={t('scene.dialoguePlaceholder')}
-                        value={scene.audio?.dialogue ?? ''}
-                        onChange={(e) =>
-                          updateScene(scene.id, {
-                            audio: { ...scene.audio, dialogue: e.target.value },
-                          })
-                        }
-                      />
+                  {(showDialogue || showSoundEffects) && (
+                    <div className="grid grid-cols-2 gap-4 max-sm:grid-cols-1">
+                      {showDialogue && (
+                        <div>
+                          <label className={labelClass} htmlFor={`dialogue-${scene.id}`}>
+                            {t('scene.existingDialogueLabel')}
+                          </label>
+                          <AutoResizeTextarea
+                            id={`dialogue-${scene.id}`}
+                            placeholder={t('scene.dialoguePlaceholder')}
+                            value={scene.audio?.dialogue ?? ''}
+                            onChange={(e) =>
+                              updateScene(scene.id, {
+                                audio: { ...scene.audio, dialogue: e.target.value },
+                              })
+                            }
+                          />
+                          <p className="mt-1.5 text-xs text-slate-500 print:hidden">
+                            {t('scene.existingDialogueHelp')}
+                          </p>
+                        </div>
+                      )}
+                      {showSoundEffects && (
+                        <div>
+                          <label className={labelClass} htmlFor={`soundEffects-${scene.id}`}>
+                            {t('scene.soundLabel')}
+                          </label>
+                          <AutoResizeTextarea
+                            id={`soundEffects-${scene.id}`}
+                            placeholder={t('scene.soundPlaceholder')}
+                            value={scene.audio?.soundEffects ?? ''}
+                            onChange={(e) =>
+                              updateScene(scene.id, {
+                                audio: { ...scene.audio, soundEffects: e.target.value },
+                              })
+                            }
+                          />
+                        </div>
+                      )}
                     </div>
-                    {features.hasAudioEffects && (
-                      <div>
-                        <label className={labelClass} htmlFor={`soundEffects-${scene.id}`}>
-                          {t('scene.soundLabel')}
-                        </label>
-                        <AutoResizeTextarea
-                          id={`soundEffects-${scene.id}`}
-                          placeholder={t('scene.soundPlaceholder')}
-                          value={scene.audio?.soundEffects ?? ''}
-                          onChange={(e) =>
-                            updateScene(scene.id, {
-                              audio: { ...scene.audio, soundEffects: e.target.value },
-                            })
-                          }
-                        />
-                      </div>
-                    )}
-                  </div>
-                  {features.hasLocation && (
+                  )}
+                  {showLocation && (
                     <div>
                       <label className={labelClass} htmlFor={`location-${scene.id}`}>
                         {t('scene.locationLabel')}
@@ -413,68 +438,71 @@ function SceneCard({ sceneId }: SceneCardProps) {
                 </>
               )}
 
-              {/* === ADVANCED ONLY === */}
-              {complexity === 'advanced' && (
+              {(showCameraSize || showCameraMovement || showMaterials) && (
                 <>
-                  <div className="grid grid-cols-2 gap-4 max-sm:grid-cols-1">
-                    {features.hasCameraSize && (
-                      <div>
-                        <label className={labelClass} htmlFor={`camera-size-${scene.id}`}>
-                          {t('scene.shotSizeLabel')}
-                        </label>
-                        <AutoResizeTextarea
-                          id={`camera-size-${scene.id}`}
-                          placeholder={t('scene.shotSizePlaceholder')}
-                          value={scene.camera?.shotSize ?? ''}
-                          onChange={(e) =>
-                            updateScene(scene.id, {
-                              camera: { ...scene.camera, shotSize: e.target.value },
-                            })
-                          }
-                        />
-                      </div>
-                    )}
-                    {features.hasCameraMovement && (
-                      <div>
-                        <label className={labelClass} htmlFor={`camera-movement-${scene.id}`}>
-                          {t('scene.cameraMovementLabel')}
-                        </label>
-                        <AutoResizeTextarea
-                          id={`camera-movement-${scene.id}`}
-                          placeholder={t('scene.cameraMovementPlaceholder')}
-                          value={scene.camera?.movement ?? ''}
-                          onChange={(e) =>
-                            updateScene(scene.id, {
-                              camera: { ...scene.camera, movement: e.target.value },
-                            })
-                          }
-                        />
-                      </div>
-                    )}
-                  </div>
-                  <div>
-                    <label className={labelClass} htmlFor={`materials-${scene.id}`}>
-                      {t('scene.materialsLabel')}
-                    </label>
-                    <AutoResizeTextarea
-                      id={`materials-${scene.id}`}
-                      placeholder={
-                        visual
-                          ? t('scene.materialsPlaceholderVisual')
-                          : t('scene.materialsPlaceholder')
-                      }
-                      value={localMaterials}
-                      onChange={(e) => setLocalMaterials(e.target.value)}
-                      onBlur={() =>
-                        updateScene(scene.id, {
-                          materials: localMaterials
-                            .split(',')
-                            .map((s) => s.trim())
-                            .filter(Boolean),
-                        })
-                      }
-                    />
-                  </div>
+                  {(showCameraSize || showCameraMovement) && (
+                    <div className="grid grid-cols-2 gap-4 max-sm:grid-cols-1">
+                      {showCameraSize && (
+                        <div>
+                          <label className={labelClass} htmlFor={`camera-size-${scene.id}`}>
+                            {t('scene.shotSizeLabel')}
+                          </label>
+                          <AutoResizeTextarea
+                            id={`camera-size-${scene.id}`}
+                            placeholder={t('scene.shotSizePlaceholder')}
+                            value={scene.camera?.shotSize ?? ''}
+                            onChange={(e) =>
+                              updateScene(scene.id, {
+                                camera: { ...scene.camera, shotSize: e.target.value },
+                              })
+                            }
+                          />
+                        </div>
+                      )}
+                      {showCameraMovement && (
+                        <div>
+                          <label className={labelClass} htmlFor={`camera-movement-${scene.id}`}>
+                            {t('scene.cameraMovementLabel')}
+                          </label>
+                          <AutoResizeTextarea
+                            id={`camera-movement-${scene.id}`}
+                            placeholder={t('scene.cameraMovementPlaceholder')}
+                            value={scene.camera?.movement ?? ''}
+                            onChange={(e) =>
+                              updateScene(scene.id, {
+                                camera: { ...scene.camera, movement: e.target.value },
+                              })
+                            }
+                          />
+                        </div>
+                      )}
+                    </div>
+                  )}
+                  {showMaterials && (
+                    <div>
+                      <label className={labelClass} htmlFor={`materials-${scene.id}`}>
+                        {t('scene.materialsLabel')}
+                      </label>
+                      <AutoResizeTextarea
+                        id={`materials-${scene.id}`}
+                        placeholder={
+                          visual
+                            ? t('scene.materialsPlaceholderVisual')
+                            : t('scene.materialsPlaceholder')
+                        }
+                        value={localMaterials}
+                        onChange={(e) => setLocalMaterials(e.target.value)}
+                        onBlur={() =>
+                          updateScene(scene.id, {
+                            materials: localMaterials
+                              .split(',')
+                              .map((s) => s.trim())
+                              .filter(Boolean),
+                          })
+                        }
+                      />
+                    </div>
+                  )}
                 </>
               )}
 
@@ -483,8 +511,7 @@ function SceneCard({ sceneId }: SceneCardProps) {
                 const value = scene.customFields?.[definition.key] ?? '';
                 // Format-Presets erst ab ihrer Mindeststufe zeigen, damit „Einfach"
                 // schlank bleibt. Nutzerfelder (kein min) immer sichtbar.
-                const min = presetFieldMinComplexity(definition.key);
-                if (min && COMPLEXITY_RANK[complexity] < COMPLEXITY_RANK[min]) return null;
+                if (!isPresetVisible(definition.key, productType, complexity)) return null;
                 const fieldId = `custom-${definition.key}-${scene.id}`;
                 const isSelect = definition.type === 'select' && definition.options;
                 // Altwert, der nicht (mehr) in den Optionen liegt, bleibt wählbar.
