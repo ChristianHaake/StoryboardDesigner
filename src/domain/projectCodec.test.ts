@@ -77,6 +77,25 @@ describe('decodeProject', () => {
     expect(decoded.fieldDefinitions?.[2]).toEqual({ key: 'free', label: 'Frei' });
   });
 
+  it('preserves and bounds custom-field helper text', () => {
+    const decoded = decodeProject(
+      project({
+        version: '1.5',
+        fieldDefinitions: [
+          {
+            key: 'shot',
+            label: 'Einstellung',
+            description: `  ${'x'.repeat(120)}  `,
+            type: 'select',
+            options: ['Totale'],
+          },
+        ],
+      }),
+    );
+
+    expect(decoded.fieldDefinitions?.[0]?.description).toBe('x'.repeat(100));
+  });
+
   it('preserves alt text and drops empty alt text', () => {
     const decoded = decodeProject(
       project({

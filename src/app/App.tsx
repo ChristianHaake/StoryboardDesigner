@@ -175,7 +175,11 @@ function AppShell({
   const hideFooter = location.pathname === '/play';
 
   return (
-    <div className="flex min-h-screen flex-col bg-slate-100 text-slate-900 print:bg-white">
+    <div
+      className={`flex min-h-screen flex-col bg-slate-100 text-slate-900 print:bg-white ${
+        hideFooter ? '' : 'pb-14 print:pb-0'
+      }`}
+    >
       <Suspense fallback={null}>
         <Routes>
           <Route

@@ -1,95 +1,122 @@
-import type { ProductType } from './types';
+import type { Complexity, ProductType } from './types';
+
+export type SceneDetailField =
+  | 'soundEffects'
+  | 'location'
+  | 'cameraSize'
+  | 'cameraMovement'
+  | 'materials';
 
 export interface FormatFeatures {
   hasImage: boolean;
-  hasCameraSize: boolean;
-  hasCameraMovement: boolean;
-  hasAudioEffects: boolean; // Musik & Sound
-  hasLocation: boolean;
+  detailFields: Partial<Record<SceneDetailField, Complexity>>;
 }
 
 export const FORMAT_FEATURES: Record<ProductType, FormatFeatures> = {
-  // Video-based formats
-  // shortFilm: Kameraeinstellung/-bewegung kommen aus den Format-Presets
-  // (Dropdown mit Fachbegriffen), daher hier die generischen Einbaufelder aus,
-  // sonst erscheint jedes Feld doppelt.
   shortFilm: {
     hasImage: true,
-    hasCameraSize: false,
-    hasCameraMovement: false,
-    hasAudioEffects: true,
-    hasLocation: true,
+    detailFields: {
+      soundEffects: 'standard',
+      location: 'standard',
+      materials: 'advanced',
+    },
   },
   explainerVideo: {
     hasImage: true,
-    hasCameraSize: true,
-    hasCameraMovement: true,
-    hasAudioEffects: true,
-    hasLocation: true,
+    detailFields: {
+      soundEffects: 'standard',
+      materials: 'advanced',
+    },
   },
   socialMediaClip: {
     hasImage: true,
-    hasCameraSize: true,
-    hasCameraMovement: true,
-    hasAudioEffects: true,
-    hasLocation: true,
+    detailFields: {
+      soundEffects: 'standard',
+      location: 'advanced',
+      cameraSize: 'advanced',
+      cameraMovement: 'advanced',
+      materials: 'advanced',
+    },
   },
-  // stopMotion: Kamera steht fest, Objekte bewegen sich. Statt „Kamerabewegung"
-  // liefert das Preset ein Einzelbilder-Feld; Einstellungsgröße kommt als Preset.
   stopMotion: {
     hasImage: true,
-    hasCameraSize: false,
-    hasCameraMovement: false,
-    hasAudioEffects: true,
-    hasLocation: true,
+    detailFields: {
+      soundEffects: 'standard',
+      location: 'advanced',
+      materials: 'advanced',
+    },
   },
   custom: {
     hasImage: true,
-    hasCameraSize: true,
-    hasCameraMovement: true,
-    hasAudioEffects: true,
-    hasLocation: true,
+    detailFields: {
+      soundEffects: 'standard',
+      location: 'advanced',
+      cameraSize: 'advanced',
+      cameraMovement: 'advanced',
+      materials: 'advanced',
+    },
   },
 
-  // Static visual formats: Bildausschnitt/Sprechblase kommen als Presets,
-  // daher generisches Einstellungsgrößen-Einbaufeld aus (sonst Dopplung).
   fotostory: {
     hasImage: true,
-    hasCameraSize: false,
-    hasCameraMovement: false,
-    hasAudioEffects: false,
-    hasLocation: true,
+    detailFields: {
+      location: 'standard',
+      materials: 'advanced',
+    },
   },
   comic: {
     hasImage: true,
-    hasCameraSize: false,
-    hasCameraMovement: false,
-    hasAudioEffects: false,
-    hasLocation: true,
+    detailFields: {
+      location: 'standard',
+      materials: 'advanced',
+    },
   },
 
-  // Audio-only formats
   podcast: {
     hasImage: false,
-    hasCameraSize: false,
-    hasCameraMovement: false,
-    hasAudioEffects: true,
-    hasLocation: false,
+    detailFields: {
+      soundEffects: 'standard',
+      materials: 'advanced',
+    },
   },
   audioPlay: {
     hasImage: false,
-    hasCameraSize: false,
-    hasCameraMovement: false,
-    hasAudioEffects: true,
-    hasLocation: false,
+    detailFields: {
+      soundEffects: 'simple',
+      materials: 'advanced',
+    },
   },
 
-  // Stage formats
   roleplay: {
     hasImage: true,
-    hasCameraSize: false,
-    hasCameraMovement: false,
-    hasAudioEffects: true,
-    hasLocation: true,
+    detailFields: {
+      soundEffects: 'standard',
+      location: 'standard',
+      materials: 'standard',
+    },
   },
 };
+
+const COMPLEXITY_RANK: Record<Complexity, number> = {
+  simple: 0,
+  standard: 1,
+  advanced: 2,
+};
+
+export function isSceneDetailFieldVisible(
+  productType: ProductType,
+  complexity: Complexity,
+  field: SceneDetailField,
+): boolean {
+  const minimum = FORMAT_FEATURES[productType].detailFields[field];
+  return minimum !== undefined && COMPLEXITY_RANK[complexity] >= COMPLEXITY_RANK[minimum];
+}
+
+export function getVisibleSceneDetailFields(
+  productType: ProductType,
+  complexity: Complexity,
+): SceneDetailField[] {
+  return (Object.keys(FORMAT_FEATURES[productType].detailFields) as SceneDetailField[]).filter(
+    (field) => isSceneDetailFieldVisible(productType, complexity, field),
+  );
+}

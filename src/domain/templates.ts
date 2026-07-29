@@ -21,31 +21,10 @@ export const STARTER_FORMATS: StarterFormat[] = [
   'roleplay',
 ];
 
-// Welche Text-Preset-Felder je Format mit Beispielwerten befüllt werden, plus
-// der zugehörige (flache) i18n-Key-Teil. Select-Felder bleiben leer — ihre
-// Optionen sind sprachabhängig und sollen vom Nutzer gewählt werden.
-// i18n ist auf zwei Ebenen begrenzt (namespace.key), daher flache Keys.
-const TEXT_FIELDS: Partial<Record<StarterFormat, { key: string; part: string }[]>> = {
-  shortFilm: [
-    { key: 'preset:shortFilm:camera-movement', part: 'CameraMovement' },
-    { key: 'preset:shortFilm:caption', part: 'Caption' },
-  ],
-  fotostory: [
-    { key: 'preset:fotostory:framing', part: 'Framing' },
-    { key: 'preset:fotostory:caption', part: 'Caption' },
-  ],
-};
-
 function makeScene(format: StarterFormat, index: number): Scene {
   const t = i18n.t;
   const n = index + 1;
   const prefix = `templates.${format}S${n}`;
-  const customFields: Record<string, string> = {};
-  const fields = TEXT_FIELDS[format] || [];
-  for (const { key, part } of fields) {
-    const value = t(`${prefix}${part}`, { defaultValue: '' });
-    if (value) customFields[key] = value;
-  }
   return {
     id: generateId(),
     orderIndex: index,
@@ -58,7 +37,6 @@ function makeScene(format: StarterFormat, index: number): Scene {
     location: '',
     materials: [],
     imageFit: 'cover',
-    ...(Object.keys(customFields).length > 0 ? { customFields } : {}),
   };
 }
 
@@ -69,7 +47,7 @@ export function buildStarterProject(format: StarterFormat): StoryboardProject {
     projectName: t(`templates.${format}Name`),
     groupMembers: [],
     topic: '',
-    complexity: 'standard',
+    complexity: 'simple',
     subject: t(`templates.${format}Subject`, { defaultValue: '' }),
     productType: format,
     date: '',

@@ -11,8 +11,8 @@ With a good storyboard, everyone knows what to do during the shoot.
 
 ## First steps
 
-1. **Choose a format** — tap your media product on the start screen. You can also load an example for any format.
-2. **Set up the project** — enter a project name (required). Topic, subject, group members and level of detail are optional.
+1. **Choose a format** — first choose video, image, audio or stage, then tap your media product. “Your own idea” sits below the format groups.
+2. **Set up the project** — enter a project name (required). New projects start at **Simple**. Standard and Pro are available under **More details** when needed.
 3. **Fill in the planning:**
    - **Logline:** What is it about? Describe your idea in one sentence.
    - **Objective:** What should your audience understand or feel?
@@ -25,8 +25,8 @@ With a good storyboard, everyone knows what to do during the shoot.
 - **Insert an image:** Tap the dashed square of a scene. You can take a photo or choose a file. The image is resized automatically.
 - **Fill in the text:**
   - **Action / image description:** What happens in this scene?
-  - **Speech and sound:** What is said, what music or sounds?
-  - **More fields:** depending on the format, e.g. location, shot size, camera movement or caption.
+  - **Text and sound:** The label matches your format, for example voiceover, speech bubble, dialogue or speaker notes.
+  - **More fields:** The app only shows fields that fit the format and level of detail. Camera or material fields appear when they are relevant.
 - **Reorder:** Hold the dots icon of a scene and drag it to the desired position.
 - **Duplicate:** The copy icon creates a copy of the scene right below it.
 - **Delete:** The trash icon deletes the scene. If that was a mistake: an “Undo” appears briefly at the bottom — tap it quickly.
@@ -39,7 +39,8 @@ removes its entries from all scenes.
 
 Every format comes with a matching field template. Use “Add” in the dialog to
 restore missing template fields. Your own fields and any values already entered
-are kept.
+are kept. When you change format, unrelated template fields are hidden rather
+than deleted.
 
 ## Saving and loading
 

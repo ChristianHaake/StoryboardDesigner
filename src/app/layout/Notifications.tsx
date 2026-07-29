@@ -41,7 +41,7 @@ export default function Notifications() {
   if (!lastDeleted && !errorMessage && !successMessage) return null;
 
   return (
-    <div className="fixed right-4 bottom-4 left-4 z-20 flex flex-col items-center gap-2 sm:right-auto sm:left-1/2 sm:-translate-x-1/2 print:hidden">
+    <div className="fixed right-4 bottom-20 left-4 z-50 flex flex-col items-center gap-2 sm:right-auto sm:left-1/2 sm:-translate-x-1/2 print:hidden">
       {errorMessage && (
         <div
           role="alert"

@@ -11,8 +11,8 @@ Mit einem guten Storyboard weiß beim Dreh jede:r, was zu tun ist.
 
 ## Erste Schritte
 
-1. **Format wählen** — tippe auf der Startseite auf dein Medienprodukt. Zu jedem Format kannst du auch ein Beispiel laden.
-2. **Projekt einrichten** — gib einen Projektnamen ein (Pflichtfeld). Thema, Fach, Gruppenmitglieder und Detailgrad sind optional.
+1. **Format wählen** — wähle zuerst Video, Bild, Audio oder Bühne und tippe dann auf dein Medienprodukt. „Eigene Idee“ findest du unter den Formatgruppen.
+2. **Projekt einrichten** — gib einen Projektnamen ein (Pflichtfeld). Neue Projekte starten mit **Einfach**. Standard und Profi findest du nur bei Bedarf unter **Weitere Details**.
 3. **Planung ausfüllen:**
    - **Logline:** Worum geht es? Beschreibe deine Idee in einem Satz.
    - **Ziel:** Was soll dein Publikum verstehen oder fühlen?
@@ -25,8 +25,8 @@ Mit einem guten Storyboard weiß beim Dreh jede:r, was zu tun ist.
 - **Bild einfügen:** Tippe auf das gestrichelte Quadrat einer Szene. Du kannst ein Foto aufnehmen oder eine Datei auswählen. Das Bild wird automatisch verkleinert.
 - **Texte ausfüllen:**
   - **Aktion / Bildbeschreibung:** Was passiert in dieser Szene?
-  - **Sprechtext und Ton:** Was wird gesagt, welche Musik oder Geräusche?
-  - **Weitere Felder:** je nach Format z. B. Ort, Einstellungsgröße, Kamerabewegung oder Bildunterschrift.
+  - **Text und Ton:** Das Feld heißt passend zu deinem Format zum Beispiel Voiceover, Sprechblase, Dialog oder Sprechertext.
+  - **Weitere Felder:** Die App zeigt nur die Felder, die zu Format und Detailgrad passen. Kamera- oder Materialangaben erscheinen erst, wenn sie für dein Projekt sinnvoll sind.
 - **Sortieren:** Halte das Punkte-Symbol einer Szene gedrückt und ziehe sie an die gewünschte Stelle.
 - **Duplizieren:** Das Kopier-Symbol erstellt eine Kopie der Szene direkt darunter.
 - **Löschen:** Das Papierkorb-Symbol löscht die Szene. Falls das ein Versehen war: Unten erscheint kurz „Rückgängig" — tippe schnell darauf.
@@ -39,7 +39,8 @@ Löschen verschwinden auch die zugehörigen Einträge aus allen Szenen.
 
 Jedes Format bringt eine passende Feldvorlage mit. Über „Ergänzen" im Dialog
 fügst du fehlende Vorlagenfelder wieder hinzu. Eigene Felder und bereits
-eingetragene Werte bleiben erhalten.
+eingetragene Werte bleiben erhalten. Wechselst du das Format, werden unpassende
+Vorlagen ausgeblendet, aber nicht gelöscht.
 
 ## Speichern und Laden
 

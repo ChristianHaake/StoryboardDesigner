@@ -2,7 +2,8 @@ import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { useStoryboardStore } from '../../app/store/useStoryboardStore';
-import { FORMAT_FEATURES } from '../../domain/formatConfig';
+import { FORMAT_FEATURES, isSceneDetailFieldVisible } from '../../domain/formatConfig';
+import { isPresetVisible } from '../../domain/customFields';
 import {
   ChevronLeft,
   ChevronRight,
@@ -24,7 +25,13 @@ export default function PresentationView() {
   const imageUrls = useStoryboardStore((s) => s.imageUrls);
   const fieldDefinitions = useStoryboardStore((s) => s.fieldDefinitions);
   const productType = useStoryboardStore((s) => s.metaData.productType);
+  const complexity = useStoryboardStore((s) => s.metaData.complexity);
   const features = productType ? FORMAT_FEATURES[productType] : FORMAT_FEATURES.shortFilm;
+  const showSoundEffects = isSceneDetailFieldVisible(productType, complexity, 'soundEffects');
+  const showLocation = isSceneDetailFieldVisible(productType, complexity, 'location');
+  const showCameraSize = isSceneDetailFieldVisible(productType, complexity, 'cameraSize');
+  const showCameraMovement = isSceneDetailFieldVisible(productType, complexity, 'cameraMovement');
+  const showMaterials = isSceneDetailFieldVisible(productType, complexity, 'materials');
   const [currentIndex, setCurrentIndex] = useState(0);
   const [isPlaying, setIsPlaying] = useState(false);
   const [durationMs, setDurationMs] = useState<number>(SLIDE_DURATIONS[0]);
@@ -200,30 +207,26 @@ export default function PresentationView() {
             {currentScene.audio?.dialogue && (
               <FieldBlock label={t('presentation.dialogue')} value={currentScene.audio.dialogue} />
             )}
-            {currentScene.audio?.soundEffects && (
-              <FieldBlock
-                label={t('presentation.sound')}
-                value={currentScene.audio.soundEffects}
-              />
+            {showSoundEffects && currentScene.audio?.soundEffects && (
+              <FieldBlock label={t('presentation.sound')} value={currentScene.audio.soundEffects} />
             )}
-            {(currentScene.camera?.shotSize ||
-              currentScene.camera?.angle ||
-              currentScene.camera?.movement) && (
+            {((showCameraSize && (currentScene.camera?.shotSize || currentScene.camera?.angle)) ||
+              (showCameraMovement && currentScene.camera?.movement)) && (
               <FieldBlock
                 label={t('presentation.camera')}
                 value={[
-                  currentScene.camera.shotSize,
-                  currentScene.camera.angle,
-                  currentScene.camera.movement,
+                  showCameraSize ? currentScene.camera.shotSize : '',
+                  showCameraSize ? currentScene.camera.angle : '',
+                  showCameraMovement ? currentScene.camera.movement : '',
                 ]
                   .filter(Boolean)
                   .join(' · ')}
               />
             )}
-            {currentScene.location && (
+            {showLocation && currentScene.location && (
               <FieldBlock label={t('presentation.location')} value={currentScene.location} />
             )}
-            {currentScene.materials?.length ? (
+            {showMaterials && currentScene.materials?.length ? (
               <FieldBlock
                 label={t('presentation.materials')}
                 value={currentScene.materials.join(', ')}
@@ -233,6 +236,7 @@ export default function PresentationView() {
             {/* Custom Fields — nur Felder mit aktiver Definition, mit Label. */}
             {currentScene.customFields &&
               (fieldDefinitions ?? []).map((definition) => {
+                if (!isPresetVisible(definition.key, productType, complexity)) return null;
                 const value = currentScene.customFields?.[definition.key];
                 if (!value) return null;
                 return (

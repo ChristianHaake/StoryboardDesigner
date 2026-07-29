@@ -18,7 +18,7 @@ export function createInitialMetaData(): MetaData {
     projectName: '',
     groupMembers: [],
     topic: '',
-    complexity: 'standard',
+    complexity: 'simple',
     subject: '',
     productType: 'shortFilm',
     date: '',

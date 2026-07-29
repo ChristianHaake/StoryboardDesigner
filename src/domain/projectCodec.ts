@@ -7,6 +7,7 @@ import type {
 } from './types';
 import {
   MAX_CUSTOM_FIELDS,
+  MAX_CUSTOM_FIELD_DESCRIPTION_LENGTH,
   MAX_CUSTOM_FIELD_LABEL_LENGTH,
   normalizeSelectOptions,
 } from './customFields';
@@ -92,6 +93,7 @@ function validateFieldDefinitions(value: unknown): CustomFieldDefinition[] | und
     if (!isRecord(item)) continue;
     const key = str(item.key).trim();
     const label = str(item.label).trim().slice(0, MAX_CUSTOM_FIELD_LABEL_LENGTH);
+    const description = str(item.description).trim().slice(0, MAX_CUSTOM_FIELD_DESCRIPTION_LENGTH);
     const normalizedLabel = label.toLocaleLowerCase('de');
     if (!key || !label || seenKeys.has(key) || seenLabels.has(normalizedLabel)) continue;
     seenKeys.add(key);
@@ -101,9 +103,15 @@ function validateFieldDefinitions(value: unknown): CustomFieldDefinition[] | und
       ? normalizeSelectOptions(item.options.filter((o): o is string => typeof o === 'string'))
       : [];
     if (item.type === 'select' && options.length > 0) {
-      definitions.push({ key, label, type: 'select', options });
+      definitions.push({
+        key,
+        label,
+        type: 'select',
+        options,
+        ...(description ? { description } : {}),
+      });
     } else {
-      definitions.push({ key, label });
+      definitions.push({ key, label, ...(description ? { description } : {}) });
     }
   }
   return definitions.length > 0 ? definitions : undefined;

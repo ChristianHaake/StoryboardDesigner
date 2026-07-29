@@ -15,6 +15,16 @@ import {
   Sparkles,
   ArrowRight,
 } from 'lucide-react';
+import { useState } from 'react';
+
+type FormatCategory = 'video' | 'image' | 'audio' | 'stage';
+
+const CATEGORY_FORMATS: Record<FormatCategory, ProductType[]> = {
+  video: ['shortFilm', 'explainerVideo', 'stopMotion', 'socialMediaClip'],
+  image: ['fotostory', 'comic'],
+  audio: ['audioPlay', 'podcast'],
+  stage: ['roleplay'],
+};
 
 export default function StartScreen() {
   const { t } = useTranslation();
@@ -22,6 +32,7 @@ export default function StartScreen() {
   const setFormatType = useStoryboardStore((s) => s.setFormatType);
   const loadProject = useStoryboardStore((s) => s.loadProject);
   const hasContent = useStoryboardStore((s) => s.hasContent);
+  const [activeCategory, setActiveCategory] = useState<FormatCategory>('video');
 
   const selectProduct = (product: ProductType) => {
     setFormatType(product);
@@ -83,13 +94,30 @@ export default function StartScreen() {
       title: t('format.roleplay'),
       desc: t('formatDesc.roleplay'),
     },
-    {
-      type: 'custom',
-      icon: Sparkles,
-      title: t('format.custom'),
-      desc: t('formatDesc.custom'),
-    },
   ];
+  const categories: { id: FormatCategory; label: string }[] = [
+    { id: 'video', label: t('formatCategory.video') },
+    { id: 'image', label: t('formatCategory.image') },
+    { id: 'audio', label: t('formatCategory.audio') },
+    { id: 'stage', label: t('formatCategory.stage') },
+  ];
+  const visibleTiles = TILES.filter((tile) => CATEGORY_FORMATS[activeCategory].includes(tile.type));
+
+  function handleCategoryKeyDown(event: React.KeyboardEvent, index: number) {
+    let nextIndex: number;
+    if (event.key === 'ArrowRight') nextIndex = (index + 1) % categories.length;
+    else if (event.key === 'ArrowLeft')
+      nextIndex = (index - 1 + categories.length) % categories.length;
+    else if (event.key === 'Home') nextIndex = 0;
+    else if (event.key === 'End') nextIndex = categories.length - 1;
+    else return;
+
+    event.preventDefault();
+    const next = categories[nextIndex];
+    if (!next) return;
+    setActiveCategory(next.id);
+    document.getElementById(`format-category-${next.id}`)?.focus();
+  }
 
   return (
     <div className="mx-auto max-w-5xl py-8 px-4 sm:px-6 lg:px-8 fade-in">
@@ -109,8 +137,40 @@ export default function StartScreen() {
         </p>
       </div>
 
-      <div className="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3">
-        {TILES.map((tile) => {
+      <div
+        role="tablist"
+        aria-label={t('formatCategory.label')}
+        className="mb-6 grid grid-cols-2 gap-2 rounded-2xl border border-slate-200 bg-white p-2 sm:grid-cols-4"
+      >
+        {categories.map((category, index) => (
+          <button
+            key={category.id}
+            id={`format-category-${category.id}`}
+            type="button"
+            role="tab"
+            aria-selected={activeCategory === category.id}
+            aria-controls="format-panel"
+            tabIndex={activeCategory === category.id ? 0 : -1}
+            onClick={() => setActiveCategory(category.id)}
+            onKeyDown={(event) => handleCategoryKeyDown(event, index)}
+            className={`min-h-12 rounded-xl px-3 py-2 text-sm font-semibold transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 ${
+              activeCategory === category.id
+                ? 'bg-blue-600 text-white'
+                : 'text-slate-600 hover:bg-slate-100 hover:text-slate-900'
+            }`}
+          >
+            {category.label}
+          </button>
+        ))}
+      </div>
+
+      <div
+        id="format-panel"
+        role="tabpanel"
+        aria-labelledby={`format-category-${activeCategory}`}
+        className="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3"
+      >
+        {visibleTiles.map((tile) => {
           const Icon = tile.icon;
           const hasStarter = STARTER_FORMATS.includes(
             tile.type as (typeof STARTER_FORMATS)[number],
@@ -154,6 +214,18 @@ export default function StartScreen() {
           );
         })}
       </div>
+
+      <button
+        type="button"
+        onClick={() => selectProduct('custom')}
+        className="mt-6 flex min-h-12 w-full items-center justify-between rounded-xl border border-dashed border-slate-300 bg-white px-5 py-3 text-left text-sm text-slate-600 transition-colors hover:border-blue-400 hover:bg-blue-50 hover:text-blue-700 focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500"
+      >
+        <span>
+          <span className="block font-semibold text-slate-900">{t('format.custom')}</span>
+          <span className="mt-0.5 block text-xs">{t('formatDesc.custom')}</span>
+        </span>
+        <ArrowRight className="h-5 w-5 shrink-0" aria-hidden="true" />
+      </button>
     </div>
   );
 }

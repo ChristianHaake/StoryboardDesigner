@@ -5,10 +5,13 @@ import {
   MAX_CUSTOM_FIELDS,
   MAX_CUSTOM_FIELD_LABEL_LENGTH,
   COMPLEXITY_RANK,
+  getFormatPreset,
+  isRetiredPreset,
   presetFieldMinComplexity,
+  presetProductType,
 } from '../../domain/customFields';
 import { buttonPrimary, buttonSecondary } from './fieldStyles';
-import type { CustomFieldDefinition, CustomFieldType, ProductType } from '../../domain/types';
+import type { CustomFieldDefinition, CustomFieldType } from '../../domain/types';
 import { Trash2, X } from 'lucide-react';
 
 const dialogInputClass =
@@ -135,12 +138,6 @@ function FieldDefinitionRow({
   );
 }
 
-const FORMAT_KEYS: Partial<Record<ProductType, string>> = {
-  shortFilm: 'format.shortFilm',
-  fotostory: 'format.fotostory',
-  custom: 'format.custom',
-};
-
 export default function FieldConfigDialog({ open, onClose }: FieldConfigDialogProps) {
   const { t } = useTranslation();
   const dialogRef = useRef<HTMLDialogElement>(null);
@@ -159,6 +156,15 @@ export default function FieldConfigDialog({ open, onClose }: FieldConfigDialogPr
   const [newOptions, setNewOptions] = useState('');
   const [message, setMessage] = useState<{ text: string; kind: 'error' | 'info' } | null>(null);
   const isError = message?.kind === 'error';
+  const hasFormatPreset = getFormatPreset(productType).length > 0;
+  const activeDefinitions = definitions.filter((definition) => {
+    const owner = presetProductType(definition.key);
+    return !isRetiredPreset(definition.key) && (!owner || owner === productType);
+  });
+  const preservedDefinitions = definitions.filter((definition) => {
+    const owner = presetProductType(definition.key);
+    return isRetiredPreset(definition.key) || (owner !== undefined && owner !== productType);
+  });
 
   const notify = useCallback((text: string, kind: 'error' | 'info') => {
     setMessage({ text, kind });
@@ -411,16 +417,14 @@ export default function FieldConfigDialog({ open, onClose }: FieldConfigDialogPr
                 </h3>
                 <p className="mt-1 text-xs text-slate-500">
                   {t('fieldConfig.presetDescription', {
-                    format: FORMAT_KEYS[productType]
-                      ? t(FORMAT_KEYS[productType]!)
-                      : t('format.custom'),
+                    format: t(`format.${productType}`),
                   })}
                 </p>
               </div>
               <button
                 type="button"
                 onClick={handleApplyPreset}
-                disabled={productType === 'custom' || definitions.length >= MAX_CUSTOM_FIELDS}
+                disabled={!hasFormatPreset || definitions.length >= MAX_CUSTOM_FIELDS}
                 className={`${buttonSecondary} min-h-11 shrink-0`}
               >
                 {t('fieldConfig.apply')}
@@ -433,13 +437,13 @@ export default function FieldConfigDialog({ open, onClose }: FieldConfigDialogPr
             <h3 id="fields-title" className="text-sm font-semibold text-slate-900">
               {t('fieldConfig.activeHeading')}
             </h3>
-            {definitions.length === 0 ? (
+            {activeDefinitions.length === 0 ? (
               <p className="mt-3 rounded-lg bg-slate-50 px-4 py-4 text-sm text-slate-600">
                 {t('fieldConfig.empty')}
               </p>
             ) : (
               <div className="mt-3 space-y-2">
-                {definitions.map((definition) => {
+                {activeDefinitions.map((definition) => {
                   const min = presetFieldMinComplexity(definition.key);
                   const belowActive = min && COMPLEXITY_RANK[complexity] < COMPLEXITY_RANK[min];
                   const levelLabel =
@@ -462,6 +466,25 @@ export default function FieldConfigDialog({ open, onClose }: FieldConfigDialogPr
               </div>
             )}
           </section>
+
+          {preservedDefinitions.length > 0 && (
+            <details className="mt-6 border-t border-slate-200 pt-5">
+              <summary className="min-h-11 cursor-pointer text-sm font-semibold text-slate-700">
+                {t('fieldConfig.preservedHeading', { count: preservedDefinitions.length })}
+              </summary>
+              <p className="mb-3 text-xs text-slate-500">{t('fieldConfig.preservedDescription')}</p>
+              <div className="space-y-2">
+                {preservedDefinitions.map((definition) => (
+                  <FieldDefinitionRow
+                    key={definition.key}
+                    definition={definition}
+                    onSave={handleSave}
+                    onDelete={handleDelete}
+                  />
+                ))}
+              </div>
+            </details>
+          )}
 
           {message && !isError && (
             <p role="status" className="mt-4 rounded-lg bg-blue-50 px-3 py-2 text-sm text-blue-900">

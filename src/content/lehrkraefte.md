@@ -10,7 +10,9 @@ Sie unter **Hilfe**.
 
 Die App eignet sich für Projekt- und Gruppenarbeit ab etwa Klasse 5 und lässt
 sich fächerübergreifend nutzen (Deutsch, Kunst, Politik, Naturwissenschaften,
-Informatik, Fremdsprachen). Der Detaillierungsgrad ist wählbar:
+Informatik, Fremdsprachen). Der Detaillierungsgrad ist wählbar. Neue Projekte
+starten bewusst mit **Einfach**; die höheren Stufen liegen unter **Weitere
+Details**:
 
 - **Einfach** — nur die wichtigsten Felder. Für jüngere Lerngruppen oder einen
   schnellen Einstieg.
@@ -18,8 +20,9 @@ Informatik, Fremdsprachen). Der Detaillierungsgrad ist wählbar:
 - **Profi** — alle Felder inklusive Kameraeinstellung, Kamerabewegung und
   Material. Für vertiefte Medienarbeit und ältere Jahrgänge.
 
-So passen Sie die kognitive Last an die Lerngruppe an, ohne das Werkzeug zu
-wechseln.
+Die Szenenfelder sind zusätzlich formatspezifisch: Ein Podcast erhält andere
+Eingaben als ein Comic oder Kurzfilm. So passen Sie die kognitive Last an die
+Lerngruppe an, ohne das Werkzeug zu wechseln.
 
 ## Vorgeschlagener Ablauf
 
