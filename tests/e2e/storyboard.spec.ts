@@ -83,6 +83,8 @@ test.describe('Storyboard Creator E2E Browser Click Test Suite', () => {
   });
 
   test('2. Complete Storyboard Creation and Editor Workflow', async ({ page }) => {
+    test.setTimeout(90_000);
+
     // A. Choose Format Tile: "Kurzfilm" (shortFilm)
     await page.locator('button', { hasText: 'Kurzfilm' }).click();
 

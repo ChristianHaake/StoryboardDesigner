@@ -87,7 +87,7 @@ test.describe('Release QA regression smoke', () => {
     );
   });
 
-  test('restores deleted scenes and reorders with buttons and drag', async ({ page }) => {
+  test('restores deleted scenes and reorders with buttons and keyboard drag', async ({ page }) => {
     await createBasicProject(page, 'Release QA Reorder');
     await page.getByLabel('Handlung / Bildbeschreibung').fill('Eins');
     await page.locator('button', { hasText: 'Szene hinzufügen' }).click();
@@ -111,34 +111,37 @@ test.describe('Release QA regression smoke', () => {
       .poll(async () => sceneActionValues(page))
       .toEqual(['Eins', 'Zwei', 'Drei']);
 
-    const handle = page.locator('button[aria-label="Szene 3 verschieben"]');
-    const target = page.locator('article').first();
-    await target.scrollIntoViewIfNeeded();
-    await handle.scrollIntoViewIfNeeded();
+    // Keep all sortable targets in the viewport so keyboard collision detection
+    // behaves consistently across Chromium and WebKit.
+    const moveUpWithKeyboard = async (sceneNumber: number) => {
+      const handle = page.locator(`button[aria-label="Szene ${sceneNumber} verschieben"]`);
+      await handle.focus();
+      await handle.press('Space');
+      await expect(
+        page.getByText(`Szene über Position ${sceneNumber} bewegt.`, { exact: true }),
+      ).toBeAttached();
+      await handle.press('ArrowUp');
+      await expect(
+        page.getByText(`Szene über Position ${sceneNumber - 1} bewegt.`, { exact: true }),
+      ).toBeAttached();
+      await handle.press('Space');
+      await expect(
+        page.getByText(`Szene an Position ${sceneNumber - 1} abgelegt.`, { exact: true }),
+      ).toBeAttached();
+    };
 
-    await handle.dragTo(target, { force: true });
-    if ((await sceneActionValues(page))[0] !== 'Drei') {
-      await target.scrollIntoViewIfNeeded();
-      await handle.scrollIntoViewIfNeeded();
+    await page.locator('button', { hasText: 'Alle einklappen' }).click();
+    await expect(page.getByLabel('Handlung / Bildbeschreibung')).toHaveCount(0);
+    await moveUpWithKeyboard(3);
+    await page.locator('button', { hasText: 'Alle ausklappen' }).click();
+    await expect
+      .poll(async () => sceneActionValues(page))
+      .toEqual(['Eins', 'Drei', 'Zwei']);
 
-      const handleBox = await handle.boundingBox();
-      const targetBox = await target.boundingBox();
-      expect(handleBox).toBeTruthy();
-      expect(targetBox).toBeTruthy();
-
-      await page.mouse.move(
-        handleBox!.x + handleBox!.width / 2,
-        handleBox!.y + handleBox!.height / 2,
-      );
-      await page.mouse.down();
-      await page.mouse.move(handleBox!.x + handleBox!.width / 2, handleBox!.y - 30, { steps: 8 });
-      await page.mouse.move(
-        targetBox!.x + targetBox!.width / 2,
-        targetBox!.y + targetBox!.height / 2,
-        { steps: 30 },
-      );
-      await page.mouse.up();
-    }
+    await page.locator('button', { hasText: 'Alle einklappen' }).click();
+    await expect(page.getByLabel('Handlung / Bildbeschreibung')).toHaveCount(0);
+    await moveUpWithKeyboard(2);
+    await page.locator('button', { hasText: 'Alle ausklappen' }).click();
 
     await expect
       .poll(async () => sceneActionValues(page))
