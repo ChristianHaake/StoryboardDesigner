@@ -13,16 +13,7 @@ import { FORMAT_FEATURES, isSceneDetailFieldVisible } from '../../domain/formatC
 import { isPresetVisible } from '../../domain/customFields';
 import { inputClass, labelClass } from '../../shared/ui/fieldStyles';
 import { MAX_SCENES } from '../../domain/projectCodec';
-import {
-  GripVertical,
-  Copy,
-  Trash2,
-  X,
-  ChevronUp,
-  ChevronDown,
-  ArrowUp,
-  ArrowDown,
-} from 'lucide-react';
+import { GripVertical, Copy, Trash2, X, ChevronDown, ArrowUp, ArrowDown } from 'lucide-react';
 
 const EMPTY_FIELD_DEFINITIONS: NonNullable<
   ReturnType<typeof useStoryboardStore.getState>['fieldDefinitions']
@@ -152,7 +143,7 @@ function SceneCard({ sceneId }: SceneCardProps) {
             value={scene.title}
             placeholder={t(productType === 'podcast' ? 'scene.titlePodcast' : 'scene.title', { n })}
             onChange={(e) => updateScene(scene.id, { title: e.target.value })}
-            className="flex-1 min-w-0 bg-transparent border-none p-0 focus:ring-0 text-xs font-bold tracking-[0.14em] text-slate-700 uppercase placeholder-slate-400"
+            className="min-h-11 min-w-0 flex-1 border-none bg-transparent p-0 text-xs font-bold tracking-[0.14em] text-slate-700 uppercase placeholder-slate-400 focus:ring-0 print:min-h-0"
             aria-label={t(productType === 'podcast' ? 'scene.titlePodcast' : 'scene.title', { n })}
           />
         </h3>
@@ -223,11 +214,11 @@ function SceneCard({ sceneId }: SceneCardProps) {
               }
               className="inline-flex size-11 items-center justify-center rounded-lg text-slate-500 transition-colors hover:bg-slate-100 hover:text-slate-800"
             >
-              {isCollapsed ? (
-                <ChevronDown className="w-[18px] h-[18px]" strokeWidth={1.5} aria-hidden="true" />
-              ) : (
-                <ChevronUp className="w-[18px] h-[18px]" strokeWidth={1.5} aria-hidden="true" />
-              )}
+              <ChevronDown
+                className={`h-[18px] w-[18px] transition-transform ${isCollapsed ? '' : 'rotate-180'}`}
+                strokeWidth={1.5}
+                aria-hidden="true"
+              />
             </button>
           </div>
         </div>
@@ -256,14 +247,14 @@ function SceneCard({ sceneId }: SceneCardProps) {
                       <img
                         src={imageUrl}
                         alt={scene.altText?.trim() ? scene.altText : t('scene.imageAlt', { n })}
-                        className={`aspect-video w-full max-sm:aspect-video print:aspect-video print:rounded-none ${
+                        className={`image-edge aspect-video w-full max-sm:aspect-video print:aspect-video print:rounded-none ${
                           scene.imageFit === 'contain'
                             ? 'object-contain bg-slate-900'
                             : 'object-cover'
                         }`}
                       />
                     </label>
-                    <div className="absolute bottom-2 left-2 flex gap-1 print:hidden opacity-0 transition-opacity group-hover:opacity-100 focus-within:opacity-100">
+                    <div className="absolute bottom-2 left-2 flex gap-1 opacity-0 transition-opacity group-hover:opacity-100 focus-within:opacity-100 pointer-coarse:opacity-100 print:hidden">
                       <button
                         type="button"
                         onClick={() =>
@@ -271,7 +262,17 @@ function SceneCard({ sceneId }: SceneCardProps) {
                             imageFit: scene.imageFit === 'contain' ? 'cover' : 'contain',
                           })
                         }
-                        className="inline-flex h-7 items-center justify-center rounded bg-slate-900/70 px-2 text-[10px] font-medium text-white backdrop-blur-md transition-colors hover:bg-slate-900"
+                        aria-label={
+                          scene.imageFit === 'contain'
+                            ? t('scene.fitCover', 'Füllen')
+                            : t('scene.fitContain', 'Einpassen')
+                        }
+                        title={
+                          scene.imageFit === 'contain'
+                            ? t('scene.fitCover', 'Füllen')
+                            : t('scene.fitContain', 'Einpassen')
+                        }
+                        className="inline-flex min-h-11 items-center justify-center rounded-lg bg-slate-900/75 px-3 text-xs font-medium text-white backdrop-blur-md transition-[background-color,transform] motion-safe:active:scale-[0.96] hover:bg-slate-900"
                       >
                         {scene.imageFit === 'contain'
                           ? t('scene.fitCover', 'Füllen')

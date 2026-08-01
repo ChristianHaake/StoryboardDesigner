@@ -3,6 +3,7 @@
 const de = {
   common: {
     appTitle: 'Storyboard-Creator',
+    loading: 'Inhalt wird geladen …',
   },
   save: {
     saving: 'Speichern …',

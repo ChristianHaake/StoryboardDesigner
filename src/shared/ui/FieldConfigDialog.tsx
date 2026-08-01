@@ -289,7 +289,9 @@ export default function FieldConfigDialog({ open, onClose }: FieldConfigDialogPr
                   {t('fieldConfig.addHeading')}
                 </h3>
                 <p className="mt-1 text-xs text-slate-500">
-                  {t('fieldConfig.usage', { count: definitions.length, max: MAX_CUSTOM_FIELDS })}
+                  <span className="tabular-nums">
+                    {t('fieldConfig.usage', { count: definitions.length, max: MAX_CUSTOM_FIELDS })}
+                  </span>
                 </p>
               </div>
             </div>
@@ -470,7 +472,9 @@ export default function FieldConfigDialog({ open, onClose }: FieldConfigDialogPr
           {preservedDefinitions.length > 0 && (
             <details className="mt-6 border-t border-slate-200 pt-5">
               <summary className="min-h-11 cursor-pointer text-sm font-semibold text-slate-700">
-                {t('fieldConfig.preservedHeading', { count: preservedDefinitions.length })}
+                <span className="tabular-nums">
+                  {t('fieldConfig.preservedHeading', { count: preservedDefinitions.length })}
+                </span>
               </summary>
               <p className="mb-3 text-xs text-slate-500">{t('fieldConfig.preservedDescription')}</p>
               <div className="space-y-2">

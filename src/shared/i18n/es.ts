@@ -11,6 +11,7 @@ type Translations = {
 const es: Translations = {
   common: {
     appTitle: 'Storyboard-Creator',
+    loading: 'Cargando contenido …',
   },
   save: {
     saving: 'Guardando …',

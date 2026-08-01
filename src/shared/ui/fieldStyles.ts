@@ -6,9 +6,9 @@ export const labelClass =
   'mb-1.5 block text-sm font-medium text-slate-700 print:mb-0 print:text-xs';
 
 // Button-Tokens: einheitliche Hierarchie über alle Aktionen (primär/sekundär/ghost).
-// Höhe (min-h-*) wird je Verwendung gesetzt, damit 44-px-Touch-Ziele erhalten bleiben.
 const buttonBase =
-  'inline-flex items-center justify-center gap-2 rounded-lg text-sm font-semibold transition-colors focus-visible:outline-none focus-visible:ring-3 focus-visible:ring-blue-100 disabled:cursor-not-allowed disabled:opacity-50';
+  'inline-flex min-h-11 items-center justify-center gap-2 rounded-lg text-sm font-semibold transition-[color,background-color,border-color,box-shadow,transform] motion-safe:active:scale-[0.96] focus-visible:outline-none focus-visible:ring-3 focus-visible:ring-blue-100 disabled:cursor-not-allowed disabled:opacity-50 disabled:active:scale-100';
 export const buttonPrimary = `${buttonBase} bg-blue-600 px-4 text-white shadow-sm shadow-blue-600/20 hover:bg-blue-700`;
 export const buttonSecondary = `${buttonBase} border border-slate-300 bg-white px-3 text-slate-700 shadow-sm hover:border-slate-400 hover:bg-slate-50`;
 export const buttonGhost = `${buttonBase} text-slate-600 hover:bg-slate-100 hover:text-slate-900`;
+export const iconButton = `${buttonBase} size-11 shrink-0`;

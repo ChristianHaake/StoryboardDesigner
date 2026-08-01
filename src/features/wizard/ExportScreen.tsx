@@ -80,8 +80,9 @@ export default function ExportScreen() {
       <WizardSteps />
       <div className="mb-8">
         <button
+          type="button"
           onClick={() => setWizardStep('review')}
-          className="flex items-center text-sm text-slate-500 hover:text-blue-600 transition-colors"
+          className="flex min-h-11 items-center rounded-lg px-2 text-sm text-slate-500 transition-[color,background-color,transform] motion-safe:active:scale-[0.96] hover:bg-slate-100 hover:text-blue-600"
         >
           <ArrowLeft className="mr-1 h-4 w-4" />
           {t('wizard.exportBack')}
@@ -92,10 +93,12 @@ export default function ExportScreen() {
         <div className="inline-flex rounded-full bg-emerald-100 p-4 text-emerald-600 mb-6">
           <CheckCircle2 className="h-12 w-12" />
         </div>
-        <h1 className="text-4xl font-extrabold tracking-tight text-slate-900">
+        <h1 className="text-balance text-4xl font-extrabold tracking-tight text-slate-900">
           {t('wizard.exportTitle')}
         </h1>
-        <p className="mt-4 text-xl text-slate-500 max-w-lg">{t('wizard.exportSubtitle')}</p>
+        <p className="mt-4 max-w-lg text-pretty text-xl text-slate-500">
+          {t('wizard.exportSubtitle')}
+        </p>
       </div>
 
       <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-2">

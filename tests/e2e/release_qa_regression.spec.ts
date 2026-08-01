@@ -20,6 +20,7 @@ async function sceneActionValues(page: Page) {
 
 test.describe('Release QA regression smoke', () => {
   test('exports, imports, creates PDF, and calls print', async ({ page }) => {
+    test.setTimeout(90_000);
     await page.addInitScript(() => {
       (window as unknown as { __printCalled: boolean }).__printCalled = false;
       window.print = () => {
@@ -38,17 +39,40 @@ test.describe('Release QA regression smoke', () => {
     expect(projectPath).toBeTruthy();
     expect(fs.statSync(projectPath!).size).toBeGreaterThan(100);
 
-    const pdfDownloadPromise = page.waitForEvent('download');
+    const longSceneText =
+      'Diese längere Szene prüft PDF-Umbruch, Rasterleistung und lesbare Ausgabe. '.repeat(6);
+    await page.getByLabel('Handlung / Bildbeschreibung').fill(longSceneText);
+    await page.locator('button', { hasText: 'Szene hinzufügen' }).click();
+    await page.getByLabel('Szene 2', { exact: true }).fill('Zweite lange PDF-Testszene');
+    await page.getByLabel('Handlung / Bildbeschreibung').nth(1).fill(longSceneText);
+    await page.locator('button', { hasText: 'Szene hinzufügen' }).click();
+    await page.getByLabel('Szene 3', { exact: true }).fill('Dritte lange PDF-Testszene');
+    await page.getByLabel('Handlung / Bildbeschreibung').nth(2).fill(longSceneText);
+
+    const imageBuffer = fs.readFileSync(new URL('../../public/pwa-192x192.png', import.meta.url));
+    await page.locator('input[accept="image/png,image/jpeg"]').first().setInputFiles({
+      name: 'pwa-192x192.png',
+      mimeType: 'image/png',
+      buffer: imageBuffer,
+    });
+    await expect(page.locator('article img').first()).toBeVisible();
+
+    const pdfDownloadPromise = page.waitForEvent('download', { timeout: 30_000 });
     await page.locator('button', { hasText: /^PDF$/ }).click();
     const pdfDownload = await pdfDownloadPromise;
     const pdfPath = await pdfDownload.path();
     expect(pdfDownload.suggestedFilename()).toBe('Release QA Roundtrip.pdf');
     expect(pdfPath).toBeTruthy();
-    expect(fs.statSync(pdfPath!).size).toBeGreaterThan(1000);
+    const pdfBytes = fs.readFileSync(pdfPath!);
+    expect(pdfBytes.subarray(0, 5).toString('ascii')).toBe('%PDF-');
+    expect(pdfBytes.length).toBeGreaterThan(10_000);
+    expect(pdfBytes.length).toBeLessThan(5_000_000);
 
     await page.locator('button', { hasText: 'Drucken' }).click();
     await expect
-      .poll(() => page.evaluate(() => (window as unknown as { __printCalled: boolean }).__printCalled))
+      .poll(() =>
+        page.evaluate(() => (window as unknown as { __printCalled: boolean }).__printCalled),
+      )
       .toBe(true);
 
     await page.evaluate(() => {
@@ -62,12 +86,14 @@ test.describe('Release QA regression smoke', () => {
       .locator('button', { hasText: 'Drucken' })
       .click();
     await expect
-      .poll(() => page.evaluate(() => (window as unknown as { __printCalled: boolean }).__printCalled))
+      .poll(() =>
+        page.evaluate(() => (window as unknown as { __printCalled: boolean }).__printCalled),
+      )
       .toBe(true);
     // Nach Druck/PDF kehrt die App automatisch zum Export-Schritt zurück.
     await expect(page.locator('h1', { hasText: 'Dein Storyboard ist fertig!' })).toBeVisible();
 
-    const exportScreenPdfDownloadPromise = page.waitForEvent('download');
+    const exportScreenPdfDownloadPromise = page.waitForEvent('download', { timeout: 30_000 });
     await page.locator('button', { hasText: 'Als PDF herunterladen' }).click();
     const exportScreenPdfDownload = await exportScreenPdfDownloadPromise;
     expect(exportScreenPdfDownload.suggestedFilename()).toBe('Release QA Roundtrip.pdf');
@@ -97,19 +123,13 @@ test.describe('Release QA regression smoke', () => {
 
     await page.locator('button[aria-label="Szene 1 löschen"]').click();
     await page.locator('button', { hasText: 'Rückgängig' }).click();
-    await expect
-      .poll(async () => sceneActionValues(page))
-      .toEqual(['Eins', 'Zwei', 'Drei']);
+    await expect.poll(async () => sceneActionValues(page)).toEqual(['Eins', 'Zwei', 'Drei']);
 
     await page.locator('button[aria-label="Szene 3 nach oben verschieben"]').click();
-    await expect
-      .poll(async () => sceneActionValues(page))
-      .toEqual(['Eins', 'Drei', 'Zwei']);
+    await expect.poll(async () => sceneActionValues(page)).toEqual(['Eins', 'Drei', 'Zwei']);
 
     await page.locator('button[aria-label="Szene 2 nach unten verschieben"]').click();
-    await expect
-      .poll(async () => sceneActionValues(page))
-      .toEqual(['Eins', 'Zwei', 'Drei']);
+    await expect.poll(async () => sceneActionValues(page)).toEqual(['Eins', 'Zwei', 'Drei']);
 
     // Keep all sortable targets in the viewport so keyboard collision detection
     // behaves consistently across Chromium and WebKit.
@@ -134,18 +154,14 @@ test.describe('Release QA regression smoke', () => {
     await expect(page.getByLabel('Handlung / Bildbeschreibung')).toHaveCount(0);
     await moveUpWithKeyboard(3);
     await page.locator('button', { hasText: 'Alle ausklappen' }).click();
-    await expect
-      .poll(async () => sceneActionValues(page))
-      .toEqual(['Eins', 'Drei', 'Zwei']);
+    await expect.poll(async () => sceneActionValues(page)).toEqual(['Eins', 'Drei', 'Zwei']);
 
     await page.locator('button', { hasText: 'Alle einklappen' }).click();
     await expect(page.getByLabel('Handlung / Bildbeschreibung')).toHaveCount(0);
     await moveUpWithKeyboard(2);
     await page.locator('button', { hasText: 'Alle ausklappen' }).click();
 
-    await expect
-      .poll(async () => sceneActionValues(page))
-      .toEqual(['Drei', 'Eins', 'Zwei']);
+    await expect.poll(async () => sceneActionValues(page)).toEqual(['Drei', 'Eins', 'Zwei']);
   });
 
   for (const viewport of [
@@ -165,4 +181,23 @@ test.describe('Release QA regression smoke', () => {
       expect(metrics.scrollWidth).toBeLessThanOrEqual(metrics.innerWidth);
     });
   }
+
+  test('wraps an unbroken review title without hiding its status', async ({ page }) => {
+    await page.setViewportSize({ width: 390, height: 844 });
+    await createBasicProject(page, 'Long review title');
+
+    const longTitle = 'UntrennbarerSzenentitel'.repeat(12);
+    await page.getByLabel('Szene 1', { exact: true }).fill(longTitle);
+    await page.locator('button', { hasText: 'Prüfen & Abschließen' }).click();
+
+    const title = page.getByText(longTitle, { exact: true });
+    await expect(title).toBeVisible();
+    await expect(page.getByText('Teilweise (OK)', { exact: true })).toBeVisible();
+
+    const metrics = await page.evaluate(() => ({
+      innerWidth: window.innerWidth,
+      scrollWidth: document.documentElement.scrollWidth,
+    }));
+    expect(metrics.scrollWidth).toBeLessThanOrEqual(metrics.innerWidth);
+  });
 });

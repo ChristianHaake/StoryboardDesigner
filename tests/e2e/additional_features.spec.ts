@@ -27,42 +27,8 @@ async function readAutosaveRaw(page: import('@playwright/test').Page): Promise<s
   });
 }
 
-// The sticky header's top row (with the "Kommentare" toggle) collapses to zero
-// height once scrolled past ~120px, letting the actions row overlap it. Scroll
-// to the top first so the toggle is a stable, unobstructed click target
-// (otherwise flaky on CI WebKit).
-async function revealHeader(page: import('@playwright/test').Page): Promise<void> {
-  await page.evaluate(() => window.scrollTo(0, 0));
-}
-
-// Test-environment layout/timing hardening, applied on every load (survives
-// page.reload()):
-//   * disable CSS transitions/animations + smooth scroll — the sticky header's
-//     collapse/expand animation otherwise makes click targets "not stable".
-//   * make the header non-sticky — while sticky (z-10) it overlaps body content
-//     after Playwright auto-scrolls a target to the top, so the header's buttons
-//     intercept the click. Static, it scrolls away with the content and never
-//     covers a target. Header controls are still reached via revealHeader().
-// Both symptoms were CI-WebKit-only (different scroll metrics than local).
-async function stabilizeForTests(page: import('@playwright/test').Page): Promise<void> {
-  await page.addInitScript(() => {
-    const css =
-      '*,*::before,*::after{transition:none!important;animation:none!important;scroll-behavior:auto!important}' +
-      'header{position:static!important}';
-    const apply = () => {
-      const style = document.createElement('style');
-      style.textContent = css;
-      document.head.appendChild(style);
-    };
-    if (document.head) apply();
-    else document.addEventListener('DOMContentLoaded', apply);
-  });
-}
-
 test.describe('Storyboard Creator Additional Features E2E Suite', () => {
-
   test.beforeEach(async ({ page }) => {
-    await stabilizeForTests(page);
     await page.goto('/');
     await expect(page.locator('h1')).toContainText('Was möchtest du');
   });
@@ -145,7 +111,6 @@ test.describe('Storyboard Creator Additional Features E2E Suite', () => {
     await page.locator('button', { hasText: 'Szene hinzufügen' }).click();
 
     // Turn on Feedback Mode
-    await revealHeader(page);
     await page.locator('button[title="Kommentare"]').click();
 
     // Verify comment thread is visible on Scene Card 1
@@ -158,19 +123,24 @@ test.describe('Storyboard Creator Additional Features E2E Suite', () => {
     await commentThread.locator('button', { hasText: 'Senden' }).click();
 
     // Verify comment is added
-    await expect(commentThread.locator('span', { hasText: 'Das Bild sollte dramatischer wirken.' })).toBeVisible();
+    await expect(
+      commentThread.locator('span', { hasText: 'Das Bild sollte dramatischer wirken.' }),
+    ).toBeVisible();
 
     // Toggle checked state
     const checkbox = commentThread.locator('input[type="checkbox"]');
     await checkbox.click();
-    await expect(commentThread.locator('span', { hasText: 'Das Bild sollte dramatischer wirken.' })).toHaveClass(/line-through/);
+    await expect(
+      commentThread.locator('span', { hasText: 'Das Bild sollte dramatischer wirken.' }),
+    ).toHaveClass(/line-through/);
 
     // Delete comment
     await commentThread.locator('button[aria-label^="Kommentar"]').click();
-    await expect(commentThread.locator('span', { hasText: 'Das Bild sollte dramatischer wirken.' })).not.toBeVisible();
+    await expect(
+      commentThread.locator('span', { hasText: 'Das Bild sollte dramatischer wirken.' }),
+    ).not.toBeVisible();
 
     // Turn feedback mode off
-    await revealHeader(page);
     await page.locator('button[title="Kommentare"]').click();
     await expect(commentThread).not.toBeVisible();
   });
@@ -231,7 +201,9 @@ test.describe('Storyboard Creator Additional Features E2E Suite', () => {
       .toMatch(/Kaffeetasse[\s\S]*Vogel|Vogel[\s\S]*Kaffeetasse/);
     await page.reload();
 
-    await expect(page.locator('textarea[placeholder="Requisite eingeben"]')).toHaveValue('Kaffeetasse');
+    await expect(page.locator('textarea[placeholder="Requisite eingeben"]')).toHaveValue(
+      'Kaffeetasse',
+    );
     await expect(page.getByLabel('Kameraperspektive').first()).toHaveValue('Vogel');
 
     // Remove field definition
@@ -326,6 +298,19 @@ test.describe('Storyboard Creator Additional Features E2E Suite', () => {
     await page.locator('a[href="/play"]').first().click();
     await expect(page.locator('div').filter({ hasText: '1 / 2' }).first()).toBeVisible();
 
+    // Focused controls retain native keyboard activation instead of triggering slide navigation.
+    const playButton = page.getByRole('button', { name: 'Abspielen' });
+    await playButton.focus();
+    await page.keyboard.press('Space');
+    const pauseButton = page.getByRole('button', { name: 'Pausieren' });
+    await expect(pauseButton).toBeFocused();
+    await expect(page.locator('div').filter({ hasText: '1 / 2' }).first()).toBeVisible();
+
+    await page.keyboard.press('Enter');
+    await expect(playButton).toBeFocused();
+    await expect(page.locator('div').filter({ hasText: '1 / 2' }).first()).toBeVisible();
+    await playButton.evaluate((button) => button.blur());
+
     // Press Left arrow at start -> should stay on slide 1
     await page.keyboard.press('ArrowLeft');
     await expect(page.locator('div').filter({ hasText: '1 / 2' }).first()).toBeVisible();
@@ -338,8 +323,9 @@ test.describe('Storyboard Creator Additional Features E2E Suite', () => {
     await page.keyboard.press('ArrowRight');
     await expect(page.locator('div').filter({ hasText: '2 / 2' }).first()).toBeVisible();
 
-    // Exit presentation
-    await page.locator('button[aria-label="Präsentation beenden"]').click();
+    // Escape remains global even while an interactive control is focused.
+    await playButton.focus();
+    await page.keyboard.press('Escape');
     await expect(page.url()).not.toContain('/play');
   });
 
