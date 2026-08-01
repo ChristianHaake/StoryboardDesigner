@@ -159,7 +159,8 @@ export default function TopBar() {
             <LanguageToggle />
             <Link
               to="/lehrkraefte"
-              className="inline-flex min-h-10 items-center gap-1.5 rounded-lg px-2.5 text-sm font-semibold text-slate-600 transition-colors hover:bg-slate-100 hover:text-slate-900"
+              aria-label={t('brand.forEducators')}
+              className="inline-flex min-h-11 min-w-11 items-center justify-center gap-1.5 rounded-lg px-2.5 text-sm font-semibold text-slate-600 transition-[color,background-color,transform] motion-safe:active:scale-[0.96] hover:bg-slate-100 hover:text-slate-900"
             >
               <GraduationCap className="w-[18px] h-[18px]" strokeWidth={1.8} aria-hidden="true" />
               <span className="max-lg:hidden">{t('brand.forEducators')}</span>
@@ -169,7 +170,7 @@ export default function TopBar() {
               onClick={toggleFeedbackMode}
               aria-pressed={feedbackMode}
               title={t('feedback.toggle')}
-              className={`inline-flex min-h-10 items-center gap-1.5 rounded-lg px-2.5 text-sm font-semibold transition-colors ${
+              className={`inline-flex min-h-11 min-w-11 items-center justify-center gap-1.5 rounded-lg px-2.5 text-sm font-semibold transition-[color,background-color,transform] motion-safe:active:scale-[0.96] ${
                 feedbackMode
                   ? 'bg-amber-100 text-amber-900 hover:bg-amber-200'
                   : 'text-slate-600 hover:bg-slate-100 hover:text-slate-900'
@@ -182,7 +183,10 @@ export default function TopBar() {
         }
         actionsAriaLabel={t('topbar.actions')}
         actionsArea={
-          <div className="flex w-full items-center gap-2 max-sm:col-span-2">
+          <div className="flex min-w-0 w-full flex-wrap items-center gap-2">
+            <span id="document-actions-require-scene" className="sr-only">
+              {t('topbar.needScenes')}
+            </span>
             {/* File Menu */}
             <details
               ref={fileMenuRef}
@@ -211,7 +215,7 @@ export default function TopBar() {
                     if (fileMenuRef.current) fileMenuRef.current.open = false;
                     fileInputRef.current?.click();
                   }}
-                  className="flex w-full items-center gap-2.5 rounded-lg px-3 py-2.5 text-sm font-medium text-slate-700 transition-colors hover:bg-slate-100 hover:text-slate-900"
+                  className="flex min-h-11 w-full items-center gap-2.5 rounded-lg px-3 py-2 text-sm font-medium text-slate-700 transition-colors hover:bg-slate-100 hover:text-slate-900"
                 >
                   <Upload className="w-[18px] h-[18px]" strokeWidth={1.8} />
                   {t('topbar.load')}
@@ -224,7 +228,7 @@ export default function TopBar() {
                     if (fileMenuRef.current) fileMenuRef.current.open = false;
                     void handleExport();
                   }}
-                  className="flex w-full items-center gap-2.5 rounded-lg px-3 py-2.5 text-sm font-medium text-slate-700 transition-colors hover:bg-slate-100 hover:text-slate-900 disabled:opacity-50 disabled:cursor-not-allowed"
+                  className="flex min-h-11 w-full items-center gap-2.5 rounded-lg px-3 py-2 text-sm font-medium text-slate-700 transition-colors hover:bg-slate-100 hover:text-slate-900 disabled:opacity-50 disabled:cursor-not-allowed"
                 >
                   <Download className="w-[18px] h-[18px]" strokeWidth={1.8} />
                   {t('topbar.save')}
@@ -236,7 +240,7 @@ export default function TopBar() {
                     if (fileMenuRef.current) fileMenuRef.current.open = false;
                     handleReset();
                   }}
-                  className="flex w-full items-center gap-2.5 rounded-lg px-3 py-2.5 text-sm font-medium text-red-600 transition-colors hover:bg-red-50 hover:text-red-700"
+                  className="flex min-h-11 w-full items-center gap-2.5 rounded-lg px-3 py-2 text-sm font-medium text-red-600 transition-colors hover:bg-red-50 hover:text-red-700"
                 >
                   <Trash2 className="w-[18px] h-[18px]" strokeWidth={1.8} />
                   {t('topbar.reset')}
@@ -247,7 +251,7 @@ export default function TopBar() {
             {showDocumentActions ? (
               <>
                 {/* History Controls */}
-                <div className="flex gap-2 mr-auto">
+                <div className="mr-auto flex gap-2">
                   <button
                     type="button"
                     onClick={historyUndo}
@@ -271,10 +275,11 @@ export default function TopBar() {
                 </div>
 
                 {/* Export / Print */}
-                <div className="flex gap-2">
+                <div className="flex flex-wrap gap-2">
                   {hasScenes ? (
                     <Link
                       to="/play"
+                      aria-label={t('topbar.present')}
                       className={`${buttonSecondary} min-h-11 flex items-center justify-center max-sm:px-3`}
                       title={t('topbar.present')}
                     >
@@ -282,19 +287,25 @@ export default function TopBar() {
                       <span className="max-sm:hidden">{t('topbar.present')}</span>
                     </Link>
                   ) : (
-                    <span
+                    <button
+                      type="button"
+                      disabled
                       aria-disabled="true"
+                      aria-label={t('topbar.present')}
+                      aria-describedby="document-actions-require-scene"
                       title={t('topbar.needScenes')}
                       className={`${buttonSecondary} min-h-11 flex cursor-not-allowed items-center justify-center opacity-50 max-sm:px-3`}
                     >
                       <Play className="w-[18px] h-[18px]" strokeWidth={1.8} aria-hidden="true" />
                       <span className="max-sm:hidden">{t('topbar.present')}</span>
-                    </span>
+                    </button>
                   )}
                   <button
                     type="button"
                     onClick={handlePrint}
                     disabled={!hasScenes}
+                    aria-label={t('topbar.print')}
+                    aria-describedby={!hasScenes ? 'document-actions-require-scene' : undefined}
                     className={`${buttonSecondary} min-h-11 max-sm:px-3`}
                     title={hasScenes ? t('topbar.print') : t('topbar.needScenes')}
                   >
@@ -306,6 +317,8 @@ export default function TopBar() {
                     onClick={handlePdf}
                     disabled={pdfBusy || !hasScenes}
                     aria-busy={pdfBusy}
+                    aria-label={pdfBusy ? t('topbar.pdfBusy') : t('topbar.pdf')}
+                    aria-describedby={!hasScenes ? 'document-actions-require-scene' : undefined}
                     className={`${buttonPrimary} min-h-11 max-sm:px-3`}
                     title={hasScenes ? t('topbar.pdf') : t('topbar.needScenes')}
                   >

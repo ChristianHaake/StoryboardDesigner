@@ -41,7 +41,7 @@ export default function SceneNavigator() {
               onClick={() => jump(id)}
               aria-label={t('navigator.jump', { n: index + 1 })}
               title={t('navigator.jump', { n: index + 1 })}
-              className="inline-flex size-9 items-center justify-center rounded-lg border border-slate-200 bg-white text-sm font-semibold text-slate-700 tabular-nums transition-colors hover:border-blue-400 hover:bg-blue-50 hover:text-blue-700"
+              className="inline-flex size-11 items-center justify-center rounded-lg border border-slate-200 bg-white text-sm font-semibold text-slate-700 tabular-nums transition-[color,background-color,border-color,transform] motion-safe:active:scale-[0.96] hover:border-blue-400 hover:bg-blue-50 hover:text-blue-700"
             >
               {index + 1}
             </button>
@@ -61,7 +61,7 @@ export default function SceneNavigator() {
         </span>
         <span className="h-1.5 w-24 overflow-hidden rounded-full bg-slate-200">
           <span
-            className="block h-full rounded-full bg-blue-600 transition-all"
+            className="block h-full rounded-full bg-blue-600 transition-[width]"
             style={{ width: `${percent}%` }}
           />
         </span>

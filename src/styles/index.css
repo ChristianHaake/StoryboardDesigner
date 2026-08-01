@@ -41,6 +41,16 @@
     sans-serif;
   font-synthesis: none;
   text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+.image-edge {
+  box-shadow: inset 0 0 0 1px rgb(0 0 0 / 10%);
+}
+
+html[data-theme='dark'] .image-edge {
+  box-shadow: inset 0 0 0 1px rgb(255 255 255 / 10%);
 }
 
 html {
@@ -239,5 +249,9 @@ html[data-theme='contrast'] .prose {
 
   :focus-visible {
     outline: none;
+  }
+
+  .image-edge {
+    box-shadow: none;
   }
 }

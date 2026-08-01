@@ -5,6 +5,7 @@ import TopBar from './layout/TopBar';
 import Footer from './layout/Footer';
 import Notifications from './layout/Notifications';
 import WizardRouter from '../features/wizard/WizardRouter';
+import LoadingStatus from '../shared/ui/LoadingStatus';
 
 // Lazy: react-markdown bleibt aus dem Editor-Bundle (Hilfe-Seiten selten besucht).
 const MarkdownView = lazy(() => import('../features/markdown/MarkdownView'));
@@ -175,12 +176,8 @@ function AppShell({
   const hideFooter = location.pathname === '/play';
 
   return (
-    <div
-      className={`flex min-h-screen flex-col bg-slate-100 text-slate-900 print:bg-white ${
-        hideFooter ? '' : 'pb-14 print:pb-0'
-      }`}
-    >
-      <Suspense fallback={null}>
+    <div className="flex min-h-screen flex-col bg-slate-100 text-slate-900 print:bg-white">
+      <Suspense fallback={<LoadingStatus className="flex-1" />}>
         <Routes>
           <Route
             path="/"

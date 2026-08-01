@@ -57,22 +57,31 @@ export default function DisplaySettings() {
         onClick={cycleTheme}
         aria-label={t('display.themeLabel', { mode: themeName })}
         title={t('display.themeLabel', { mode: themeName })}
-        className="inline-flex size-10 items-center justify-center rounded-lg text-slate-600 transition-colors hover:bg-slate-100 hover:text-slate-900"
+        className="relative inline-flex size-11 items-center justify-center rounded-lg text-slate-600 transition-[color,background-color,transform] motion-safe:active:scale-[0.96] hover:bg-slate-100 hover:text-slate-900"
       >
-        {theme === 'dark' ? (
-          <Moon className="w-[18px] h-[18px]" strokeWidth={1.8} aria-hidden="true" />
-        ) : theme === 'contrast' ? (
-          <Contrast className="w-[18px] h-[18px]" strokeWidth={1.8} aria-hidden="true" />
-        ) : (
-          <Sun className="w-[18px] h-[18px]" strokeWidth={1.8} aria-hidden="true" />
-        )}
+        {(
+          [
+            ['light', Sun],
+            ['dark', Moon],
+            ['contrast', Contrast],
+          ] as const
+        ).map(([mode, Icon]) => (
+          <Icon
+            key={mode}
+            className={`absolute h-[18px] w-[18px] transition-[opacity,transform,filter] duration-200 ease-[cubic-bezier(0.2,0,0,1)] motion-reduce:scale-100 motion-reduce:blur-0 motion-reduce:transition-none ${
+              theme === mode ? 'scale-100 opacity-100 blur-0' : 'scale-25 opacity-0 blur-[4px]'
+            }`}
+            strokeWidth={1.8}
+            aria-hidden="true"
+          />
+        ))}
       </button>
       <button
         type="button"
         onClick={cycleFont}
         aria-label={t('display.fontLabel', { size: fontName })}
         title={t('display.fontLabel', { size: fontName })}
-        className="inline-flex size-10 items-center justify-center rounded-lg text-slate-600 transition-colors hover:bg-slate-100 hover:text-slate-900"
+        className="inline-flex size-11 items-center justify-center rounded-lg text-slate-600 transition-[color,background-color,transform] motion-safe:active:scale-[0.96] hover:bg-slate-100 hover:text-slate-900"
       >
         <span aria-hidden="true" className="font-bold leading-none">
           <span className="text-xs">A</span>

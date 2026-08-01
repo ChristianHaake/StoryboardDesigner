@@ -1,4 +1,9 @@
-Hier ist der technische Umsetzungsplan für die Architektur und Entwicklung der Storyboard-App. Die Konzeption ist auf Skalierbarkeit, Wartbarkeit und den reinen Client-Betrieb mit Cloudflare Workers Static Assets ausgelegt.
+# Technischer Umsetzungsplan
+
+Aktueller, findings-basierter Interface-Plan:
+[Interface-Polish Mitigation Coding Plan](Interface-Polish-Mitigation-Codingplan.md)
+
+Der folgende historische Umsetzungsplan dokumentiert die Architektur und Entwicklung der Storyboard-App. Die Konzeption ist auf Skalierbarkeit, Wartbarkeit und den reinen Client-Betrieb mit Cloudflare Workers Static Assets ausgelegt.
 
 ### 1. Tech-Stack
 

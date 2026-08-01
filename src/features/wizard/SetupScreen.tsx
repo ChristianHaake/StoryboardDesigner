@@ -30,8 +30,9 @@ export default function SetupScreen() {
       <WizardSteps />
       <div className="mb-8">
         <button
+          type="button"
           onClick={() => setWizardStep('start')}
-          className="flex items-center text-sm text-slate-500 hover:text-blue-600 transition-colors"
+          className="flex min-h-11 items-center rounded-lg px-2 text-sm text-slate-500 transition-[color,background-color,transform] motion-safe:active:scale-[0.96] hover:bg-slate-100 hover:text-blue-600"
         >
           <ArrowLeft className="mr-1 h-4 w-4" />
           {t('wizard.setupBack')}
@@ -43,10 +44,10 @@ export default function SetupScreen() {
           <Settings className="h-6 w-6" />
         </div>
         <div>
-          <h1 className="text-3xl font-bold tracking-tight text-slate-900">
+          <h1 className="text-balance text-3xl font-bold tracking-tight text-slate-900">
             {t('wizard.setupTitle')}
           </h1>
-          <p className="mt-1 text-slate-500">
+          <p className="mt-1 text-pretty text-slate-500">
             {t(`format.${metaData.productType}`)} · {t('wizard.setupStep')}
           </p>
         </div>
@@ -133,7 +134,7 @@ export default function SetupScreen() {
             type="button"
             aria-pressed={metaData.complexity === 'simple'}
             onClick={() => updateMetaData({ complexity: 'simple' as Complexity })}
-            className={`relative flex min-h-20 w-full flex-col items-start rounded-xl border p-4 text-left transition-all ${
+            className={`relative flex min-h-20 w-full flex-col items-start rounded-xl border p-4 text-left transition-[color,background-color,border-color,box-shadow,transform] motion-safe:active:scale-[0.96] ${
               metaData.complexity === 'simple'
                 ? 'border-blue-500 bg-blue-50 ring-1 ring-blue-500'
                 : 'border-slate-200 bg-white hover:border-blue-300 hover:bg-slate-50'
@@ -180,7 +181,7 @@ export default function SetupScreen() {
                   type="button"
                   aria-pressed={metaData.complexity === level.id}
                   onClick={() => updateMetaData({ complexity: level.id as Complexity })}
-                  className={`relative flex min-h-20 flex-col items-start rounded-xl border p-4 text-left transition-all ${
+                  className={`relative flex min-h-20 flex-col items-start rounded-xl border p-4 text-left transition-[color,background-color,border-color,box-shadow,transform] motion-safe:active:scale-[0.96] ${
                     metaData.complexity === level.id
                       ? 'border-blue-500 bg-blue-50 ring-1 ring-blue-500'
                       : 'border-slate-200 bg-white hover:border-blue-300 hover:bg-slate-50'

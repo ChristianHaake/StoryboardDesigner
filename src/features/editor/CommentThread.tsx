@@ -38,7 +38,7 @@ export default memo(function CommentThread({ sceneId, sceneNumber, comments }: C
           {t('feedback.heading')}
         </h4>
         {open > 0 && (
-          <span className="rounded-full bg-amber-200 px-2 py-0.5 text-xs font-semibold text-amber-900">
+          <span className="rounded-full bg-amber-200 px-2 py-0.5 text-xs font-semibold text-amber-900 tabular-nums">
             {t('feedback.openCount', { count: open })}
           </span>
         )}

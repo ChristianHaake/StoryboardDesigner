@@ -15,7 +15,7 @@ export default function PrePlanningSection() {
 
   return (
     <details className="group mt-8" open={hasPrePlanningContent || undefined}>
-      <summary className="flex cursor-pointer items-center gap-3 list-none [&::-webkit-details-marker]:hidden print:hidden">
+      <summary className="flex min-h-11 cursor-pointer items-center gap-3 list-none [&::-webkit-details-marker]:hidden print:hidden">
         <h2 className="text-xs font-bold tracking-[0.16em] text-slate-700 uppercase transition-colors group-open:text-blue-700">
           {t('editor.planning')}
         </h2>

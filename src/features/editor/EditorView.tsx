@@ -131,15 +131,17 @@ export default function EditorView() {
         {/* Wizard Navigation */}
         <div className="mb-8 flex items-center justify-between print:hidden">
           <button
+            type="button"
             onClick={() => useStoryboardStore.getState().setWizardStep('setup')}
-            className="flex items-center text-sm font-medium text-slate-500 hover:text-blue-600 transition-colors"
+            className="flex min-h-11 items-center rounded-lg px-2 text-sm font-medium text-slate-500 transition-[color,background-color,transform] motion-safe:active:scale-[0.96] hover:bg-slate-100 hover:text-blue-600"
           >
             {t('wizard.backToSetup')}
           </button>
 
           <button
+            type="button"
             onClick={() => useStoryboardStore.getState().setWizardStep('review')}
-            className="rounded-lg bg-blue-600 px-6 py-2 text-sm font-semibold text-white shadow-sm hover:bg-blue-500 transition-colors"
+            className="min-h-11 rounded-lg bg-blue-600 px-6 text-sm font-semibold text-white shadow-sm transition-[background-color,box-shadow,transform] motion-safe:active:scale-[0.96] hover:bg-blue-500"
           >
             {t('wizard.review')}
           </button>
@@ -147,7 +149,7 @@ export default function EditorView() {
         {/* Dokument-Kopf: Projektkontext auf Bildschirm, Druck und PDF */}
         <header className="mb-8 border-b border-slate-200 pb-5">
           <div className="flex flex-wrap items-center gap-x-3 gap-y-2">
-            <h1 className="text-2xl font-bold tracking-tight text-slate-900 print:text-xl">
+            <h1 className="min-w-0 text-balance text-2xl font-bold tracking-tight text-slate-900 [overflow-wrap:anywhere] print:text-xl">
               {metaData.projectName.trim() || t('editor.docUntitled')}
             </h1>
             <span className="inline-flex items-center rounded-md bg-blue-50 px-2 py-0.5 text-xs font-semibold uppercase tracking-wider text-blue-700 print:bg-transparent print:px-0 print:text-slate-600">
@@ -159,21 +161,23 @@ export default function EditorView() {
             metaData.groupMembers.length > 0) && (
             <dl className="mt-2.5 flex flex-wrap gap-x-6 gap-y-1 text-sm text-slate-600">
               {metaData.topic.trim() && (
-                <div className="flex gap-1.5">
+                <div className="flex min-w-0 gap-1.5">
                   <dt className="font-medium text-slate-500">{t('editor.docTopic')}:</dt>
-                  <dd>{metaData.topic}</dd>
+                  <dd className="min-w-0 [overflow-wrap:anywhere]">{metaData.topic}</dd>
                 </div>
               )}
               {metaData.subject.trim() && (
-                <div className="flex gap-1.5">
+                <div className="flex min-w-0 gap-1.5">
                   <dt className="font-medium text-slate-500">{t('editor.docSubject')}:</dt>
-                  <dd>{metaData.subject}</dd>
+                  <dd className="min-w-0 [overflow-wrap:anywhere]">{metaData.subject}</dd>
                 </div>
               )}
               {metaData.groupMembers.length > 0 && (
-                <div className="flex gap-1.5">
+                <div className="flex min-w-0 gap-1.5">
                   <dt className="font-medium text-slate-500">{t('editor.docGroup')}:</dt>
-                  <dd>{metaData.groupMembers.join(', ')}</dd>
+                  <dd className="min-w-0 [overflow-wrap:anywhere]">
+                    {metaData.groupMembers.join(', ')}
+                  </dd>
                 </div>
               )}
             </dl>
@@ -212,7 +216,7 @@ export default function EditorView() {
                     <button
                       type="button"
                       onClick={() => collapseAllScenes(!isAllCollapsed)}
-                      className="inline-flex items-center gap-1.5 text-xs font-semibold text-slate-500 hover:text-slate-700 transition-colors"
+                      className="inline-flex min-h-11 items-center gap-1.5 rounded-lg px-2 text-xs font-semibold text-slate-500 transition-[color,background-color,transform] motion-safe:active:scale-[0.96] hover:bg-slate-100 hover:text-slate-700"
                     >
                       {isAllCollapsed ? (
                         <>

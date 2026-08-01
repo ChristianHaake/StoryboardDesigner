@@ -82,7 +82,22 @@ export default function PresentationView() {
     const handleKeyDown = (e: KeyboardEvent) => {
       if (e.key === 'Escape') {
         handleExit();
-      } else if (e.key === 'ArrowRight' || e.key === ' ') {
+        return;
+      }
+
+      const target = e.target;
+      const isInteractiveTarget =
+        target instanceof HTMLElement &&
+        (target.isContentEditable ||
+          Boolean(
+            target.closest(
+              'button, a[href], input, textarea, select, summary, [role="button"], [role="link"], [role="textbox"], [role="checkbox"], [role="radio"], [role="switch"], [role="slider"], [role="spinbutton"], [role="combobox"], [role="listbox"], [role="menuitem"], [role="option"], [role="tab"]',
+            ),
+          ));
+
+      if (isInteractiveTarget) return;
+
+      if (e.key === 'ArrowRight' || e.key === ' ') {
         e.preventDefault();
         handleNext();
       } else if (e.key === 'ArrowLeft') {
@@ -102,8 +117,9 @@ export default function PresentationView() {
         <h2 className="mb-2 text-xl font-medium">{t('presentation.emptyTitle')}</h2>
         <p className="mb-8 text-slate-400">{t('presentation.emptyDesc')}</p>
         <button
+          type="button"
           onClick={handleExit}
-          className="rounded-lg bg-slate-800 px-6 py-2.5 font-medium transition-colors hover:bg-slate-700"
+          className="min-h-11 rounded-lg bg-slate-800 px-6 font-medium transition-[background-color,transform] motion-safe:active:scale-[0.96] hover:bg-slate-700"
         >
           {t('presentation.exit')}
         </button>
@@ -132,7 +148,7 @@ export default function PresentationView() {
                 return list[(list.indexOf(d) + 1) % list.length];
               })
             }
-            className="flex h-10 items-center justify-center rounded-full bg-slate-900/60 px-3 text-sm font-medium tabular-nums text-slate-300 backdrop-blur-sm transition-colors hover:bg-slate-800 hover:text-white"
+            className="flex h-11 items-center justify-center rounded-full bg-slate-900/60 px-3 text-sm font-medium tabular-nums text-slate-300 backdrop-blur-sm transition-colors hover:bg-slate-800 hover:text-white"
             aria-label={t('presentation.speedLabel', { s: durationMs / 1000 })}
             title={t('presentation.speedLabel', { s: durationMs / 1000 })}
           >
@@ -141,19 +157,28 @@ export default function PresentationView() {
           <button
             type="button"
             onClick={() => setIsPlaying(!isPlaying)}
-            className="flex h-10 w-10 items-center justify-center rounded-full bg-slate-900/60 text-slate-300 backdrop-blur-sm transition-colors hover:bg-slate-800 hover:text-white"
+            className="flex h-11 w-11 items-center justify-center rounded-full bg-slate-900/60 text-slate-300 backdrop-blur-sm transition-colors hover:bg-slate-800 hover:text-white"
             aria-label={isPlaying ? t('presentation.pause') : t('presentation.play')}
             title={isPlaying ? t('presentation.pause') : t('presentation.play')}
           >
-            {isPlaying ? (
-              <Pause className="h-5 w-5" strokeWidth={2} />
-            ) : (
-              <Play className="h-5 w-5 ml-1" strokeWidth={2} />
-            )}
+            <span className="relative block h-5 w-5" aria-hidden="true">
+              <Pause
+                className={`absolute inset-0 h-5 w-5 transition-[opacity,transform,filter] duration-200 ease-[cubic-bezier(0.2,0,0,1)] motion-reduce:scale-100 motion-reduce:blur-0 motion-reduce:transition-none ${
+                  isPlaying ? 'scale-100 opacity-100 blur-0' : 'scale-25 opacity-0 blur-[4px]'
+                }`}
+                strokeWidth={2}
+              />
+              <Play
+                className={`absolute inset-0 ml-0.5 h-5 w-5 transition-[opacity,transform,filter] duration-200 ease-[cubic-bezier(0.2,0,0,1)] motion-reduce:scale-100 motion-reduce:blur-0 motion-reduce:transition-none ${
+                  isPlaying ? 'scale-25 opacity-0 blur-[4px]' : 'scale-100 opacity-100 blur-0'
+                }`}
+                strokeWidth={2}
+              />
+            </span>
           </button>
           <button
             onClick={handleExit}
-            className="inline-flex h-10 w-10 items-center justify-center rounded-full bg-slate-900/60 text-slate-300 backdrop-blur-sm transition-colors hover:bg-slate-800 hover:text-white"
+            className="inline-flex h-11 w-11 items-center justify-center rounded-full bg-slate-900/60 text-slate-300 backdrop-blur-sm transition-colors hover:bg-slate-800 hover:text-white"
             title={t('presentation.exit')}
             aria-label={t('presentation.exit')}
           >
@@ -163,7 +188,9 @@ export default function PresentationView() {
       </div>
 
       {/* Main Content Area */}
-      <div className="flex flex-1 flex-col overflow-hidden">
+      <div
+        className={`flex flex-1 flex-col overflow-hidden ${features.hasImage ? '' : 'pt-20 sm:pt-24'}`}
+      >
         {/* Image Section — hidden for audio-only formats */}
         {features.hasImage && (
           <div className="relative flex flex-1 items-center justify-center p-8 pb-4">
@@ -171,7 +198,7 @@ export default function PresentationView() {
               <img
                 src={imageUrl}
                 alt={currentScene.altText || ''}
-                className="max-h-full max-w-full rounded-lg object-contain shadow-2xl"
+                className="image-edge max-h-full max-w-full rounded-lg object-contain shadow-2xl"
               />
             ) : (
               <div className="flex aspect-video w-full max-w-3xl items-center justify-center rounded-lg border-2 border-dashed border-slate-800 bg-slate-900/50">
@@ -187,7 +214,9 @@ export default function PresentationView() {
             {currentScene.text && (
               <div className="flex items-start gap-3 rounded-lg bg-slate-800/50 p-4 border border-slate-700/50">
                 <MessageSquare className="mt-1 h-5 w-5 shrink-0 text-slate-400" />
-                <p className="text-xl leading-relaxed text-slate-100">{currentScene.text}</p>
+                <p className="min-w-0 text-xl leading-relaxed text-slate-100 [overflow-wrap:anywhere]">
+                  {currentScene.text}
+                </p>
               </div>
             )}
             {currentScene.action && (
@@ -197,7 +226,7 @@ export default function PresentationView() {
                   <h3 className="mb-1 text-xs font-semibold tracking-wider text-slate-500 uppercase">
                     {t('presentation.action')}
                   </h3>
-                  <p className="text-xl leading-relaxed text-slate-100 italic">
+                  <p className="min-w-0 text-xl leading-relaxed text-slate-100 italic [overflow-wrap:anywhere]">
                     {currentScene.action}
                   </p>
                 </div>
@@ -244,7 +273,9 @@ export default function PresentationView() {
                     <h3 className="mb-1 text-xs font-semibold tracking-wider text-slate-500 uppercase">
                       {definition.label}
                     </h3>
-                    <p className="text-lg leading-relaxed text-slate-300">{value}</p>
+                    <p className="text-lg leading-relaxed text-slate-300 [overflow-wrap:anywhere]">
+                      {value}
+                    </p>
                   </div>
                 );
               })}
@@ -257,7 +288,7 @@ export default function PresentationView() {
         <button
           onClick={handlePrev}
           disabled={currentIndex === 0}
-          className="pointer-events-auto inline-flex h-12 w-12 items-center justify-center rounded-full bg-slate-900/80 text-white backdrop-blur-sm transition-all hover:scale-110 hover:bg-slate-800 disabled:opacity-0"
+          className="pointer-events-auto inline-flex h-12 w-12 items-center justify-center rounded-full bg-slate-900/80 text-white backdrop-blur-sm transition-[color,background-color,opacity] hover:bg-slate-800 disabled:opacity-0"
           aria-label={t('presentation.prev')}
         >
           <ChevronLeft className="h-8 w-8" />
@@ -267,7 +298,7 @@ export default function PresentationView() {
         <button
           onClick={handleNext}
           disabled={currentIndex === totalScenes - 1}
-          className="pointer-events-auto inline-flex h-12 w-12 items-center justify-center rounded-full bg-slate-900/80 text-white backdrop-blur-sm transition-all hover:scale-110 hover:bg-slate-800 disabled:opacity-0"
+          className="pointer-events-auto inline-flex h-12 w-12 items-center justify-center rounded-full bg-slate-900/80 text-white backdrop-blur-sm transition-[color,background-color,opacity] hover:bg-slate-800 disabled:opacity-0"
           aria-label={t('presentation.next')}
         >
           <ChevronRight className="h-8 w-8" />
@@ -283,7 +314,7 @@ function FieldBlock({ label, value }: { label: string; value: string }) {
       <h3 className="mb-1 text-xs font-semibold tracking-wider text-slate-500 uppercase">
         {label}
       </h3>
-      <p className="text-lg leading-relaxed text-slate-300">{value}</p>
+      <p className="text-lg leading-relaxed text-slate-300 [overflow-wrap:anywhere]">{value}</p>
     </div>
   );
 }

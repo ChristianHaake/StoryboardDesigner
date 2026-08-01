@@ -25,7 +25,7 @@ export default function LanguageToggle({ className = '' }: LanguageToggleProps) 
             onClick={() => void i18n.changeLanguage(lng)}
             aria-pressed={active}
             aria-label={t(`language.switchTo${lng.charAt(0).toUpperCase()}${lng.slice(1)}`)}
-            className={`min-h-9 min-w-9 rounded-md px-2.5 text-sm font-semibold transition-colors ${
+            className={`min-h-11 min-w-11 rounded-md px-2.5 text-sm font-semibold transition-[color,background-color,box-shadow,transform] motion-safe:active:scale-[0.96] ${
               active ? 'bg-blue-600 text-white shadow-sm' : 'text-slate-600 hover:bg-white'
             }`}
           >
