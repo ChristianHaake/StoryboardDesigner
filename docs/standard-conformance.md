@@ -22,7 +22,7 @@ Review date:
 ```text
 Rule: Legal/info content lives in top-level content/.
 Reason: App loads markdown via Vite `?raw` imports from src/content/ (see
-  src/App.tsx). Moving to top-level content/ would break the build wiring.
+  src/app/App.tsx). Moving to top-level content/ would break the build wiring.
 Scope: src/content/{hilfe,hilfe.en,datenschutz,impressum}.md
 Temporary or permanent: Permanent.
 Review date: n/a
@@ -41,7 +41,7 @@ Review date: n/a
 ## App-specific decisions
 
 - **Undo/Redo** covers project content (metaData, prePlanning, fieldDefinitions,
-  scenes) via a snapshot stack (`utils/history.ts`). Images are intentionally
+  scenes) via a snapshot stack (`src/domain/history.ts`). Images are intentionally
   excluded — image add/remove has its own flow and the per-scene delete keeps
   its own undo snackbar. Keyboard shortcuts defer to native text undo while a
   form field is focused.
@@ -50,7 +50,7 @@ Review date: n/a
   `jsPDF`; the separate print action uses native `window.print()` with print
   CSS. Neither path uses a server.
 - State persists via `idb-keyval` / IndexedDB (autosave) plus `.storyboard`
-  ZIP files (`jszip` + `file-saver`) for durable backups.
+  ZIP files (`fflate` + `file-saver`) for durable backups.
 - **Theming** (light / dark / high-contrast) is implemented by overriding
   Tailwind v4 theme variables (`--color-*`) under `html[data-theme]` in
   `index.css`, rather than migrating every component className to semantic

@@ -13,7 +13,7 @@ Storyboard-Editor für Lernende an Schulen. Harte Anforderungen:
 
 ## Stack
 
-Vite · React 19 · TypeScript (strict) · Tailwind CSS 4 · Zustand 5 · @dnd-kit · idb-keyval · jszip · file-saver · react-markdown · react-router-dom · i18next · react-i18next · i18next-browser-languagedetector · jspdf + html-to-image (lazy, PDF-Export) · Vitest
+Vite · React 19 · TypeScript (strict) · Tailwind CSS 4 · Zustand 5 · @dnd-kit · idb-keyval · fflate · file-saver · react-markdown · react-router-dom · i18next · react-i18next · i18next-browser-languagedetector · jspdf + html-to-image (lazy, PDF-Export) · Vitest
 
 ## Datenfluss
 
@@ -38,8 +38,8 @@ Vite · React 19 · TypeScript (strict) · Tailwind CSS 4 · Zustand 5 · @dnd-k
 
 - **`selectProject(state)`** serialisiert den Store als `StoryboardProject` — dieselbe Struktur landet im Autosave und als `data.json` im ZIP.
 - **`decodeProject(raw)`** ist der gemeinsame Validierungs- und Migrationspfad für ZIP und IndexedDB. Neuere Major-Versionen werden abgewiesen; v1.0- und v1.1-Daten werden normalisiert.
-- **Format- und Detailmatrix:** `formatConfig.ts` definiert zentral, welche zusätzlichen Szenenfelder pro Produktart und Detailstufe sichtbar sind. `customFields.ts` ordnet Formatvorlagen ihrem Produkt und ihrer Mindeststufe zu.
-- **Autosave** ([src/utils/persistence.ts](src/utils/persistence.ts)): debounced, Sequenz-Guard verhindert, dass ein noch laufender älterer Save das `pending`-Flag löscht. `pending` speist die `beforeunload`-Warnung.
+- **Format- und Detailmatrix:** `FORMAT_SPECS` in `formatConfig.ts` ist die einzige Quelle für die Feld-Zuordnung pro Produktart: Bildfeld, Beschriftung der Kernfelder, eingebaute Detailfelder mit Mindeststufe und Format-Presets. Editor, Präsentation, Prüfung und Vorlagen lesen nur dort. `customFields.ts` leitet daraus Preset-Lookups und Limits ab. Gegen `MAX_CUSTOM_FIELDS` und bei Label-Dubletten zählen nur aktive Felder (Nutzerfelder und Presets des aktuellen Formats); Presets anderer Formate und ausgemusterte Presets bleiben als Daten erhalten, sind ausgeblendet und belegen weder Platz noch Labelnamen.
+- **Autosave** ([src/shared/utils/persistence.ts](src/shared/utils/persistence.ts)): debounced, Sequenz-Guard verhindert, dass ein noch laufender älterer Save das `pending`-Flag löscht. `pending` speist die `beforeunload`-Warnung.
 - **Restore-Guard:** `touched` wird von jeder mutierenden Store-Aktion gesetzt. Der asynchrone Restore beim App-Start schreibt nur in einen unberührten Store.
 
 ## Mehrsprachigkeit

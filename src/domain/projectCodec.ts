@@ -5,10 +5,12 @@ import type {
   SceneComment,
   StoryboardProject,
 } from './types';
+import { PRODUCT_TYPES } from './formatConfig';
 import {
   MAX_CUSTOM_FIELDS,
   MAX_CUSTOM_FIELD_DESCRIPTION_LENGTH,
   MAX_CUSTOM_FIELD_LABEL_LENGTH,
+  isActiveField,
   normalizeSelectOptions,
 } from './customFields';
 import { generateId } from '../shared/utils/idGenerator';
@@ -58,19 +60,6 @@ function imageFileName(value: unknown): string | null {
   return value;
 }
 
-const FORMAT_TYPES: MetaData['productType'][] = [
-  'shortFilm',
-  'explainerVideo',
-  'fotostory',
-  'audioPlay',
-  'podcast',
-  'stopMotion',
-  'comic',
-  'socialMediaClip',
-  'roleplay',
-  'custom',
-];
-
 function validateVersion(value: unknown): string {
   if (typeof value !== 'string') throw new ProjectValidationError(i18n.t('errors.versionMissing'));
   const major = Number.parseInt(value.split('.')[0] ?? '', 10);
@@ -83,21 +72,32 @@ function validateVersion(value: unknown): string {
   return PROJECT_VERSION;
 }
 
-function validateFieldDefinitions(value: unknown): CustomFieldDefinition[] | undefined {
+function validateFieldDefinitions(
+  value: unknown,
+  productType: MetaData['productType'],
+): CustomFieldDefinition[] | undefined {
   if (!Array.isArray(value)) return undefined;
   const seenKeys = new Set<string>();
   const seenLabels = new Set<string>();
   const definitions: CustomFieldDefinition[] = [];
+  let activeCount = 0;
   for (const item of value) {
-    if (definitions.length >= MAX_CUSTOM_FIELDS) break;
     if (!isRecord(item)) continue;
     const key = str(item.key).trim();
+    // Nur aktive Felder zählen gegen das Limit; ausgeblendete Presets sind endlich und eindeutig.
+    const active = isActiveField(key, productType);
+    if (active && activeCount >= MAX_CUSTOM_FIELDS) continue;
     const label = str(item.label).trim().slice(0, MAX_CUSTOM_FIELD_LABEL_LENGTH);
     const description = str(item.description).trim().slice(0, MAX_CUSTOM_FIELD_DESCRIPTION_LENGTH);
     const normalizedLabel = label.toLocaleLowerCase('de');
-    if (!key || !label || seenKeys.has(key) || seenLabels.has(normalizedLabel)) continue;
+    // Labels nur unter aktiven Feldern eindeutig: Presets verschiedener Formate teilen Labels.
+    if (!key || !label || seenKeys.has(key) || (active && seenLabels.has(normalizedLabel)))
+      continue;
     seenKeys.add(key);
-    seenLabels.add(normalizedLabel);
+    if (active) {
+      seenLabels.add(normalizedLabel);
+      activeCount++;
+    }
     // type 'select' nur mit gültigen Optionen; sonst auf Freitext zurückfallen.
     const options = Array.isArray(item.options)
       ? normalizeSelectOptions(item.options.filter((o): o is string => typeof o === 'string'))
@@ -132,7 +132,7 @@ export function decodeProject(raw: unknown): StoryboardProject {
   }
 
   const md = raw.metaData;
-  const productType = FORMAT_TYPES.includes(md.productType as MetaData['productType'])
+  const productType = PRODUCT_TYPES.includes(md.productType as MetaData['productType'])
     ? (md.productType as MetaData['productType'])
     : 'custom';
   const pp = isRecord(raw.prePlanning) ? raw.prePlanning : {};
@@ -181,7 +181,7 @@ export function decodeProject(raw: unknown): StoryboardProject {
     };
   });
 
-  const fieldDefinitions = validateFieldDefinitions(raw.fieldDefinitions);
+  const fieldDefinitions = validateFieldDefinitions(raw.fieldDefinitions, productType);
   return {
     version,
     metaData: {

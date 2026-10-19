@@ -20,7 +20,7 @@ Eine rein clientseitige Web-App für Lernende zum Erstellen von Storyboards (Kur
 - **Styling:** Tailwind CSS v4
 - **State Management:** Zustand 5
 - **Drag & Drop:** @dnd-kit
-- **Dateiformat & Export:** jszip, file-saver, html-to-image, jsPDF
+- **Dateiformat & Export:** fflate, file-saver, html-to-image, jsPDF
 - **Speicherung:** idb-keyval (IndexedDB)
 - **I18n:** i18next, react-i18next
 

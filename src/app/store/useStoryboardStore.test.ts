@@ -1,6 +1,6 @@
 import { beforeEach, describe, expect, it } from 'vitest';
 import { MAX_SCENES } from '../../domain/projectCodec';
-import { isPresetVisible } from '../../domain/customFields';
+import { getFormatPreset, isPresetVisible } from '../../domain/customFields';
 import { selectProject, useStoryboardStore } from './useStoryboardStore';
 
 beforeEach(() => {
@@ -206,6 +206,25 @@ describe('useStoryboardStore', () => {
     expect(useStoryboardStore.getState().scenes[0]?.customFields?.[key]).toBe(
       'Nahaufnahme der Figur',
     );
+  });
+
+  it('shows the target format presets after switching a project with content', () => {
+    useStoryboardStore.getState().setFormatType('shortFilm');
+    useStoryboardStore.getState().addScene();
+
+    expect(useStoryboardStore.getState().setFormatType('stopMotion')).toBe(2);
+    const state = useStoryboardStore.getState();
+    const visible = (state.fieldDefinitions ?? [])
+      .filter((definition) => isPresetVisible(definition.key, 'stopMotion', 'advanced'))
+      .map((definition) => definition.key);
+    expect(visible).toEqual(getFormatPreset('stopMotion').map((definition) => definition.key));
+  });
+
+  it('allows a custom label that only collides with a hidden preset of another format', () => {
+    useStoryboardStore.getState().setFormatType('shortFilm');
+    useStoryboardStore.getState().addScene();
+    useStoryboardStore.getState().setFormatType('podcast'); // shortFilm-Presets jetzt ausgeblendet
+    expect(useStoryboardStore.getState().addCustomField('Kamerabewegung')).toBeNull();
   });
 
   it('validates adding and renaming custom fields', () => {
