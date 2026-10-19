@@ -9,7 +9,7 @@ import { useShallow } from 'zustand/react/shallow';
 import { resizeImage } from '../../shared/utils/imageResizer';
 import AutoResizeTextarea from '../../shared/ui/AutoResizeTextarea';
 import CommentThread from './CommentThread';
-import { FORMAT_FEATURES, isSceneDetailFieldVisible } from '../../domain/formatConfig';
+import { FORMAT_SPECS, getSceneDetailVisibility } from '../../domain/formatConfig';
 import { isPresetVisible } from '../../domain/customFields';
 import { inputClass, labelClass } from '../../shared/ui/fieldStyles';
 import { MAX_SCENES } from '../../domain/projectCodec';
@@ -40,7 +40,7 @@ function SceneCard({ sceneId }: SceneCardProps) {
   );
   const n = orderIndex + 1;
   const productType = useStoryboardStore((s) => s.metaData.productType);
-  const features = productType ? FORMAT_FEATURES[productType] : FORMAT_FEATURES.shortFilm;
+  const features = FORMAT_SPECS[productType];
   const visual = features.hasImage; // false = reine Audioformate (kein Bild/Szene-Bezug)
 
   // We must return early if scene is deleted but component is still rendering
@@ -94,11 +94,13 @@ function SceneCard({ sceneId }: SceneCardProps) {
   if (!scene) return null;
 
   const showDialogue = Boolean(scene.audio?.dialogue?.trim());
-  const showSoundEffects = isSceneDetailFieldVisible(productType, complexity, 'soundEffects');
-  const showLocation = isSceneDetailFieldVisible(productType, complexity, 'location');
-  const showCameraSize = isSceneDetailFieldVisible(productType, complexity, 'cameraSize');
-  const showCameraMovement = isSceneDetailFieldVisible(productType, complexity, 'cameraMovement');
-  const showMaterials = isSceneDetailFieldVisible(productType, complexity, 'materials');
+  const {
+    soundEffects: showSoundEffects,
+    location: showLocation,
+    cameraSize: showCameraSize,
+    cameraMovement: showCameraMovement,
+    materials: showMaterials,
+  } = getSceneDetailVisibility(productType, complexity);
 
   async function handleFileChange(event: ChangeEvent<HTMLInputElement>) {
     const file = event.target.files?.[0];
@@ -337,40 +339,18 @@ function SceneCard({ sceneId }: SceneCardProps) {
               {/* === IMMER SICHTBAR (SIMPLE) === */}
               <div>
                 <label className={labelClass} htmlFor={`action-${scene.id}`}>
-                  {visual
-                    ? t('scene.actionLabelVisual')
-                    : productType === 'podcast'
-                      ? t('scene.actionLabelTopic')
-                      : t('scene.actionLabel')}
+                  {t(`scene.${features.actionLabel}`)}
                 </label>
                 <AutoResizeTextarea
                   id={`action-${scene.id}`}
-                  placeholder={
-                    visual
-                      ? t('scene.actionPlaceholderVisual')
-                      : productType === 'podcast'
-                        ? t('scene.actionPlaceholderTopic')
-                        : t('scene.actionPlaceholder')
-                  }
+                  placeholder={t(`scene.${features.actionPlaceholder}`)}
                   value={scene.action}
                   onChange={(e) => updateScene(scene.id, { action: e.target.value })}
                 />
               </div>
               <div>
                 <label className={labelClass} htmlFor={`text-${scene.id}`}>
-                  {productType === 'fotostory' || productType === 'comic'
-                    ? t('scene.bubbleTextLabel')
-                    : productType === 'audioPlay' || productType === 'roleplay'
-                      ? t('scene.spokenDialogueLabel')
-                      : productType === 'podcast'
-                        ? t('scene.podcastTextLabel')
-                        : productType === 'explainerVideo'
-                          ? t('scene.voiceoverLabel')
-                          : productType === 'stopMotion'
-                            ? t('scene.optionalAudioTextLabel')
-                            : productType === 'socialMediaClip'
-                              ? t('scene.socialTextLabel')
-                              : t('scene.speechLabel')}
+                  {t(`scene.${features.textLabel}`)}
                 </label>
                 <AutoResizeTextarea
                   id={`text-${scene.id}`}

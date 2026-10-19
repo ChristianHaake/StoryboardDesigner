@@ -4,12 +4,11 @@ import { useStoryboardStore } from '../../app/store/useStoryboardStore';
 import {
   MAX_CUSTOM_FIELDS,
   MAX_CUSTOM_FIELD_LABEL_LENGTH,
-  COMPLEXITY_RANK,
   getFormatPreset,
-  isRetiredPreset,
+  isActiveField,
   presetFieldMinComplexity,
-  presetProductType,
 } from '../../domain/customFields';
+import { COMPLEXITY_RANK } from '../../domain/formatConfig';
 import { buttonPrimary, buttonSecondary } from './fieldStyles';
 import type { CustomFieldDefinition, CustomFieldType } from '../../domain/types';
 import { Trash2, X } from 'lucide-react';
@@ -157,14 +156,12 @@ export default function FieldConfigDialog({ open, onClose }: FieldConfigDialogPr
   const [message, setMessage] = useState<{ text: string; kind: 'error' | 'info' } | null>(null);
   const isError = message?.kind === 'error';
   const hasFormatPreset = getFormatPreset(productType).length > 0;
-  const activeDefinitions = definitions.filter((definition) => {
-    const owner = presetProductType(definition.key);
-    return !isRetiredPreset(definition.key) && (!owner || owner === productType);
-  });
-  const preservedDefinitions = definitions.filter((definition) => {
-    const owner = presetProductType(definition.key);
-    return isRetiredPreset(definition.key) || (owner !== undefined && owner !== productType);
-  });
+  const activeDefinitions = definitions.filter((definition) =>
+    isActiveField(definition.key, productType),
+  );
+  const preservedDefinitions = definitions.filter(
+    (definition) => !isActiveField(definition.key, productType),
+  );
 
   const notify = useCallback((text: string, kind: 'error' | 'info') => {
     setMessage({ text, kind });

@@ -4,7 +4,7 @@ import { buttonPrimary } from '../../shared/ui/fieldStyles';
 import type { Scene } from '../../domain/types';
 import { useTranslation } from 'react-i18next';
 import WizardSteps from './WizardSteps';
-import { FORMAT_FEATURES, isSceneDetailFieldVisible } from '../../domain/formatConfig';
+import { FORMAT_SPECS, getSceneDetailVisibility } from '../../domain/formatConfig';
 import { isPresetVisible } from '../../domain/customFields';
 
 export default function ReviewScreen() {
@@ -15,6 +15,8 @@ export default function ReviewScreen() {
   const productType = useStoryboardStore((s) => s.metaData.productType);
   const complexity = useStoryboardStore((s) => s.metaData.complexity);
   const fieldDefinitions = useStoryboardStore((s) => s.fieldDefinitions);
+
+  const visibility = getSceneDetailVisibility(productType, complexity);
 
   const getSceneStatus = (scene: Scene) => {
     const hasImage = !!imageUrls[scene.id];
@@ -29,19 +31,15 @@ export default function ReviewScreen() {
       !!scene.action?.trim() ||
       !!scene.text?.trim() ||
       !!scene.audio?.dialogue?.trim() ||
-      (isSceneDetailFieldVisible(productType, complexity, 'soundEffects') &&
-        !!scene.audio?.soundEffects?.trim()) ||
-      (isSceneDetailFieldVisible(productType, complexity, 'location') &&
-        !!scene.location?.trim()) ||
-      (isSceneDetailFieldVisible(productType, complexity, 'cameraSize') &&
+      (visibility.soundEffects && !!scene.audio?.soundEffects?.trim()) ||
+      (visibility.location && !!scene.location?.trim()) ||
+      (visibility.cameraSize &&
         !!(scene.camera?.shotSize?.trim() || scene.camera?.angle?.trim())) ||
-      (isSceneDetailFieldVisible(productType, complexity, 'cameraMovement') &&
-        !!scene.camera?.movement?.trim()) ||
-      (isSceneDetailFieldVisible(productType, complexity, 'materials') &&
-        !!scene.materials?.length) ||
+      (visibility.cameraMovement && !!scene.camera?.movement?.trim()) ||
+      (visibility.materials && !!scene.materials?.length) ||
       hasVisibleCustomContent;
 
-    if (hasContent && (hasImage || !FORMAT_FEATURES[productType].hasImage)) return 'complete';
+    if (hasContent && (hasImage || !FORMAT_SPECS[productType].hasImage)) return 'complete';
     if (hasImage || hasContent) return 'partial';
     return 'empty';
   };

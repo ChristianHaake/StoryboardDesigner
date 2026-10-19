@@ -1,6 +1,7 @@
 import type { MetaData, Scene, StoryboardProject } from './types';
 import { generateId } from '../shared/utils/idGenerator';
 import { getFormatPreset } from './customFields';
+import { PRODUCT_TYPES } from './formatConfig';
 import { PROJECT_VERSION } from './projectCodec';
 import i18n from '../shared/i18n';
 
@@ -9,17 +10,9 @@ import i18n from '../shared/i18n';
 // i18n, damit die Vorlage in der aktiven Sprache erscheint.
 
 export type StarterFormat = Exclude<MetaData['productType'], 'custom'>;
-export const STARTER_FORMATS: StarterFormat[] = [
-  'shortFilm',
-  'explainerVideo',
-  'fotostory',
-  'audioPlay',
-  'podcast',
-  'stopMotion',
-  'comic',
-  'socialMediaClip',
-  'roleplay',
-];
+export const STARTER_FORMATS = PRODUCT_TYPES.filter(
+  (format): format is StarterFormat => format !== 'custom',
+);
 
 function makeScene(format: StarterFormat, index: number): Scene {
   const t = i18n.t;

@@ -3,7 +3,9 @@ import type { MetaData, PrePlanning } from '../../../domain/types';
 import { generateId } from '../../../shared/utils/idGenerator';
 import {
   MAX_CUSTOM_FIELDS,
+  countActiveFields,
   createCustomFieldDefinition,
+  isActiveField,
   getFormatPreset,
   mergeFormatPreset,
   normalizeSelectOptions,
@@ -75,13 +77,17 @@ export const createProjectSlice: StoryboardCreator<ProjectSlice> = (set) => ({
     let error: string | null = null;
     set((state) => {
       const definitions = state.fieldDefinitions ?? [];
-      error = validateCustomFieldLabel(label, definitions);
+      const productType = state.metaData.productType;
+      error = validateCustomFieldLabel(
+        label,
+        definitions.filter((definition) => isActiveField(definition.key, productType)),
+      );
       if (error) return state;
       if (type === 'select') {
         error = validateSelectOptions(options);
         if (error) return state;
       }
-      if (definitions.length >= MAX_CUSTOM_FIELDS) {
+      if (countActiveFields(definitions, productType) >= MAX_CUSTOM_FIELDS) {
         error = i18n.t('fields.maxFields', { max: MAX_CUSTOM_FIELDS });
         return state;
       }
@@ -105,7 +111,12 @@ export const createProjectSlice: StoryboardCreator<ProjectSlice> = (set) => ({
         error = i18n.t('fields.notFound');
         return state;
       }
-      error = validateCustomFieldLabel(label, definitions, key);
+      const productType = state.metaData.productType;
+      error = validateCustomFieldLabel(
+        label,
+        definitions.filter((definition) => isActiveField(definition.key, productType)),
+        key,
+      );
       if (error) return state;
       return {
         touched: true,

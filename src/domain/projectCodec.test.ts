@@ -279,4 +279,37 @@ describe('decodeProject', () => {
       `Zu viele Szenen (max. ${MAX_SCENES}).`,
     );
   });
+
+  it('keeps presets of different formats that share a label', () => {
+    const fieldDefinitions = [
+      { key: 'preset:shortFilm:shot-size', label: 'Einstellungsgröße' },
+      { key: 'preset:stopMotion:frames', label: 'Bilder pro Sekunde' },
+      { key: 'preset:stopMotion:shot-size', label: 'Einstellungsgröße' },
+    ];
+    const decoded = decodeProject(
+      project({
+        metaData: { ...project().metaData, productType: 'stopMotion' },
+        fieldDefinitions,
+      }),
+    );
+    expect(decoded.fieldDefinitions?.map((definition) => definition.key)).toEqual(
+      fieldDefinitions.map((definition) => definition.key),
+    );
+  });
+
+  it('limits active fields but keeps hidden presets of other formats', () => {
+    const userFields = Array.from({ length: 25 }, (_, index) => ({
+      key: `custom:${index}`,
+      label: `Feld ${index}`,
+    }));
+    const decoded = decodeProject(
+      project({
+        metaData: { ...project().metaData, productType: 'shortFilm' },
+        fieldDefinitions: [{ key: 'preset:stopMotion:frames', label: 'Frames' }, ...userFields],
+      }),
+    );
+    const keys = decoded.fieldDefinitions?.map((definition) => definition.key) ?? [];
+    expect(keys.filter((key) => key.startsWith('custom:'))).toHaveLength(20);
+    expect(keys).toContain('preset:stopMotion:frames');
+  });
 });

@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { useStoryboardStore } from '../../app/store/useStoryboardStore';
-import { FORMAT_FEATURES, isSceneDetailFieldVisible } from '../../domain/formatConfig';
+import { FORMAT_SPECS, getSceneDetailVisibility } from '../../domain/formatConfig';
 import { isPresetVisible } from '../../domain/customFields';
 import {
   ChevronLeft,
@@ -26,12 +26,14 @@ export default function PresentationView() {
   const fieldDefinitions = useStoryboardStore((s) => s.fieldDefinitions);
   const productType = useStoryboardStore((s) => s.metaData.productType);
   const complexity = useStoryboardStore((s) => s.metaData.complexity);
-  const features = productType ? FORMAT_FEATURES[productType] : FORMAT_FEATURES.shortFilm;
-  const showSoundEffects = isSceneDetailFieldVisible(productType, complexity, 'soundEffects');
-  const showLocation = isSceneDetailFieldVisible(productType, complexity, 'location');
-  const showCameraSize = isSceneDetailFieldVisible(productType, complexity, 'cameraSize');
-  const showCameraMovement = isSceneDetailFieldVisible(productType, complexity, 'cameraMovement');
-  const showMaterials = isSceneDetailFieldVisible(productType, complexity, 'materials');
+  const features = FORMAT_SPECS[productType];
+  const {
+    soundEffects: showSoundEffects,
+    location: showLocation,
+    cameraSize: showCameraSize,
+    cameraMovement: showCameraMovement,
+    materials: showMaterials,
+  } = getSceneDetailVisibility(productType, complexity);
   const [currentIndex, setCurrentIndex] = useState(0);
   const [isPlaying, setIsPlaying] = useState(false);
   const [durationMs, setDurationMs] = useState<number>(SLIDE_DURATIONS[0]);

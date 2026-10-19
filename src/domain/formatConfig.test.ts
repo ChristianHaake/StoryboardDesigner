@@ -1,6 +1,11 @@
 import { describe, expect, it } from 'vitest';
 import type { Complexity, ProductType } from './types';
-import { getVisibleSceneDetailFields } from './formatConfig';
+import {
+  FORMAT_SPECS,
+  PRODUCT_TYPES,
+  getSceneDetailVisibility,
+  getVisibleSceneDetailFields,
+} from './formatConfig';
 import { getFormatPreset, isPresetVisible } from './customFields';
 
 const TYPES: ProductType[] = [
@@ -115,4 +120,33 @@ describe('formatConfig', () => {
       }
     });
   }
+
+  it('covers exactly the known product types', () => {
+    expect([...PRODUCT_TYPES].sort()).toEqual([...TYPES].sort());
+  });
+
+  it('namespaces preset keys by owner format and keeps them unique', () => {
+    const seen = new Set<string>();
+    for (const productType of PRODUCT_TYPES) {
+      for (const preset of FORMAT_SPECS[productType].presets) {
+        expect(preset.key.startsWith(`preset:${productType}:`), preset.key).toBe(true);
+        expect(seen.has(preset.key), preset.key).toBe(false);
+        seen.add(preset.key);
+      }
+    }
+  });
+
+  it('derives the detail visibility map from the same rules as the visible list', () => {
+    for (const complexity of ['simple', 'standard', 'advanced'] as const) {
+      for (const productType of PRODUCT_TYPES) {
+        const visible = getVisibleSceneDetailFields(productType, complexity);
+        const map = getSceneDetailVisibility(productType, complexity);
+        expect(
+          Object.keys(map)
+            .filter((key) => map[key as keyof typeof map])
+            .sort(),
+        ).toEqual([...visible].sort());
+      }
+    }
+  });
 });
