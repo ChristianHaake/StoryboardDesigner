@@ -5,7 +5,7 @@ https://github.com/ChristianHaake/haak3-webapp-standard
 
 Use `/caveman` in `lite` mode for normal communication. Use `/cavecrew` for
 focused investigation, small edits, and review when Claude Code exposes
-subagent capability. Repository skill definitions live in `.claude/skills/`.
+subagent capability. Skills come from the runtime (Claude Code plugins) and are not vendored in the repository.
 
 Preserve app-specific architecture unless a requested change or mandatory
 standard rule requires otherwise. Document exceptions explicitly.
