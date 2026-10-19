@@ -153,7 +153,7 @@ export default function StartScreen() {
             tabIndex={activeCategory === category.id ? 0 : -1}
             onClick={() => setActiveCategory(category.id)}
             onKeyDown={(event) => handleCategoryKeyDown(event, index)}
-            className={`min-h-12 rounded-xl px-3 py-2 text-sm font-semibold transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 ${
+            className={`min-h-12 min-w-0 rounded-xl px-3 py-2 text-sm font-semibold [overflow-wrap:anywhere] transition-colors focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500 ${
               activeCategory === category.id
                 ? 'bg-blue-600 text-white'
                 : 'text-slate-600 hover:bg-slate-100 hover:text-slate-900'
