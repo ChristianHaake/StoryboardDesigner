@@ -1,5 +1,6 @@
 import { useTranslation } from 'react-i18next';
 import { useStoryboardStore } from '../../app/store/useStoryboardStore';
+import { confirmAction } from '../../shared/ui/confirm';
 import type { ProductType } from '../../domain/types';
 import { buildStarterProject, STARTER_FORMATS } from '../../domain/templates';
 import {
@@ -39,8 +40,10 @@ export default function StartScreen() {
     setWizardStep('setup');
   };
 
-  const loadStarter = (product: (typeof STARTER_FORMATS)[number]) => {
-    if (hasContent && !window.confirm(t('templates.confirmReplace'))) return;
+  const loadStarter = async (product: (typeof STARTER_FORMATS)[number]) => {
+    if (hasContent && !(await confirmAction(t('templates.confirmReplace'), t('confirm.replace')))) {
+      return;
+    }
     loadProject(buildStarterProject(product), {}, true);
   };
 
@@ -205,7 +208,7 @@ export default function StartScreen() {
                   type="button"
                   onClick={(event) => {
                     event.stopPropagation();
-                    loadStarter(tile.type as (typeof STARTER_FORMATS)[number]);
+                    void loadStarter(tile.type as (typeof STARTER_FORMATS)[number]);
                   }}
                   className="mt-4 inline-flex min-h-11 items-center rounded-lg bg-slate-100 px-3 text-sm font-semibold text-slate-700 transition-[color,background-color,transform] motion-safe:active:scale-[0.96] hover:bg-blue-50 hover:text-blue-700 focus:outline-none focus-visible:ring-2 focus-visible:ring-blue-500"
                 >

@@ -21,7 +21,7 @@ export default function MarkdownView({ source, contentLanguage }: MarkdownViewPr
   const wizardPath = useStoryboardStore((s) => PATH_BY_STEP[s.activeStep]);
 
   return (
-    <main>
+    <main id="main" tabIndex={-1} className="focus:outline-none">
       <A4Page>
         <Link
           to={wizardPath}

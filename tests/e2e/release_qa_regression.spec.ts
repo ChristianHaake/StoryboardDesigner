@@ -30,7 +30,7 @@ test.describe('Release QA regression smoke', () => {
 
     await createBasicProject(page, 'Release QA Roundtrip');
 
-    await page.locator('summary', { hasText: 'Datei' }).click();
+    await page.getByRole('button', { name: 'Datei', exact: true }).click();
     const projectDownloadPromise = page.waitForEvent('download');
     await page.locator('button', { hasText: 'Speichern' }).click();
     const projectDownload = await projectDownloadPromise;
@@ -99,12 +99,11 @@ test.describe('Release QA regression smoke', () => {
     expect(exportScreenPdfDownload.suggestedFilename()).toBe('Release QA Roundtrip.pdf');
     await expect(page.locator('h1', { hasText: 'Dein Storyboard ist fertig!' })).toBeVisible();
 
-    await page.locator('summary', { hasText: 'Datei' }).click();
-    page.once('dialog', async (dialog) => {
-      expect(dialog.message()).toContain('Alle lokal gespeicherten Daten löschen');
-      await dialog.accept();
-    });
+    await page.getByRole('button', { name: 'Datei', exact: true }).click();
     await page.locator('button', { hasText: 'Zurücksetzen' }).click();
+    const confirm = page.getByRole('alertdialog');
+    await expect(confirm).toContainText('Alle lokal gespeicherten Daten löschen');
+    await confirm.getByRole('button', { name: 'Zurücksetzen' }).click();
     await expect(page.locator('h1')).toContainText('Was möchtest du');
 
     await page.locator('input[accept=".storyboard,.zip"]').setInputFiles(projectPath!);

@@ -52,7 +52,7 @@ Die URL wird erst nach dem Autosave-Check (`isReady`) ausgewertet und auf
 erreichbare Schritte begrenzt (`clampStep`: ohne Projekt nur Start, ohne
 Projektnamen nur bis Einrichten). Interne Wechsel, die nur den Editor für
 PDF/Druck einblenden, laufen mit `replaceHistory`, damit kein Verlauf entsteht.
-`/play` und die Inhaltsseiten werden nicht synchronisiert; Rückwege dorthin
+Der Router übernimmt Navigationen verzögert; eigene, noch ausstehende Ziele werden in `requested` vermerkt, damit eine verspätet eintreffende Navigation nicht als Zurück-Klick gelesen wird. `/play` und die Inhaltsseiten werden nicht synchronisiert; Rückwege dorthin
 führen in den aktuellen Wizard-Schritt zurück.
 
 ## Mehrsprachigkeit

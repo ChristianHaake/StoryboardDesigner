@@ -17,6 +17,14 @@ const de = {
     progressLabel: 'Fortschritt',
     progress: '{{done}}/{{total}} befüllt',
   },
+  confirm: {
+    cancel: 'Abbrechen',
+    replace: 'Ersetzen',
+    delete: 'Löschen',
+  },
+  a11y: {
+    skipToContent: 'Zum Inhalt springen',
+  },
   templates: {
     pickHeading: 'Mit Beispiel starten',
     pickHint: 'Lade eine Vorlage mit vorkonfigurierten Feldern und Beispielinhalten.',

@@ -12,6 +12,11 @@ import { PATH_BY_STEP, STEP_BY_PATH, clampStep } from './wizardPaths';
  *   auf erreichbare Schritte
  * Inhaltsseiten und /play werden nicht angefasst. Vor dem Autosave-Check
  * (isReady) passiert nichts, damit ein Reload auf /editor nicht verfällt.
+ *
+ * Der Router übernimmt Navigationen verzögert (Transition). Eigene Navigationen
+ * werden daher in `requested` vermerkt: kommt eine davon verspätet an, obwohl der
+ * Store schon weiter ist, wird sie nicht als Nutzeraktion gelesen, sondern auf
+ * den aktuellen Schritt zurückgesetzt.
  */
 export default function WizardUrlSync() {
   const { pathname } = useLocation();
@@ -20,26 +25,42 @@ export default function WizardUrlSync() {
   const activeStep = useStoryboardStore((s) => s.activeStep);
   const setWizardStep = useStoryboardStore((s) => s.setWizardStep);
   const seen = useRef<{ pathname: string; step: WizardStep } | null>(null);
+  const requested = useRef<string[]>([]);
 
   useEffect(() => {
     if (!ready) return;
+    const go = (path: string, replace: boolean) => {
+      requested.current.push(path);
+      navigate(path, { replace });
+    };
+
     const previous = seen.current;
     seen.current = { pathname, step: activeStep };
+    const pathChanged = previous !== null && previous.pathname !== pathname;
+    let ownNavigation = false;
+    if (pathChanged) {
+      const index = requested.current.indexOf(pathname);
+      if (index >= 0) {
+        requested.current.splice(0, index + 1);
+        ownNavigation = true;
+      }
+    }
+
     const pathStep = STEP_BY_PATH[pathname];
     if (!pathStep) return;
 
     const stepChanged = previous !== null && previous.step !== activeStep;
-    const urlDriven = previous === null || (!stepChanged && previous.pathname !== pathname);
+    const urlDriven = previous === null || (pathChanged && !ownNavigation && !stepChanged);
     if (urlDriven) {
       const { hasContent, metaData } = useStoryboardStore.getState();
       const target = clampStep(pathStep, { hasContent, projectName: metaData.projectName });
       if (target !== activeStep) setWizardStep(target, true);
-      if (PATH_BY_STEP[target] !== pathname) navigate(PATH_BY_STEP[target], { replace: true });
+      if (PATH_BY_STEP[target] !== pathname) go(PATH_BY_STEP[target], true);
       return;
     }
     if (PATH_BY_STEP[activeStep] !== pathname) {
-      const replace = useStoryboardStore.getState().stepNavigation === 'replace';
-      navigate(PATH_BY_STEP[activeStep], { replace });
+      const replace = ownNavigation || useStoryboardStore.getState().stepNavigation === 'replace';
+      go(PATH_BY_STEP[activeStep], replace);
     }
   }, [ready, pathname, activeStep, navigate, setWizardStep]);
 

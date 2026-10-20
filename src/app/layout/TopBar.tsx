@@ -5,32 +5,21 @@ import { Link } from 'react-router-dom';
 import { useStoryboardStore } from '../store/useStoryboardStore';
 import { clearAutosave } from '../../shared/utils/persistence';
 import { redo as historyRedo, undo as historyUndo } from '../../domain/history';
+import FileMenu from './FileMenu';
+import { confirmAction } from '../../shared/ui/confirm';
 import { useDocumentActions } from '../../shared/hooks/useDocumentActions';
 import BrandLogo from './BrandLogo';
 import SaveIndicator from './SaveIndicator';
 import StatusPill from './StatusPill';
 import LanguageToggle from './LanguageToggle';
 import { buttonPrimary, buttonSecondary } from '../../shared/ui/fieldStyles';
-import {
-  MessageSquare,
-  Undo,
-  Redo,
-  Upload,
-  Download,
-  Printer,
-  FileText,
-  Trash2,
-  Folder,
-  Play,
-  GraduationCap,
-} from 'lucide-react';
+import { MessageSquare, Undo, Redo, Printer, FileText, Play, GraduationCap } from 'lucide-react';
 
 import { SharedTopBar } from '@haak3/ui';
 
 export default function TopBar() {
   const { t } = useTranslation();
   const fileInputRef = useRef<HTMLInputElement>(null);
-  const fileMenuRef = useRef<HTMLDetailsElement>(null);
   const feedbackMode = useStoryboardStore((s) => s.feedbackMode);
   const toggleFeedbackMode = useStoryboardStore((s) => s.toggleFeedbackMode);
   const canUndo = useStoryboardStore((s) => s.canUndo);
@@ -42,10 +31,12 @@ export default function TopBar() {
 
   const { saveBusy, pdfBusy, saveProject, exportPdf, print } = useDocumentActions();
 
-  function handleReset() {
+  async function handleReset() {
     const state = useStoryboardStore.getState();
     // Irreversibel: aktuelles Projekt UND Autosave löschen. Daher Bestätigung.
-    if (state.hasContent && !window.confirm(t('topbar.confirmReset'))) return;
+    if (state.hasContent && !(await confirmAction(t('topbar.confirmReset'), t('topbar.reset')))) {
+      return;
+    }
     state.resetProject();
     void clearAutosave();
     state.setSuccessMessage(t('topbar.resetSuccess'));
@@ -56,7 +47,10 @@ export default function TopBar() {
     event.target.value = '';
     if (!file) return;
     const state = useStoryboardStore.getState();
-    if (state.hasContent && !window.confirm(t('topbar.confirmReplace'))) {
+    if (
+      state.hasContent &&
+      !(await confirmAction(t('topbar.confirmReplace'), t('confirm.replace')))
+    ) {
       return;
     }
     const zipHandler = await import('../../shared/utils/zipHandler');
@@ -111,66 +105,12 @@ export default function TopBar() {
             <span id="document-actions-require-scene" className="sr-only">
               {t('topbar.needScenes')}
             </span>
-            {/* File Menu */}
-            <details
-              ref={fileMenuRef}
-              className="relative group [&>summary::-webkit-details-marker]:hidden"
-            >
-              <summary
-                aria-label={t('topbar.file')}
-                title={t('topbar.file')}
-                className={`${buttonSecondary} min-h-11 cursor-pointer list-none select-none`}
-              >
-                <Folder className="w-[18px] h-[18px]" strokeWidth={1.8} aria-hidden="true" />
-                <span className="max-sm:hidden">{t('topbar.file')}</span>
-              </summary>
-              {/* Overlay to close details when clicking outside */}
-              <div
-                className="fixed inset-0 z-40 hidden cursor-default group-open:block"
-                onClick={() => {
-                  if (fileMenuRef.current) fileMenuRef.current.open = false;
-                }}
-                aria-hidden="true"
-              />
-              <div className="absolute left-0 top-full mt-1.5 w-52 rounded-xl border border-slate-200 bg-white p-1.5 shadow-xl z-50">
-                <button
-                  type="button"
-                  onClick={() => {
-                    if (fileMenuRef.current) fileMenuRef.current.open = false;
-                    fileInputRef.current?.click();
-                  }}
-                  className="flex min-h-11 w-full items-center gap-2.5 rounded-lg px-3 py-2 text-sm font-medium text-slate-700 transition-colors hover:bg-slate-100 hover:text-slate-900"
-                >
-                  <Upload className="w-[18px] h-[18px]" strokeWidth={1.8} />
-                  {t('topbar.load')}
-                </button>
-                <button
-                  type="button"
-                  disabled={saveBusy}
-                  aria-busy={saveBusy}
-                  onClick={() => {
-                    if (fileMenuRef.current) fileMenuRef.current.open = false;
-                    void saveProject();
-                  }}
-                  className="flex min-h-11 w-full items-center gap-2.5 rounded-lg px-3 py-2 text-sm font-medium text-slate-700 transition-colors hover:bg-slate-100 hover:text-slate-900 disabled:opacity-50 disabled:cursor-not-allowed"
-                >
-                  <Download className="w-[18px] h-[18px]" strokeWidth={1.8} />
-                  {t('topbar.save')}
-                </button>
-                <div className="my-1.5 h-px bg-slate-100" />
-                <button
-                  type="button"
-                  onClick={() => {
-                    if (fileMenuRef.current) fileMenuRef.current.open = false;
-                    handleReset();
-                  }}
-                  className="flex min-h-11 w-full items-center gap-2.5 rounded-lg px-3 py-2 text-sm font-medium text-red-600 transition-colors hover:bg-red-50 hover:text-red-700"
-                >
-                  <Trash2 className="w-[18px] h-[18px]" strokeWidth={1.8} />
-                  {t('topbar.reset')}
-                </button>
-              </div>
-            </details>
+            <FileMenu
+              onLoad={() => fileInputRef.current?.click()}
+              onSave={() => void saveProject()}
+              onReset={() => void handleReset()}
+              saveBusy={saveBusy}
+            />
 
             {showDocumentActions ? (
               <>

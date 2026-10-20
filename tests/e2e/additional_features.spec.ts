@@ -211,10 +211,8 @@ test.describe('Storyboard Creator Additional Features E2E Suite', () => {
     await expect(dialog).toBeVisible();
 
     // Click delete for "Requisite"
-    page.once('dialog', async (d) => {
-      await d.accept();
-    });
     await page.locator('button[aria-label="Feld Requisite löschen"]').click();
+    await page.getByRole('alertdialog').getByRole('button', { name: 'Löschen' }).click();
 
     // Close Dialog
     await page.locator('button[aria-label="Dialog schließen"]').click();
@@ -336,12 +334,11 @@ test.describe('Storyboard Creator Additional Features E2E Suite', () => {
     await page.locator('button', { hasText: 'Zum Editor' }).click();
 
     // Reset project
-    await page.locator('summary', { hasText: 'Datei' }).click();
-    page.once('dialog', async (d) => {
-      expect(d.message()).toContain('Alle lokal gespeicherten Daten löschen');
-      await d.accept();
-    });
+    await page.getByRole('button', { name: 'Datei', exact: true }).click();
     await page.locator('button', { hasText: 'Zurücksetzen' }).click();
+    const confirm = page.getByRole('alertdialog');
+    await expect(confirm).toContainText('Alle lokal gespeicherten Daten löschen');
+    await confirm.getByRole('button', { name: 'Zurücksetzen' }).click();
 
     // Should return to Start Screen
     await expect(page.locator('h1')).toContainText('Was möchtest du');

@@ -25,6 +25,14 @@ const es: Translations = {
     progressLabel: 'Progreso',
     progress: '{{done}}/{{total}} con contenido',
   },
+  confirm: {
+    cancel: 'Cancelar',
+    replace: 'Reemplazar',
+    delete: 'Eliminar',
+  },
+  a11y: {
+    skipToContent: 'Saltar al contenido',
+  },
   templates: {
     pickHeading: 'Empezar con un ejemplo',
     pickHint: 'Carga una plantilla con campos preconfigurados y contenido de ejemplo.',

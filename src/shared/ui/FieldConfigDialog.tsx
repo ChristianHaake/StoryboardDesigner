@@ -10,6 +10,7 @@ import {
 } from '../../domain/customFields';
 import { COMPLEXITY_RANK } from '../../domain/formatConfig';
 import { buttonPrimary, buttonSecondary } from './fieldStyles';
+import { confirmAction } from './confirm';
 import type { CustomFieldDefinition, CustomFieldType } from '../../domain/types';
 import { Trash2, X } from 'lucide-react';
 
@@ -228,8 +229,8 @@ export default function FieldConfigDialog({ open, onClose }: FieldConfigDialogPr
     notify(t('fieldConfig.renamed'), 'info');
   }
 
-  function handleDelete(key: string, label: string) {
-    if (!window.confirm(t('fieldConfig.confirmDelete', { label }))) {
+  async function handleDelete(key: string, label: string) {
+    if (!(await confirmAction(t('fieldConfig.confirmDelete', { label }), t('confirm.delete')))) {
       return;
     }
     deleteCustomField(key);

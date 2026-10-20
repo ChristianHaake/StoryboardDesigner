@@ -9,12 +9,10 @@ export default function PrePlanningSection() {
   const prePlanning = useStoryboardStore((s) => s.prePlanning);
   const updatePrePlanning = useStoryboardStore((s) => s.updatePrePlanning);
 
-  const hasPrePlanningContent = Boolean(
-    prePlanning.logline || prePlanning.objective || prePlanning.roles || prePlanning.resources,
-  );
-
+  // Standardmäßig offen: Logline, Ziel, Rollen und Ressourcen sind das Gerüst, das
+  // vor der ersten Szene steht. Nutzende können den Bereich selbst einklappen.
   return (
-    <details className="group mt-8" open={hasPrePlanningContent || undefined}>
+    <details className="group mt-8" open>
       <summary className="flex min-h-11 cursor-pointer items-center gap-3 list-none [&::-webkit-details-marker]:hidden print:hidden">
         <h2 className="text-xs font-bold tracking-[0.16em] text-slate-700 uppercase transition-colors group-open:text-blue-700">
           {t('editor.planning')}
