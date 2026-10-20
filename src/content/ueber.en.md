@@ -20,7 +20,7 @@ high-contrast mode, adjustable font size, and image descriptions (alt text).
 ## Open source
 
 The source code is published at
-<https://github.com/ChristianHaake/Storyboard-Creator>.
+<https://github.com/ChristianHaake/StoryboardDesigner>.
 
 The software is licensed under the GNU General Public License v3.0 only
 (GPL-3.0-only).

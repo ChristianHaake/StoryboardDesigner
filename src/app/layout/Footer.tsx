@@ -31,7 +31,7 @@ export default function Footer() {
           <span className="max-sm:hidden">{t('footer.coffee')}</span>
         </a>
         <a
-          href="https://github.com/ChristianHaake/Storyboard-Creator"
+          href="https://github.com/ChristianHaake/StoryboardDesigner"
           target="_blank"
           rel="noreferrer"
           className="inline-flex min-h-11 shrink-0 items-center justify-center gap-1.5 rounded-lg px-3 text-slate-500 transition-[color,background-color,transform] motion-safe:active:scale-[0.96] hover:bg-slate-100 hover:text-slate-900"

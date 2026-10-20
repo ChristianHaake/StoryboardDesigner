@@ -6,7 +6,7 @@
   "description": "Eine rein clientseitige Web-App für Lernende zum Erstellen von Storyboards (Film, Fotostory, Rede).",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/ChristianHaake/Storyboard-Creator.git"
+    "url": "git+https://github.com/ChristianHaake/StoryboardDesigner.git"
   },
   "author": "Christian Haake",
   "keywords": [
@@ -74,5 +74,8 @@
     "vite": "^8.0.16",
     "vite-plugin-pwa": "^1.3.0",
     "vitest": "^4.1.8"
+  },
+  "overrides": {
+    "postcss-selector-parser": "^7.1.6"
   }
 }

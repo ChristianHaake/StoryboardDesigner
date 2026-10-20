@@ -60,6 +60,15 @@ Review date: n/a
   in `:root`. Theme + font scale persist in `localStorage` and apply pre-paint
   via a boot script (no flash).
 
+- **Dependency override.** `package.json` pins `postcss-selector-parser` to
+  `^7.1.6` via `overrides`. `@tailwindcss/typography@0.5.20` requires the exact
+  6.0.10, which carries GHSA-rj75-hqrm-r3gf (build-time only). The built CSS is
+  byte-identical with the override. Remove it once typography ships a fixed
+  dependency (`npm audit` is clean without it).
+- **Repository name.** The GitHub repository is `ChristianHaake/StoryboardDesigner`;
+  the product name stays "Storyboard-Creator" (sbc.haak3.de). Repository links in
+  the footer, About page, `package.json` and `AGENTS.md` use the repository name.
+
 ## Known gaps & documented limitations
 
 - **Alt text in PDF export.** Scenes carry a per-image `altText` (editor field,

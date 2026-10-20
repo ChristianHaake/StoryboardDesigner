@@ -29,7 +29,7 @@ https://github.com/ChristianHaake/haak3-webapp-standard
 
 - App name: `Storyboard-Creator`
 - Live URL: `https://sbc.haak3.de` (Stage: `https://stage-storyboard-creator.notionsworker.workers.dev/`)
-- Repository: `https://github.com/ChristianHaake/Storyboard-Creator`
+- Repository: `https://github.com/ChristianHaake/StoryboardDesigner`
 - Client-only React 19 + Vite app. Projects stored locally as `.storyboard`
   ZIP files (`data.json` + images). No backend, no accounts, no data transfer.
 - Skills are provided by the runtime (Claude Code plugins), not vendored under
