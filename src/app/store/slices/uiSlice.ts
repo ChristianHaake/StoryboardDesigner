@@ -6,10 +6,12 @@ export const createUiSlice: StoryboardCreator<UiSlice> = (set) => ({
   feedbackMode: false,
   saveStatus: 'idle',
   activeStep: 'start',
+  stepNavigation: 'push',
   isReady: false,
   collapsedScenes: {},
 
-  setWizardStep: (step) => set({ activeStep: step }),
+  setWizardStep: (step, replaceHistory = false) =>
+    set({ activeStep: step, stepNavigation: replaceHistory ? 'replace' : 'push' }),
 
   toggleFeedbackMode: () => set((state) => ({ feedbackMode: !state.feedbackMode })),
 

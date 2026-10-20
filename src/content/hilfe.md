@@ -24,6 +24,8 @@ Oben im Fortschrittsbalken siehst du, wo du gerade bist:
 4. **Prüfen** — die App zeigt dir jede Szene mit ihrem Stand (Leer, Teilweise, Vollständig). Mit **Bearbeiten** springst du direkt zur Szene und kannst sie ergänzen.
 5. **Export** — speichere dein Projekt, erzeuge ein PDF, drucke oder starte die Präsentation.
 
+Mit dem **Zurück**-Button deines Browsers kommst du einen Schritt zurück. Wenn du die Seite neu lädst, bleibst du im selben Schritt.
+
 ## Szenen
 
 - **Szene hinzufügen:** Klicke unten auf „+ Szene hinzufügen".

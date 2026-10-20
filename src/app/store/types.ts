@@ -52,9 +52,12 @@ export interface UiSlice {
   feedbackMode: boolean;
   saveStatus: 'idle' | 'saving' | 'saved' | 'error';
   activeStep: WizardStep;
+  // Wie die URL auf den nächsten Schrittwechsel reagiert (replace = kein Verlaufseintrag).
+  stepNavigation: 'push' | 'replace';
+  // true, sobald der Autosave geprüft wurde (Voraussetzung für Wizard-URLs).
   isReady: boolean;
   collapsedScenes: Record<string, boolean>;
-  setWizardStep: (step: WizardStep) => void;
+  setWizardStep: (step: WizardStep, replaceHistory?: boolean) => void;
   toggleFeedbackMode: () => void;
   setSaveStatus: (status: 'idle' | 'saving' | 'saved' | 'error') => void;
   toggleSceneCollapse: (id: string, force?: boolean) => void;

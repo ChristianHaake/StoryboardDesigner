@@ -22,7 +22,7 @@ export function useDocumentActions() {
     let element = document.getElementById('storyboard-document');
     const mustSwitch = !element;
     if (mustSwitch) {
-      store.setWizardStep('editor');
+      store.setWizardStep('editor', true);
       await nextFrame();
       await nextFrame();
       element = document.getElementById('storyboard-document');
@@ -34,7 +34,7 @@ export function useDocumentActions() {
       }
       await run(element);
     } finally {
-      if (mustSwitch) useStoryboardStore.getState().setWizardStep(previousStep);
+      if (mustSwitch) useStoryboardStore.getState().setWizardStep(previousStep, true);
     }
   }
 
