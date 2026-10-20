@@ -31,7 +31,11 @@ export default function WizardSteps() {
                       : 'bg-slate-100 text-slate-400'
                 }`}
               >
-                {done ? <Check className="h-3.5 w-3.5" strokeWidth={3} aria-hidden="true" /> : i + 1}
+                {done ? (
+                  <Check className="h-3.5 w-3.5" strokeWidth={3} aria-hidden="true" />
+                ) : (
+                  i + 1
+                )}
               </span>
               <span
                 aria-current={active ? 'step' : undefined}

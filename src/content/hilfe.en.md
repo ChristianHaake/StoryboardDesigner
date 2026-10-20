@@ -24,6 +24,8 @@ The progress bar at the top shows where you are:
 4. **Review** — the app lists every scene with its status (Empty, Partial, Complete). **Edit** jumps straight to the scene so you can fill it in.
 5. **Export** — save your project, create a PDF, print or start the presentation.
 
+The **Back** button of your browser takes you one step back. If you reload the page you stay on the same step.
+
 ## Scenes
 
 - **Add a scene:** Click “+ Add scene” at the bottom.

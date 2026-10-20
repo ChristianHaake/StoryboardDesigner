@@ -2,6 +2,8 @@ import ReactMarkdown from 'react-markdown';
 import { Link } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import A4Page from '../../app/layout/A4Page';
+import { useStoryboardStore } from '../../app/store/useStoryboardStore';
+import { PATH_BY_STEP } from '../wizard/wizardPaths';
 
 export type ContentLanguage = 'de' | 'en';
 
@@ -16,12 +18,13 @@ export default function MarkdownView({ source, contentLanguage }: MarkdownViewPr
   const { t, i18n } = useTranslation();
   const uiLanguage = i18n.resolvedLanguage ?? i18n.language;
   const showLanguageNote = uiLanguage !== contentLanguage;
+  const wizardPath = useStoryboardStore((s) => PATH_BY_STEP[s.activeStep]);
 
   return (
     <main>
       <A4Page>
         <Link
-          to="/"
+          to={wizardPath}
           className="inline-flex min-h-11 items-center rounded-lg px-3 text-sm font-semibold text-blue-700 transition-colors hover:bg-blue-50 hover:text-blue-800"
         >
           {t('markdown.backToEditor')}

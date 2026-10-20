@@ -6,6 +6,8 @@ import TopBar from './layout/TopBar';
 import Footer from './layout/Footer';
 import Notifications from './layout/Notifications';
 import WizardRouter from '../features/wizard/WizardRouter';
+import WizardUrlSync from '../features/wizard/WizardUrlSync';
+import { STEP_BY_PATH, WIZARD_PATHS } from '../features/wizard/wizardPaths';
 import LoadingStatus from '../shared/ui/LoadingStatus';
 
 // Lazy: react-markdown bleibt aus dem Editor-Bundle (Hilfe-Seiten selten besucht).
@@ -99,6 +101,8 @@ export default function App() {
       if (payload && !state.touched && state.metaData === initialMetaData) {
         state.loadProject(payload.project, payload.images);
       }
+      // Erst jetzt kennt der Wizard seinen Stand; die Wizard-URLs dürfen greifen.
+      useStoryboardStore.setState({ isReady: true });
       // History-Stack nach dem initialen Laden leeren — der Restore selbst soll
       // nicht rückgängig gemacht werden.
       resetHistory();
@@ -197,11 +201,13 @@ function AppShell({
 }) {
   const { t } = useTranslation();
   const location = useLocation();
-  const activeStep = useStoryboardStore((s) => s.activeStep);
   const hideFooter = location.pathname === '/play';
 
   // Eindeutiger Seitentitel pro Route bzw. Wizard-Schritt (WCAG 2.4.2).
-  const pageKey = ROUTE_TITLE_KEYS[location.pathname] ?? STEP_TITLE_KEYS[activeStep];
+  const pathStep = STEP_BY_PATH[location.pathname];
+  const pageKey =
+    ROUTE_TITLE_KEYS[location.pathname] ??
+    (pathStep ? STEP_TITLE_KEYS[pathStep] : 'wizard.stepFormat');
   const pageTitle = t(pageKey);
   const appTitle = t('common.appTitle');
   useEffect(() => {
@@ -212,16 +218,20 @@ function AppShell({
     <div className="flex min-h-screen flex-col bg-slate-100 text-slate-900 print:bg-white">
       <Suspense fallback={<LoadingStatus className="flex-1" />}>
         <Routes>
-          <Route
-            path="/"
-            element={
-              <>
-                <TopBar />
-                <WizardRouter />
-                <Notifications />
-              </>
-            }
-          />
+          {WIZARD_PATHS.map((path) => (
+            <Route
+              key={path}
+              path={path}
+              element={
+                <>
+                  <WizardUrlSync />
+                  <TopBar />
+                  <WizardRouter />
+                  <Notifications />
+                </>
+              }
+            />
+          ))}
           <Route path="/play" element={<PresentationView />} />
           <Route
             path="/hilfe"

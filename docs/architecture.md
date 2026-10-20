@@ -42,6 +42,19 @@ Vite · React 19 · TypeScript (strict) · Tailwind CSS 4 · Zustand 5 · @dnd-k
 - **Autosave** ([src/shared/utils/persistence.ts](src/shared/utils/persistence.ts)): debounced, Sequenz-Guard verhindert, dass ein noch laufender älterer Save das `pending`-Flag löscht. `pending` speist die `beforeunload`-Warnung.
 - **Restore-Guard:** `touched` wird von jeder mutierenden Store-Aktion gesetzt. Der asynchrone Restore beim App-Start schreibt nur in einen unberührten Store.
 
+## Wizard-URLs
+
+Der Wizard-Schritt (`activeStep`) bleibt im Store; `WizardUrlSync` spiegelt ihn
+in die URL: `/` (Format), `/setup`, `/editor`, `/review`, `/export` (Pfade in
+`wizardPaths.ts`). Ein Schrittwechsel erzeugt einen Verlaufseintrag, Zurück und
+Vorwärts im Browser wechseln den Schritt, Reload und Lesezeichen behalten ihn.
+Die URL wird erst nach dem Autosave-Check (`isReady`) ausgewertet und auf
+erreichbare Schritte begrenzt (`clampStep`: ohne Projekt nur Start, ohne
+Projektnamen nur bis Einrichten). Interne Wechsel, die nur den Editor für
+PDF/Druck einblenden, laufen mit `replaceHistory`, damit kein Verlauf entsteht.
+`/play` und die Inhaltsseiten werden nicht synchronisiert; Rückwege dorthin
+führen in den aktuellen Wizard-Schritt zurück.
+
 ## Mehrsprachigkeit
 
 i18next-Singleton, Initialisierung synchron vor dem ersten React-Render (`src/main.tsx`). Browser-Sprache via `i18next-browser-languagedetector` (Reihenfolge: `localStorage` → `navigator`), Fallback Deutsch.

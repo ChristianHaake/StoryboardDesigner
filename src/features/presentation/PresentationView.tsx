@@ -1,9 +1,10 @@
 import { useEffect, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { useStoryboardStore } from '../../app/store/useStoryboardStore';
 import { FORMAT_SPECS, getSceneDetailVisibility } from '../../domain/formatConfig';
 import { isPresetVisible } from '../../domain/customFields';
+import { PATH_BY_STEP } from '../wizard/wizardPaths';
 import {
   ChevronLeft,
   ChevronRight,
@@ -76,8 +77,13 @@ export default function PresentationView() {
     }
   };
 
+  // Zurück dorthin, woher die Präsentation gestartet wurde; bei direktem Aufruf
+  // (kein Verlauf) in den aktuellen Wizard-Schritt.
+  const wizardPath = useStoryboardStore((s) => PATH_BY_STEP[s.activeStep]);
+  const location = useLocation();
   const handleExit = () => {
-    navigate('/');
+    if (location.key !== 'default') navigate(-1);
+    else navigate(wizardPath, { replace: true });
   };
 
   useEffect(() => {
