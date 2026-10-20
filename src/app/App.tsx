@@ -9,6 +9,7 @@ import WizardRouter from '../features/wizard/WizardRouter';
 import WizardUrlSync from '../features/wizard/WizardUrlSync';
 import { STEP_BY_PATH, WIZARD_PATHS } from '../features/wizard/wizardPaths';
 import LoadingStatus from '../shared/ui/LoadingStatus';
+import ConfirmDialog from '../shared/ui/ConfirmDialog';
 
 // Lazy: react-markdown bleibt aus dem Editor-Bundle (Hilfe-Seiten selten besucht).
 const MarkdownView = lazy(() => import('../features/markdown/MarkdownView'));
@@ -216,6 +217,18 @@ function AppShell({
 
   return (
     <div className="flex min-h-screen flex-col bg-slate-100 text-slate-900 print:bg-white">
+      {!hideFooter && (
+        <a
+          href="#main"
+          onClick={(event) => {
+            event.preventDefault();
+            document.getElementById('main')?.focus();
+          }}
+          className="sr-only focus:not-sr-only focus:absolute focus:top-2 focus:left-2 focus:z-[100] focus:rounded-lg focus:bg-white focus:px-4 focus:py-3 focus:text-sm focus:font-semibold focus:text-blue-700 focus:shadow-lg print:hidden"
+        >
+          {t('a11y.skipToContent')}
+        </a>
+      )}
       <Suspense fallback={<LoadingStatus className="flex-1" />}>
         <Routes>
           {WIZARD_PATHS.map((path) => (
@@ -257,6 +270,7 @@ function AppShell({
         </Routes>
       </Suspense>
       {!hideFooter && <Footer />}
+      <ConfirmDialog />
     </div>
   );
 }

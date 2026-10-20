@@ -88,4 +88,25 @@ test.describe('Wizard steps in the URL', () => {
     await expect(page).toHaveURL(/\/editor$/);
     await expect(page.locator('h1', { hasText: 'URL Test' })).toBeVisible();
   });
+
+  test('print from the export step returns to /export without extra history', async ({ page }) => {
+    await page.addInitScript(() => {
+      window.print = () => {};
+    });
+    await reachEditor(page);
+    await page.locator('button', { hasText: 'Szene hinzufügen' }).click();
+    await page.getByLabel('Handlung / Bildbeschreibung').fill('Auftritt');
+    await page.locator('button', { hasText: 'Prüfen & Abschließen' }).click();
+    await page.locator('button', { hasText: 'Weiter zum Export' }).click();
+    await expect(page).toHaveURL(/\/export$/);
+    const historyLength = await page.evaluate(() => history.length);
+
+    // Mehrfach, weil der Router Navigationen verzögert übernimmt (Rennen mit dem Rückwechsel).
+    for (let i = 0; i < 4; i++) {
+      await page.getByRole('button', { name: 'Drucken', exact: true }).click();
+      await expect(page.locator('h1', { hasText: 'Dein Storyboard' })).toBeVisible();
+      await expect(page).toHaveURL(/\/export$/);
+    }
+    expect(await page.evaluate(() => history.length)).toBe(historyLength);
+  });
 });

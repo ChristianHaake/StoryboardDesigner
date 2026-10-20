@@ -77,10 +77,9 @@ test.describe('Storyboard Creator E2E Browser Click Test Suite', () => {
     await toEditorButton.click();
 
     // C. Editor Mode: Pre-Planning inputs
-    // Toggle the Planning summary to ensure it's open (it will automatically open if it has content, but let's click it if not open)
+    // The Planning section is open by default.
     const planningDetails = page.locator('details.group:has(summary h2:text("Planung"))');
     await expect(planningDetails).toBeVisible();
-    await page.locator('summary', { hasText: 'Planung' }).click();
     await expect(planningDetails).toHaveAttribute('open');
 
     await page.locator('#logline').fill('Ein Satz über die Müllberge im Meer.');
