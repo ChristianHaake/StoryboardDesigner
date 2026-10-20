@@ -259,6 +259,7 @@ const de = {
     toExport: 'Weiter zum Export',
     exportBack: 'Zurück zur Prüfung',
     exportTitle: 'Dein Storyboard ist fertig!',
+    exportTitleDraft: 'Dein Storyboard exportieren',
     exportSubtitle:
       'Schritt 5 von 5 · Exportiere dein Projekt als Projektdatei zur späteren Bearbeitung oder als PDF zum Ausdrucken.',
     saveProject: 'Projekt speichern',

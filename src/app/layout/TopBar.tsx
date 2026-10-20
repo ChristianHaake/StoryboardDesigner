@@ -1,11 +1,11 @@
-import { useRef, useState } from 'react';
+import { useRef } from 'react';
 import type { ChangeEvent } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Link } from 'react-router-dom';
-import { selectProject, useStoryboardStore } from '../store/useStoryboardStore';
+import { useStoryboardStore } from '../store/useStoryboardStore';
 import { clearAutosave } from '../../shared/utils/persistence';
 import { redo as historyRedo, undo as historyUndo } from '../../domain/history';
-import { exportElementToPdf } from '../../shared/utils/pdfExport';
+import { useDocumentActions } from '../../shared/hooks/useDocumentActions';
 import BrandLogo from './BrandLogo';
 import SaveIndicator from './SaveIndicator';
 import StatusPill from './StatusPill';
@@ -31,92 +31,16 @@ export default function TopBar() {
   const { t } = useTranslation();
   const fileInputRef = useRef<HTMLInputElement>(null);
   const fileMenuRef = useRef<HTMLDetailsElement>(null);
-  const [pdfBusy, setPdfBusy] = useState(false);
   const feedbackMode = useStoryboardStore((s) => s.feedbackMode);
   const toggleFeedbackMode = useStoryboardStore((s) => s.toggleFeedbackMode);
   const canUndo = useStoryboardStore((s) => s.canUndo);
   const canRedo = useStoryboardStore((s) => s.canRedo);
   const activeStep = useStoryboardStore((s) => s.activeStep);
-  const setWizardStep = useStoryboardStore((s) => s.setWizardStep);
   const hasScenes = useStoryboardStore((s) => s.scenes.length > 0);
   const showDocumentActions =
     activeStep === 'editor' || activeStep === 'review' || activeStep === 'export';
 
-  const [saveBusy, setSaveBusy] = useState(false);
-
-  async function handleExport() {
-    if (saveBusy) return;
-    const state = useStoryboardStore.getState();
-    setSaveBusy(true);
-    try {
-      const { exportProject } = await import('../../shared/utils/zipHandler');
-      await exportProject(selectProject(state), state.images);
-      state.setSuccessMessage(t('topbar.saveSuccess'));
-      state.clearErrorMessage();
-    } catch (err: unknown) {
-      console.warn('Export fehlgeschlagen:', err);
-      state.setErrorMessage(t('topbar.exportFailed'));
-    } finally {
-      setSaveBusy(false);
-    }
-  }
-
-  // PDF und Druck brauchen das gemountete #storyboard-document aus dem Editor.
-  // Falls dafür der Schritt gewechselt werden muss, danach zurückwechseln,
-  // damit Nutzende nicht ohne Rückmeldung im Editor stranden.
-  async function handlePdf() {
-    if (pdfBusy) return;
-    const state = useStoryboardStore.getState();
-    const previousStep = state.activeStep;
-    let element = document.getElementById('storyboard-document');
-    const mustSwitch = !element;
-    if (mustSwitch) {
-      setWizardStep('editor');
-      await new Promise(requestAnimationFrame);
-      await new Promise(requestAnimationFrame);
-      element = document.getElementById('storyboard-document');
-    }
-    if (!element) {
-      state.setErrorMessage(t('topbar.documentMissing'));
-      if (mustSwitch) setWizardStep(previousStep);
-      return;
-    }
-    const rawName = state.metaData.projectName.trim() || t('topbar.pdfFallbackName');
-    // Unzulässige Dateinamen-Zeichen ersetzen, damit der Download-Name nicht bricht.
-    const name = rawName.replace(/[/\\:*?"<>|]/g, '_');
-    setPdfBusy(true);
-    try {
-      await exportElementToPdf(element, `${name}.pdf`, 'article');
-      state.setSuccessMessage(t('topbar.pdfSuccess'));
-      state.clearErrorMessage();
-    } catch (err: unknown) {
-      console.warn('PDF-Export fehlgeschlagen:', err);
-      state.setErrorMessage(t('topbar.pdfFailed'));
-    } finally {
-      setPdfBusy(false);
-      if (mustSwitch) setWizardStep(previousStep);
-    }
-  }
-
-  async function handlePrint() {
-    const state = useStoryboardStore.getState();
-    const previousStep = state.activeStep;
-    let element = document.getElementById('storyboard-document');
-    const mustSwitch = !element;
-    if (mustSwitch) {
-      setWizardStep('editor');
-      await new Promise(requestAnimationFrame);
-      await new Promise(requestAnimationFrame);
-      element = document.getElementById('storyboard-document');
-    }
-    if (!element) {
-      state.setErrorMessage(t('topbar.documentMissing'));
-      if (mustSwitch) setWizardStep(previousStep);
-      return;
-    }
-    window.print();
-    if (mustSwitch) setWizardStep(previousStep);
-  }
+  const { saveBusy, pdfBusy, saveProject, exportPdf, print } = useDocumentActions();
 
   function handleReset() {
     const state = useStoryboardStore.getState();
@@ -226,7 +150,7 @@ export default function TopBar() {
                   aria-busy={saveBusy}
                   onClick={() => {
                     if (fileMenuRef.current) fileMenuRef.current.open = false;
-                    void handleExport();
+                    void saveProject();
                   }}
                   className="flex min-h-11 w-full items-center gap-2.5 rounded-lg px-3 py-2 text-sm font-medium text-slate-700 transition-colors hover:bg-slate-100 hover:text-slate-900 disabled:opacity-50 disabled:cursor-not-allowed"
                 >
@@ -274,60 +198,66 @@ export default function TopBar() {
                   </button>
                 </div>
 
-                {/* Export / Print */}
-                <div className="flex flex-wrap gap-2">
-                  {hasScenes ? (
-                    <Link
-                      to="/play"
-                      aria-label={t('topbar.present')}
-                      className={`${buttonSecondary} min-h-11 flex items-center justify-center max-sm:px-3`}
-                      title={t('topbar.present')}
-                    >
-                      <Play className="w-[18px] h-[18px]" strokeWidth={1.8} aria-hidden="true" />
-                      <span className="max-sm:hidden">{t('topbar.present')}</span>
-                    </Link>
-                  ) : (
+                {/* Export / Print: im Export-Schritt stehen dieselben Aktionen als Karten bereit. */}
+                {activeStep !== 'export' && (
+                  <div className="flex flex-wrap gap-2">
+                    {hasScenes ? (
+                      <Link
+                        to="/play"
+                        aria-label={t('topbar.present')}
+                        className={`${buttonSecondary} min-h-11 flex items-center justify-center max-sm:px-3`}
+                        title={t('topbar.present')}
+                      >
+                        <Play className="w-[18px] h-[18px]" strokeWidth={1.8} aria-hidden="true" />
+                        <span className="max-sm:hidden">{t('topbar.present')}</span>
+                      </Link>
+                    ) : (
+                      <button
+                        type="button"
+                        disabled
+                        aria-disabled="true"
+                        aria-label={t('topbar.present')}
+                        aria-describedby="document-actions-require-scene"
+                        title={t('topbar.needScenes')}
+                        className={`${buttonSecondary} min-h-11 flex cursor-not-allowed items-center justify-center opacity-50 max-sm:px-3`}
+                      >
+                        <Play className="w-[18px] h-[18px]" strokeWidth={1.8} aria-hidden="true" />
+                        <span className="max-sm:hidden">{t('topbar.present')}</span>
+                      </button>
+                    )}
                     <button
                       type="button"
-                      disabled
-                      aria-disabled="true"
-                      aria-label={t('topbar.present')}
-                      aria-describedby="document-actions-require-scene"
-                      title={t('topbar.needScenes')}
-                      className={`${buttonSecondary} min-h-11 flex cursor-not-allowed items-center justify-center opacity-50 max-sm:px-3`}
+                      onClick={print}
+                      disabled={!hasScenes}
+                      aria-label={t('topbar.print')}
+                      aria-describedby={!hasScenes ? 'document-actions-require-scene' : undefined}
+                      className={`${buttonSecondary} min-h-11 max-sm:px-3`}
+                      title={hasScenes ? t('topbar.print') : t('topbar.needScenes')}
                     >
-                      <Play className="w-[18px] h-[18px]" strokeWidth={1.8} aria-hidden="true" />
-                      <span className="max-sm:hidden">{t('topbar.present')}</span>
+                      <Printer className="w-[18px] h-[18px]" strokeWidth={1.8} aria-hidden="true" />
+                      <span className="max-sm:hidden">{t('topbar.print')}</span>
                     </button>
-                  )}
-                  <button
-                    type="button"
-                    onClick={handlePrint}
-                    disabled={!hasScenes}
-                    aria-label={t('topbar.print')}
-                    aria-describedby={!hasScenes ? 'document-actions-require-scene' : undefined}
-                    className={`${buttonSecondary} min-h-11 max-sm:px-3`}
-                    title={hasScenes ? t('topbar.print') : t('topbar.needScenes')}
-                  >
-                    <Printer className="w-[18px] h-[18px]" strokeWidth={1.8} aria-hidden="true" />
-                    <span className="max-sm:hidden">{t('topbar.print')}</span>
-                  </button>
-                  <button
-                    type="button"
-                    onClick={handlePdf}
-                    disabled={pdfBusy || !hasScenes}
-                    aria-busy={pdfBusy}
-                    aria-label={pdfBusy ? t('topbar.pdfBusy') : t('topbar.pdf')}
-                    aria-describedby={!hasScenes ? 'document-actions-require-scene' : undefined}
-                    className={`${buttonPrimary} min-h-11 max-sm:px-3`}
-                    title={hasScenes ? t('topbar.pdf') : t('topbar.needScenes')}
-                  >
-                    <FileText className="w-[18px] h-[18px]" strokeWidth={1.8} aria-hidden="true" />
-                    <span className="max-sm:hidden">
-                      {pdfBusy ? t('topbar.pdfBusy') : t('topbar.pdf')}
-                    </span>
-                  </button>
-                </div>
+                    <button
+                      type="button"
+                      onClick={exportPdf}
+                      disabled={pdfBusy || !hasScenes}
+                      aria-busy={pdfBusy}
+                      aria-label={pdfBusy ? t('topbar.pdfBusy') : t('topbar.pdf')}
+                      aria-describedby={!hasScenes ? 'document-actions-require-scene' : undefined}
+                      className={`${buttonPrimary} min-h-11 max-sm:px-3`}
+                      title={hasScenes ? t('topbar.pdf') : t('topbar.needScenes')}
+                    >
+                      <FileText
+                        className="w-[18px] h-[18px]"
+                        strokeWidth={1.8}
+                        aria-hidden="true"
+                      />
+                      <span className="max-sm:hidden">
+                        {pdfBusy ? t('topbar.pdfBusy') : t('topbar.pdf')}
+                      </span>
+                    </button>
+                  </div>
+                )}
               </>
             ) : null}
           </div>

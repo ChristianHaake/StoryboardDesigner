@@ -1,11 +1,9 @@
 import { useStoryboardStore } from '../../app/store/useStoryboardStore';
 import { ArrowLeft, ArrowRight, CheckCircle2, AlertCircle } from 'lucide-react';
 import { buttonPrimary, buttonSecondary } from '../../shared/ui/fieldStyles';
-import type { Scene } from '../../domain/types';
+import { getSceneStatus, hasNoEmptyScenes } from '../../domain/sceneStatus';
 import { useTranslation } from 'react-i18next';
 import WizardSteps from './WizardSteps';
-import { FORMAT_SPECS, getSceneDetailVisibility } from '../../domain/formatConfig';
-import { isPresetVisible } from '../../domain/customFields';
 
 export default function ReviewScreen() {
   const { t } = useTranslation();
@@ -16,8 +14,6 @@ export default function ReviewScreen() {
   const productType = useStoryboardStore((s) => s.metaData.productType);
   const complexity = useStoryboardStore((s) => s.metaData.complexity);
   const fieldDefinitions = useStoryboardStore((s) => s.fieldDefinitions);
-
-  const visibility = getSceneDetailVisibility(productType, complexity);
 
   // Springt in den Editor zur Szene. Der Editor ist lazy geladen, daher auf die
   // Karte warten (höchstens ~1 s), statt sofort zu scrollen.
@@ -37,33 +33,8 @@ export default function ReviewScreen() {
     requestAnimationFrame(focusCard);
   }
 
-  const getSceneStatus = (scene: Scene) => {
-    const hasImage = !!imageUrls[scene.id];
-    const hasVisibleCustomContent = (fieldDefinitions ?? []).some((definition) => {
-      return (
-        isPresetVisible(definition.key, productType, complexity) &&
-        !!scene.customFields?.[definition.key]?.trim()
-      );
-    });
-    const hasContent =
-      !!scene.title?.trim() ||
-      !!scene.action?.trim() ||
-      !!scene.text?.trim() ||
-      !!scene.audio?.dialogue?.trim() ||
-      (visibility.soundEffects && !!scene.audio?.soundEffects?.trim()) ||
-      (visibility.location && !!scene.location?.trim()) ||
-      (visibility.cameraSize &&
-        !!(scene.camera?.shotSize?.trim() || scene.camera?.angle?.trim())) ||
-      (visibility.cameraMovement && !!scene.camera?.movement?.trim()) ||
-      (visibility.materials && !!scene.materials?.length) ||
-      hasVisibleCustomContent;
-
-    if (hasContent && (hasImage || !FORMAT_SPECS[productType].hasImage)) return 'complete';
-    if (hasImage || hasContent) return 'partial';
-    return 'empty';
-  };
-
-  const allComplete = scenes.every((s) => getSceneStatus(s) !== 'empty');
+  const statusContext = { productType, complexity, fieldDefinitions };
+  const allComplete = hasNoEmptyScenes(scenes, imageUrls, statusContext);
 
   return (
     <div className="mx-auto max-w-3xl py-8 px-4 sm:px-6 lg:px-8 fade-in">
@@ -88,7 +59,7 @@ export default function ReviewScreen() {
 
       <div className="space-y-4 mb-10">
         {scenes.map((scene, index) => {
-          const status = getSceneStatus(scene);
+          const status = getSceneStatus(scene, !!imageUrls[scene.id], statusContext);
           return (
             <div
               key={scene.id}
