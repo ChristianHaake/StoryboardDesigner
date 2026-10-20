@@ -122,7 +122,8 @@ test.describe('Interface polish regressions', () => {
     await page.locator('button', { hasText: 'Prüfen & Abschließen' }).click();
     await expect(page.locator('h1', { hasText: 'Projekt prüfen' })).toBeFocused();
     await page.locator('button', { hasText: 'Weiter zum Export' }).click();
-    await expect(page.locator('h1', { hasText: 'Dein Storyboard ist fertig!' })).toBeFocused();
+    // Die Szene ist leer, daher der neutrale Export-Titel.
+    await expect(page.locator('h1', { hasText: 'Dein Storyboard exportieren' })).toBeFocused();
   });
 
   test('sticky desktop header keeps stable geometry and does not intercept body actions', async ({

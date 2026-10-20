@@ -1,79 +1,30 @@
-import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { Link } from 'react-router-dom';
-import { useStoryboardStore, selectProject } from '../../app/store/useStoryboardStore';
-import { ArrowLeft, Download, Printer, FileText, Play, CheckCircle2 } from 'lucide-react';
-import { exportElementToPdf } from '../../shared/utils/pdfExport';
+import { useStoryboardStore } from '../../app/store/useStoryboardStore';
+import {
+  AlertCircle,
+  ArrowLeft,
+  CheckCircle2,
+  Download,
+  FileText,
+  Play,
+  Printer,
+} from 'lucide-react';
+import { useDocumentActions } from '../../shared/hooks/useDocumentActions';
+import { hasNoEmptyScenes } from '../../domain/sceneStatus';
 import { buttonPrimary, buttonSecondary } from '../../shared/ui/fieldStyles';
 import WizardSteps from './WizardSteps';
 
 export default function ExportScreen() {
   const { t } = useTranslation();
   const setWizardStep = useStoryboardStore((s) => s.setWizardStep);
-  const [saveBusy, setSaveBusy] = useState(false);
-  const [pdfBusy, setPdfBusy] = useState(false);
-
-  async function handleExport() {
-    if (saveBusy) return;
-    const state = useStoryboardStore.getState();
-    setSaveBusy(true);
-    try {
-      const { exportProject } = await import('../../shared/utils/zipHandler');
-      await exportProject(selectProject(state), state.images);
-      state.setSuccessMessage(t('topbar.saveSuccess'));
-      state.clearErrorMessage();
-    } catch (err: unknown) {
-      console.warn('Export fehlgeschlagen:', err);
-      state.setErrorMessage(t('topbar.exportFailed'));
-    } finally {
-      setSaveBusy(false);
-    }
-  }
-
-  // PDF und Druck brauchen das gemountete #storyboard-document aus dem Editor.
-  // Deshalb kurz in den Editor wechseln und danach zum Export-Schritt zurück,
-  // damit Nutzende nicht ohne Rückmeldung im Editor stranden.
-  async function handlePdf() {
-    if (pdfBusy) return;
-    const state = useStoryboardStore.getState();
-    setWizardStep('editor');
-    await new Promise(requestAnimationFrame);
-    await new Promise(requestAnimationFrame);
-    const element = document.getElementById('storyboard-document');
-    if (!element) {
-      state.setErrorMessage(t('topbar.documentMissing'));
-      setWizardStep('export');
-      return;
-    }
-    const rawName = state.metaData.projectName.trim() || t('topbar.pdfFallbackName');
-    const name = rawName.replace(/[/\\:*?"<>|]/g, '_');
-    setPdfBusy(true);
-    try {
-      await exportElementToPdf(element, `${name}.pdf`, 'article');
-      state.setSuccessMessage(t('topbar.pdfSuccess'));
-      state.clearErrorMessage();
-    } catch (err: unknown) {
-      console.warn('PDF-Export fehlgeschlagen:', err);
-      state.setErrorMessage(t('topbar.pdfFailed'));
-    } finally {
-      setPdfBusy(false);
-      setWizardStep('export');
-    }
-  }
-
-  async function handlePrint() {
-    const state = useStoryboardStore.getState();
-    setWizardStep('editor');
-    await new Promise(requestAnimationFrame);
-    await new Promise(requestAnimationFrame);
-    if (!document.getElementById('storyboard-document')) {
-      state.setErrorMessage(t('topbar.documentMissing'));
-      setWizardStep('export');
-      return;
-    }
-    window.print();
-    setWizardStep('export');
-  }
+  const { saveBusy, pdfBusy, saveProject, exportPdf, print } = useDocumentActions();
+  const scenes = useStoryboardStore((s) => s.scenes);
+  const imageUrls = useStoryboardStore((s) => s.imageUrls);
+  const productType = useStoryboardStore((s) => s.metaData.productType);
+  const complexity = useStoryboardStore((s) => s.metaData.complexity);
+  const fieldDefinitions = useStoryboardStore((s) => s.fieldDefinitions);
+  const ready = hasNoEmptyScenes(scenes, imageUrls, { productType, complexity, fieldDefinitions });
 
   return (
     <div className="mx-auto max-w-3xl py-8 px-4 sm:px-6 lg:px-8 fade-in">
@@ -90,12 +41,25 @@ export default function ExportScreen() {
       </div>
 
       <div className="mb-10 flex flex-col items-center text-center">
-        <div className="inline-flex rounded-full bg-emerald-100 p-4 text-emerald-600 mb-6">
-          <CheckCircle2 className="h-12 w-12" />
+        <div
+          className={`mb-6 inline-flex rounded-full p-4 ${
+            ready ? 'bg-emerald-100 text-emerald-600' : 'bg-amber-100 text-amber-600'
+          }`}
+        >
+          {ready ? (
+            <CheckCircle2 className="h-12 w-12" aria-hidden="true" />
+          ) : (
+            <AlertCircle className="h-12 w-12" aria-hidden="true" />
+          )}
         </div>
         <h1 className="text-balance text-4xl font-extrabold tracking-tight text-slate-900">
-          {t('wizard.exportTitle')}
+          {ready ? t('wizard.exportTitle') : t('wizard.exportTitleDraft')}
         </h1>
+        {!ready && (
+          <p role="note" className="mt-3 text-sm font-medium text-amber-700">
+            {scenes.length === 0 ? t('wizard.noScenesSummary') : t('wizard.someEmpty')}
+          </p>
+        )}
         <p className="mt-4 max-w-lg text-pretty text-xl text-slate-500">
           {t('wizard.exportSubtitle')}
         </p>
@@ -109,7 +73,7 @@ export default function ExportScreen() {
           <h3 className="text-lg font-bold text-slate-900 mb-2">{t('wizard.saveProject')}</h3>
           <p className="text-sm text-slate-500 mb-6 flex-1">{t('wizard.saveProjectDesc')}</p>
           <button
-            onClick={handleExport}
+            onClick={saveProject}
             disabled={saveBusy}
             className={`${buttonPrimary} w-full py-3`}
           >
@@ -124,7 +88,7 @@ export default function ExportScreen() {
           <h3 className="text-lg font-bold text-slate-900 mb-2">{t('wizard.exportPdf')}</h3>
           <p className="text-sm text-slate-500 mb-6 flex-1">{t('wizard.exportPdfDesc')}</p>
           <button
-            onClick={handlePdf}
+            onClick={exportPdf}
             disabled={pdfBusy}
             className={`${buttonSecondary} w-full py-3 border-purple-200 hover:bg-purple-50 text-purple-700`}
           >
@@ -138,7 +102,7 @@ export default function ExportScreen() {
           </div>
           <h3 className="text-lg font-bold text-slate-900 mb-2">{t('wizard.directPrint')}</h3>
           <p className="text-sm text-slate-500 mb-6 flex-1">{t('wizard.directPrintDesc')}</p>
-          <button onClick={handlePrint} className={`${buttonSecondary} w-full py-3`}>
+          <button onClick={print} className={`${buttonSecondary} w-full py-3`}>
             {t('topbar.print')}
           </button>
         </div>

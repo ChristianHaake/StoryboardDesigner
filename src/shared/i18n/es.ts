@@ -268,6 +268,7 @@ const es: Translations = {
     toExport: 'Continuar a exportar',
     exportBack: 'Volver a revisión',
     exportTitle: 'Tu storyboard está listo.',
+    exportTitleDraft: 'Exporta tu storyboard',
     exportSubtitle:
       'Paso 5 de 5 · Exporta tu proyecto como archivo editable o como PDF para imprimir.',
     saveProject: 'Guardar proyecto',
