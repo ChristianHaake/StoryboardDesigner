@@ -3,16 +3,19 @@ import { Link } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import A4Page from '../../app/layout/A4Page';
 
+export type ContentLanguage = 'de' | 'en';
+
 interface MarkdownViewProps {
   source: string;
-  /** true für Rechtsseiten, die nur auf Deutsch vorliegen — zeigt auf
-   *  nicht-deutscher UI einen Hinweis oberhalb des Inhalts. */
-  germanOnly?: boolean;
+  /** Sprache des Textes (nicht der UI): setzt `lang` am Inhalt für Screenreader
+   *  und zeigt einen Hinweis, wenn die UI-Sprache davon abweicht. */
+  contentLanguage: ContentLanguage;
 }
 
-export default function MarkdownView({ source, germanOnly = false }: MarkdownViewProps) {
+export default function MarkdownView({ source, contentLanguage }: MarkdownViewProps) {
   const { t, i18n } = useTranslation();
-  const showGermanOnlyNote = germanOnly && i18n.language !== 'de';
+  const uiLanguage = i18n.resolvedLanguage ?? i18n.language;
+  const showLanguageNote = uiLanguage !== contentLanguage;
 
   return (
     <main>
@@ -23,12 +26,15 @@ export default function MarkdownView({ source, germanOnly = false }: MarkdownVie
         >
           {t('markdown.backToEditor')}
         </Link>
-        {showGermanOnlyNote && (
+        {showLanguageNote && (
           <p role="note" className="mt-4 rounded-lg bg-amber-50 px-4 py-3 text-sm text-amber-900">
-            {t('markdown.germanOnly')}
+            {t(contentLanguage === 'de' ? 'markdown.germanOnly' : 'markdown.englishOnly')}
           </p>
         )}
-        <div className="prose prose-gray mt-6 max-w-none prose-headings:tracking-tight prose-a:text-blue-700 prose-a:decoration-blue-300 prose-a:underline-offset-3">
+        <div
+          lang={contentLanguage}
+          className="prose prose-gray mt-6 max-w-none prose-headings:tracking-tight prose-a:text-blue-700 prose-a:decoration-blue-300 prose-a:underline-offset-3"
+        >
           <ReactMarkdown>{source}</ReactMarkdown>
         </div>
       </A4Page>

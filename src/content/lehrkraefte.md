@@ -36,7 +36,7 @@ Lerngruppe an, ohne das Werkzeug zu wechseln.
 
 ## Feedback-Funktion
 
-Über den Schalter **Feedback** in der oberen Leiste blenden Sie pro Szene ein
+Über den Schalter **Kommentare** in der oberen Leiste blenden Sie pro Szene ein
 Kommentarfeld ein. So geben Sie oder Mitschülerinnen und Mitschüler gezielte
 Rückmeldung direkt am Storyboard. Die Kommentare werden in der
 `.storyboard`-Datei gespeichert und können abgehakt werden.

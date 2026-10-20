@@ -43,23 +43,29 @@ Damit die Arbeit bei einem Neuladen der Seite nicht verloren geht, speichert die
 
 Zusätzlich speichert die App kleine Einstellungen im `localStorage`: die gewählte Sprache (`storyboard-creator:lang`), das Darstellungsdesign (`storyboard-creator:theme`) und die Schriftgröße (`storyboard-creator:fontScale`). Diese Werte enthalten keine Projektinhalte.
 
-Alternativ entfernt die Schaltfläche **„Zurücksetzen"** in der Aktionsleiste nach einer Bestätigung das aktuelle Projekt samt automatisch gespeichertem Stand und beginnt mit einem leeren Storyboard.
+Alternativ entfernt der Eintrag **„Zurücksetzen"** im Menü **„Datei"** nach einer Bestätigung das aktuelle Projekt samt automatisch gespeichertem Stand und beginnt mit einem leeren Storyboard.
+
+Damit die App nach dem ersten Laden auch ohne Internetverbindung funktioniert, legt ein Service Worker die App-Dateien (Programmcode, Stylesheets, Logos) im Cache-Speicher des Browsers ab. Dieser Cache enthält keine Projektinhalte. Er lässt sich ebenfalls über das Löschen der Website-Daten in den Browser-Einstellungen entfernen.
 
 Beim lokalen Speichern wird eine `.storyboard`-Datei auf dem Gerät erzeugt. Beim PDF-Export rendert die App die sichtbaren Storyboard-Seiten lokal im Browser und erzeugt daraus eine `.pdf`-Datei. Die separate Druckfunktion öffnet die native Druckfunktion des Browsers. Die App überträgt diese Dateien nicht an einen Server und hat nach dem Speichern keinen Zugriff darauf.
 
-## 5. Cookies
+## 5. Externe Links
+
+Die App enthält Links zu externen Angeboten, zum Beispiel zum Quellcode auf GitHub und zu „Buy Me a Coffee". Diese Angebote werden nicht in die Seite eingebunden. Erst wenn du einen solchen Link anklickst, verlässt du diese Website; dann gelten die Datenschutzbestimmungen des jeweiligen Anbieters. Ohne Klick werden keine Daten an diese Anbieter übertragen.
+
+## 6. Cookies
 
 Diese Website verwendet keine Cookies zu Werbe-, Marketing- oder Trackingzwecken.
 
 Soweit durch technische Infrastrukturkomponenten technisch notwendige Cookies gesetzt werden, erfolgt dies auf Grundlage des berechtigten Interesses gemäß Art. 6 Abs. 1 lit. f DSGVO.
 
-## 6. Datenübermittlung in Drittländer
+## 7. Datenübermittlung in Drittländer
 
 Bei der Nutzung von Cloudflare kann eine Verarbeitung personenbezogener Daten in den USA nicht ausgeschlossen werden.
 
 Der Anbieter verwendet nach eigenen Angaben geeignete Garantien für internationale Datenübermittlungen, insbesondere Standardvertragsklauseln der Europäischen Kommission, soweit dies erforderlich ist.
 
-## 7. Rechte der betroffenen Personen
+## 8. Rechte der betroffenen Personen
 
 Sie haben im Rahmen der gesetzlichen Bestimmungen insbesondere folgende Rechte:
 
@@ -72,8 +78,8 @@ Sie haben im Rahmen der gesetzlichen Bestimmungen insbesondere folgende Rechte:
 
 Außerdem haben Sie das Recht, Beschwerde bei einer Datenschutzaufsichtsbehörde einzulegen.
 
-## 8. Änderungen dieser Datenschutzerklärung
+## 9. Änderungen dieser Datenschutzerklärung
 
 Diese Datenschutzerklärung kann angepasst werden, wenn technische oder rechtliche Änderungen dies erforderlich machen. Es gilt jeweils die auf dieser Website veröffentlichte aktuelle Fassung.
 
-_Stand: Juni 2026_
+_Stand: Oktober 2026_
