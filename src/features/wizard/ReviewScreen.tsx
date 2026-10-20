@@ -1,6 +1,6 @@
 import { useStoryboardStore } from '../../app/store/useStoryboardStore';
 import { ArrowLeft, ArrowRight, CheckCircle2, AlertCircle } from 'lucide-react';
-import { buttonPrimary } from '../../shared/ui/fieldStyles';
+import { buttonPrimary, buttonSecondary } from '../../shared/ui/fieldStyles';
 import type { Scene } from '../../domain/types';
 import { useTranslation } from 'react-i18next';
 import WizardSteps from './WizardSteps';
@@ -11,12 +11,31 @@ export default function ReviewScreen() {
   const { t } = useTranslation();
   const setWizardStep = useStoryboardStore((s) => s.setWizardStep);
   const scenes = useStoryboardStore((s) => s.scenes);
+  const toggleSceneCollapse = useStoryboardStore((s) => s.toggleSceneCollapse);
   const imageUrls = useStoryboardStore((s) => s.imageUrls);
   const productType = useStoryboardStore((s) => s.metaData.productType);
   const complexity = useStoryboardStore((s) => s.metaData.complexity);
   const fieldDefinitions = useStoryboardStore((s) => s.fieldDefinitions);
 
   const visibility = getSceneDetailVisibility(productType, complexity);
+
+  // Springt in den Editor zur Szene. Der Editor ist lazy geladen, daher auf die
+  // Karte warten (höchstens ~1 s), statt sofort zu scrollen.
+  function editScene(id: string) {
+    toggleSceneCollapse(id, false);
+    setWizardStep('editor');
+    let frames = 0;
+    const focusCard = () => {
+      const card = document.getElementById(`scene-${id}`);
+      if (card) {
+        card.scrollIntoView({ block: 'start' });
+        card.focus({ preventScroll: true });
+      } else if (frames++ < 60) {
+        requestAnimationFrame(focusCard);
+      }
+    };
+    requestAnimationFrame(focusCard);
+  }
 
   const getSceneStatus = (scene: Scene) => {
     const hasImage = !!imageUrls[scene.id];
@@ -101,6 +120,14 @@ export default function ReviewScreen() {
                     <AlertCircle className="mr-1 h-5 w-5" /> {t('wizard.empty')}
                   </span>
                 )}
+                <button
+                  type="button"
+                  onClick={() => editScene(scene.id)}
+                  aria-label={t('wizard.editSceneAria', { n: index + 1 })}
+                  className={`${buttonSecondary} min-h-11`}
+                >
+                  {t('wizard.editScene')}
+                </button>
               </div>
             </div>
           );

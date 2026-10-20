@@ -41,10 +41,9 @@ Review date: n/a
 ## App-specific decisions
 
 - **Undo/Redo** covers project content (metaData, prePlanning, fieldDefinitions,
-  scenes) via a snapshot stack (`src/domain/history.ts`). Images are intentionally
-  excluded — image add/remove has its own flow and the per-scene delete keeps
-  its own undo snackbar. Keyboard shortcuts defer to native text undo while a
-  form field is focused.
+  scenes, images) via a snapshot stack (`src/domain/history.ts`). The per-scene
+  delete additionally keeps its own undo snackbar. Keyboard shortcuts defer to
+  native text undo while a form field is focused.
 - Planning and design docs are kept under `docs/planning/`.
 - PDF export creates a local `.pdf` in the browser via `html-to-image` and
   `jsPDF`; the separate print action uses native `window.print()` with print

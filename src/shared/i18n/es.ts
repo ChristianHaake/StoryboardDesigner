@@ -254,6 +254,8 @@ const es: Translations = {
     backToSetup: 'Volver a ajustes',
     review: 'Revisar y finalizar',
     reviewBack: 'Volver al editor',
+    editScene: 'Editar',
+    editSceneAria: 'Editar la escena {{n}}',
     reviewTitle: 'Revisar proyecto',
     reviewSubtitle: 'Paso 4 de 5 · Revisa si tu storyboard está completo.',
     complete: 'Completo',
@@ -532,6 +534,7 @@ const es: Translations = {
   markdown: {
     backToEditor: '← Volver al editor',
     germanOnly: 'Esta página solo está disponible en alemán.',
+    englishOnly: 'Esta página solo está disponible en inglés.',
   },
   footer: {
     nav: 'Aspectos legales y ayuda',

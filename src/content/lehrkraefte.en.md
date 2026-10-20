@@ -33,7 +33,7 @@ without switching tools.
 
 ## Feedback feature
 
-The **Feedback** toggle in the top bar reveals a comment field per scene. You or
+The **Comments** toggle in the top bar reveals a comment field per scene. You or
 peers can give targeted feedback right on the storyboard. Comments are stored in
 the `.storyboard` file and can be marked as done.
 

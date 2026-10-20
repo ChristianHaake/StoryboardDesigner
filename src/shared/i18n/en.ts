@@ -252,6 +252,8 @@ const en: Translations = {
     backToSetup: 'Back to settings',
     review: 'Review & finish',
     reviewBack: 'Back to editor',
+    editScene: 'Edit',
+    editSceneAria: 'Edit scene {{n}}',
     reviewTitle: 'Review project',
     reviewSubtitle: 'Step 4 of 5 · Check your storyboard for completeness.',
     complete: 'Complete',
@@ -530,6 +532,7 @@ const en: Translations = {
   markdown: {
     backToEditor: '← Back to editor',
     germanOnly: 'This page is only available in German.',
+    englishOnly: 'This page is only available in English.',
   },
   footer: {
     nav: 'Legal and help',

@@ -245,6 +245,8 @@ const de = {
     backToSetup: 'Zurück zu Einstellungen',
     review: 'Prüfen & Abschließen',
     reviewBack: 'Zurück zum Editor',
+    editScene: 'Bearbeiten',
+    editSceneAria: 'Szene {{n}} bearbeiten',
     reviewTitle: 'Projekt prüfen',
     reviewSubtitle: 'Schritt 4 von 5 · Überprüfe dein Storyboard auf Vollständigkeit.',
     complete: 'Vollständig',
@@ -526,6 +528,7 @@ const de = {
   markdown: {
     backToEditor: '← Zurück zum Editor',
     germanOnly: 'Diese Seite ist nur auf Deutsch verfügbar.',
+    englishOnly: 'Diese Seite ist nur auf Englisch verfügbar.',
   },
   footer: {
     nav: 'Rechtliches und Hilfe',

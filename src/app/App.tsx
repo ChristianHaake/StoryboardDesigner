@@ -1,6 +1,7 @@
 import { Suspense, lazy, useEffect } from 'react';
 import { BrowserRouter, Navigate, Route, Routes, useLocation } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
+import type { ParseKeys } from 'i18next';
 import TopBar from './layout/TopBar';
 import Footer from './layout/Footer';
 import Notifications from './layout/Notifications';
@@ -25,6 +26,7 @@ import {
   undo as historyUndo,
   type ContentSnapshot,
 } from '../domain/history';
+import type { ContentLanguage } from '../features/markdown/MarkdownView';
 import hilfeDe from '../content/hilfe.md?raw';
 import hilfeEn from '../content/hilfe.en.md?raw';
 import lehrkraefteDe from '../content/lehrkraefte.md?raw';
@@ -34,18 +36,36 @@ import ueberEn from '../content/ueber.en.md?raw';
 import datenschutzText from '../content/datenschutz.md?raw';
 import impressumText from '../content/impressum.md?raw';
 
-export default function App() {
-  const { t, i18n } = useTranslation();
-  const language = i18n.resolvedLanguage ?? i18n.language;
-  const hilfeText = language === 'en' ? hilfeEn : hilfeDe;
-  const lehrkraefteText = language === 'en' ? lehrkraefteEn : lehrkraefteDe;
-  const ueberText = language === 'en' ? ueberEn : ueberDe;
+// Titel-Keys: Route hat Vorrang, auf "/" bestimmt der Wizard-Schritt den Titel.
+const ROUTE_TITLE_KEYS: Partial<Record<string, ParseKeys>> = {
+  '/play': 'topbar.present',
+  '/hilfe': 'footer.help',
+  '/lehrkraefte': 'brand.forEducators',
+  '/ueber': 'footer.about',
+  '/datenschutz': 'footer.privacy',
+  '/impressum': 'footer.imprint',
+};
+const STEP_TITLE_KEYS = {
+  start: 'wizard.stepFormat',
+  setup: 'wizard.stepSetup',
+  editor: 'wizard.stepEditor',
+  review: 'wizard.stepReview',
+  export: 'wizard.stepExport',
+} as const;
 
-  // Dokument-Sprache und Titel an die UI-Sprache koppeln.
+export default function App() {
+  const { i18n } = useTranslation();
+  const language = i18n.resolvedLanguage ?? i18n.language;
+  // Inhaltsseiten gibt es nur auf Deutsch und Englisch; es/fr sehen Englisch.
+  const contentLanguage: ContentLanguage = language === 'de' ? 'de' : 'en';
+  const hilfeText = contentLanguage === 'en' ? hilfeEn : hilfeDe;
+  const lehrkraefteText = contentLanguage === 'en' ? lehrkraefteEn : lehrkraefteDe;
+  const ueberText = contentLanguage === 'en' ? ueberEn : ueberDe;
+
+  // Dokument-Sprache an die UI-Sprache koppeln (Seitentitel: AppShell, pro Route).
   useEffect(() => {
     document.documentElement.lang = language;
-    document.title = t('common.appTitle');
-  }, [language, t]);
+  }, [language]);
 
   useEffect(() => {
     let cancelled = false;
@@ -149,6 +169,7 @@ export default function App() {
   return (
     <BrowserRouter>
       <AppShell
+        contentLanguage={contentLanguage}
         hilfeText={hilfeText}
         lehrkraefteText={lehrkraefteText}
         ueberText={ueberText}
@@ -160,20 +181,32 @@ export default function App() {
 }
 
 function AppShell({
+  contentLanguage,
   hilfeText,
   lehrkraefteText,
   ueberText,
   datenschutzText,
   impressumText,
 }: {
+  contentLanguage: ContentLanguage;
   hilfeText: string;
   lehrkraefteText: string;
   ueberText: string;
   datenschutzText: string;
   impressumText: string;
 }) {
+  const { t } = useTranslation();
   const location = useLocation();
+  const activeStep = useStoryboardStore((s) => s.activeStep);
   const hideFooter = location.pathname === '/play';
+
+  // Eindeutiger Seitentitel pro Route bzw. Wizard-Schritt (WCAG 2.4.2).
+  const pageKey = ROUTE_TITLE_KEYS[location.pathname] ?? STEP_TITLE_KEYS[activeStep];
+  const pageTitle = t(pageKey);
+  const appTitle = t('common.appTitle');
+  useEffect(() => {
+    document.title = `${pageTitle} – ${appTitle}`;
+  }, [pageTitle, appTitle]);
 
   return (
     <div className="flex min-h-screen flex-col bg-slate-100 text-slate-900 print:bg-white">
@@ -190,14 +223,26 @@ function AppShell({
             }
           />
           <Route path="/play" element={<PresentationView />} />
-          <Route path="/hilfe" element={<MarkdownView source={hilfeText} />} />
-          <Route path="/lehrkraefte" element={<MarkdownView source={lehrkraefteText} />} />
-          <Route path="/ueber" element={<MarkdownView source={ueberText} />} />
+          <Route
+            path="/hilfe"
+            element={<MarkdownView source={hilfeText} contentLanguage={contentLanguage} />}
+          />
+          <Route
+            path="/lehrkraefte"
+            element={<MarkdownView source={lehrkraefteText} contentLanguage={contentLanguage} />}
+          />
+          <Route
+            path="/ueber"
+            element={<MarkdownView source={ueberText} contentLanguage={contentLanguage} />}
+          />
           <Route
             path="/datenschutz"
-            element={<MarkdownView source={datenschutzText} germanOnly />}
+            element={<MarkdownView source={datenschutzText} contentLanguage="de" />}
           />
-          <Route path="/impressum" element={<MarkdownView source={impressumText} germanOnly />} />
+          <Route
+            path="/impressum"
+            element={<MarkdownView source={impressumText} contentLanguage="de" />}
+          />
           <Route path="*" element={<Navigate to="/" replace />} />
         </Routes>
       </Suspense>

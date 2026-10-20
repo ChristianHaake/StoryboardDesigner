@@ -253,6 +253,8 @@ const fr: Translations = {
     backToSetup: 'Retour aux réglages',
     review: 'Vérifier et terminer',
     reviewBack: 'Retour à l’éditeur',
+    editScene: 'Modifier',
+    editSceneAria: 'Modifier la scène {{n}}',
     reviewTitle: 'Vérifier le projet',
     reviewSubtitle: 'Étape 4 sur 5 · Vérifie que ton storyboard est complet.',
     complete: 'Complet',
@@ -534,6 +536,7 @@ const fr: Translations = {
   markdown: {
     backToEditor: '← Retour à l’éditeur',
     germanOnly: 'Cette page n’est disponible qu’en allemand.',
+    englishOnly: 'Cette page n’est disponible qu’en anglais.',
   },
   footer: {
     nav: 'Mentions légales et aide',
