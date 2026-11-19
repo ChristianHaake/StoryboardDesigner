@@ -77,6 +77,18 @@ test.describe('Content pages and navigation', () => {
     );
   });
 
+  test('legal pages show the shared contact address and analytics disclosure', async ({ page }) => {
+    for (const path of ['/datenschutz', '/impressum', '/agb']) {
+      await page.goto(path);
+      await expect(page.getByRole('link', { name: 'apps@haak3.de' }).first()).toHaveAttribute(
+        'href',
+        'mailto:apps@haak3.de',
+      );
+    }
+    await page.goto('/datenschutz');
+    await expect(page.getByRole('link', { name: 'Cloudflare Web Analytics' })).toBeVisible();
+  });
+
   test('review step jumps to the chosen scene in the editor', async ({ page }) => {
     await page.goto('/');
     await page.locator('button', { hasText: 'Kurzfilm' }).first().click();
