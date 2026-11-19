@@ -547,6 +547,8 @@ const en: Translations = {
     nav: 'Legal and help',
     help: 'Help',
     about: 'About',
+    terms: 'Terms',
+    support: 'Support',
     privacy: 'Privacy',
     imprint: 'Imprint',
     repository: 'Source code',

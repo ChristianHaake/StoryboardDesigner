@@ -543,6 +543,8 @@ const de = {
     nav: 'Rechtliches und Hilfe',
     help: 'Hilfe',
     about: 'Über',
+    terms: 'AGB',
+    support: 'Unterstützen',
     privacy: 'Datenschutz',
     imprint: 'Impressum',
     repository: 'Quellcode',

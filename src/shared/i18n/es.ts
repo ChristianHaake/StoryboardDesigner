@@ -549,6 +549,8 @@ const es: Translations = {
     nav: 'Aspectos legales y ayuda',
     help: 'Ayuda',
     about: 'Acerca de',
+    terms: 'Términos',
+    support: 'Apoyar',
     privacy: 'Privacidad',
     imprint: 'Aviso legal',
     repository: 'Código fuente',
