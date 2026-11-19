@@ -102,3 +102,9 @@ No. Everything stays on your device. Nothing is uploaded to the internet.
 
 **How many scenes can I create?**
 Up to 200. For a short film, 8–15 scenes are usually enough.
+
+## Report an error or idea
+
+If you find an error or have an idea for a feature, send the app, device and
+last step to [apps@haak3.de](mailto:apps@haak3.de). Please do not include
+project or personal data.

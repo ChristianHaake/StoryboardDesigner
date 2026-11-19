@@ -551,6 +551,8 @@ const fr: Translations = {
     nav: 'Mentions légales et aide',
     help: 'Aide',
     about: 'À propos',
+    terms: 'Conditions',
+    support: 'Soutenir',
     privacy: 'Confidentialité',
     imprint: 'Mentions légales',
     repository: 'Code source',

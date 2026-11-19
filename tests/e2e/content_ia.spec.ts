@@ -6,6 +6,8 @@ test.describe('Content pages and navigation', () => {
       ['/hilfe', 'Hilfe'],
       ['/ueber', 'Über'],
       ['/lehrkraefte', 'Für Lehrkräfte'],
+      ['/agb', 'AGB'],
+      ['/unterstuetzen', 'Unterstützen'],
       ['/datenschutz', 'Datenschutz'],
       ['/impressum', 'Impressum'],
     ];
@@ -44,6 +46,35 @@ test.describe('Content pages and navigation', () => {
     await page.goto('/hilfe');
     await expect(page.locator('.prose')).toHaveAttribute('lang', 'de');
     await expect(page.getByRole('note')).toHaveCount(0);
+  });
+
+  test('footer routes to terms and internal support with safe feedback links', async ({ page }) => {
+    await page.goto('/');
+    await page.getByRole('link', { name: 'AGB' }).click();
+    await expect(page).toHaveURL(/\/agb$/);
+    await expect(page.getByRole('link', { name: 'apps@haak3.de' })).toHaveAttribute(
+      'href',
+      'mailto:apps@haak3.de',
+    );
+    await page.goto('/');
+    await page.getByRole('link', { name: 'Spendier mir einen Kaffee' }).click();
+    await expect(page).toHaveURL(/\/unterstuetzen$/);
+    await expect(page.getByRole('link', { name: 'apps@haak3.de' })).toHaveAttribute(
+      'href',
+      'mailto:apps@haak3.de',
+    );
+    await expect(page.getByRole('link', { name: 'Kaffee spendieren' })).toHaveAttribute(
+      'href',
+      'https://buymeacoffee.com/Haake',
+    );
+    await expect(page.getByRole('link', { name: 'Kaffee spendieren' })).toHaveAttribute(
+      'target',
+      '_blank',
+    );
+    await expect(page.getByRole('link', { name: 'Kaffee spendieren' })).toHaveAttribute(
+      'rel',
+      'noopener noreferrer',
+    );
   });
 
   test('review step jumps to the chosen scene in the editor', async ({ page }) => {

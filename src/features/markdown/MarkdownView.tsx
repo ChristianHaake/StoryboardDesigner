@@ -38,7 +38,24 @@ export default function MarkdownView({ source, contentLanguage }: MarkdownViewPr
           lang={contentLanguage}
           className="prose prose-gray mt-6 max-w-none prose-headings:tracking-tight prose-a:text-blue-700 prose-a:decoration-blue-300 prose-a:underline-offset-3"
         >
-          <ReactMarkdown>{source}</ReactMarkdown>
+          <ReactMarkdown
+            components={{
+              a: ({ children, href, node, ...props }) => {
+                void node;
+                return href?.startsWith('http') ? (
+                  <a {...props} href={href} rel="noopener noreferrer" target="_blank">
+                    {children}
+                  </a>
+                ) : (
+                  <a {...props} href={href}>
+                    {children}
+                  </a>
+                );
+              },
+            }}
+          >
+            {source}
+          </ReactMarkdown>
         </div>
       </A4Page>
     </main>

@@ -104,3 +104,10 @@ Nein. Alles bleibt auf deinem Gerät. Es wird nichts ins Internet hochgeladen.
 
 **Wie viele Szenen kann ich anlegen?**
 Bis zu 200. Für einen Kurzfilm reichen meist 8–15 Szenen.
+
+## Fehler oder Ideen melden
+
+Wenn du einen Fehler findest oder eine Idee für eine neue Funktion hast, schreib
+bitte App, Gerät und den letzten Arbeitsschritt an
+[apps@haak3.de](mailto:apps@haak3.de). Bitte schicke keine Projekt- oder
+Personendaten mit.
