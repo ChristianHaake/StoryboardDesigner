@@ -67,6 +67,14 @@ test.describe('Content pages and navigation', () => {
       'href',
       'https://buymeacoffee.com/Haake',
     );
+    await expect(page.getByRole('link', { name: 'Kaffee spendieren' })).toHaveAttribute(
+      'target',
+      '_blank',
+    );
+    await expect(page.getByRole('link', { name: 'Kaffee spendieren' })).toHaveAttribute(
+      'rel',
+      'noopener noreferrer',
+    );
   });
 
   test('review step jumps to the chosen scene in the editor', async ({ page }) => {
