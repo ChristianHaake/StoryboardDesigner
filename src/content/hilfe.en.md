@@ -105,6 +105,8 @@ Up to 200. For a short film, 8–15 scenes are usually enough.
 
 ## Report an error or idea
 
-If you find an error or have an idea for a feature, send the app, device and
-last step to [apps@haak3.de](mailto:apps@haak3.de). Please do not include
-project or personal data.
+- [Report an error](https://haak3.atlassian.net/jira/software/form/69a50efc-0474-445e-8f01-66eb6b747cc1)
+- [Suggest a feature](https://haak3.atlassian.net/jira/software/form/50d4fc51-bff4-4e21-b46e-8fd987b90d24)
+
+The forms open externally. Do not include project or personal data. For general
+questions, contact [apps@haak3.de](mailto:apps@haak3.de).
