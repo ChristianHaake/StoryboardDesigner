@@ -548,6 +548,7 @@ const es: Translations = {
   footer: {
     nav: 'Aspectos legales y ayuda',
     help: 'Ayuda',
+    contact: 'Contacto',
     about: 'Acerca de',
     terms: 'Términos',
     support: 'Apoyar',
@@ -556,6 +557,13 @@ const es: Translations = {
     repository: 'Código fuente',
     coffee: 'Invítame a un café',
     localNote: 'Storyboard-Creator · El contenido permanece en tu dispositivo',
+  },
+  contact: {
+    title: 'Contacto',
+    description:
+      'Envía las preguntas generales sobre esta aplicación por correo electrónico. Usa los formularios de ayuda para errores y sugerencias de funciones.',
+    emailHeading: 'Correo electrónico',
+    socialHeading: 'Redes sociales',
   },
   fields: {
     labelEmpty: 'Introduce un nombre de campo.',

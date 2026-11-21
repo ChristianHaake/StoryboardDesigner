@@ -4,6 +4,7 @@ test.describe('Content pages and navigation', () => {
   test('every route and wizard step has its own document title', async ({ page }) => {
     const routes: [string, string][] = [
       ['/hilfe', 'Hilfe'],
+      ['/kontakt', 'Kontakt'],
       ['/ueber', 'Über'],
       ['/lehrkraefte', 'Für Lehrkräfte'],
       ['/agb', 'AGB'],
@@ -87,6 +88,20 @@ test.describe('Content pages and navigation', () => {
     }
     await page.goto('/datenschutz');
     await expect(page.getByRole('link', { name: 'Cloudflare Web Analytics' })).toBeVisible();
+  });
+
+  test('contact page exposes safe creator social links', async ({ page }) => {
+    await page.goto('/kontakt');
+    for (const [name, href] of [
+      ['LinkedIn', 'https://www.linkedin.com/in/christianhaake/'],
+      ['Instagram', 'https://www.instagram.com/_haake/'],
+      ['Threads', 'https://www.threads.com/@_haake'],
+    ]) {
+      const link = page.getByRole('link', { name, exact: true });
+      await expect(link).toHaveAttribute('href', href);
+      await expect(link).toHaveAttribute('target', '_blank');
+      await expect(link).toHaveAttribute('rel', 'noopener noreferrer');
+    }
   });
 
   test('help and support link safely to the creator feedback forms', async ({ page }) => {

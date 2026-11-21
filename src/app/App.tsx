@@ -13,6 +13,7 @@ import ConfirmDialog from '../shared/ui/ConfirmDialog';
 
 // Lazy: react-markdown bleibt aus dem Editor-Bundle (Hilfe-Seiten selten besucht).
 const MarkdownView = lazy(() => import('../features/markdown/MarkdownView'));
+const ContactPage = lazy(() => import('../features/markdown/ContactPage'));
 const PresentationView = lazy(() => import('../features/presentation/PresentationView'));
 import { useStoryboardStore, selectProject } from './store/useStoryboardStore';
 import {
@@ -47,6 +48,7 @@ import supportEn from '../content/unterstuetzung.en.md?raw';
 const ROUTE_TITLE_KEYS: Partial<Record<string, ParseKeys>> = {
   '/play': 'topbar.present',
   '/hilfe': 'footer.help',
+  '/kontakt': 'footer.contact',
   '/lehrkraefte': 'brand.forEducators',
   '/ueber': 'footer.about',
   '/agb': 'footer.terms',
@@ -264,6 +266,7 @@ function AppShell({
             path="/hilfe"
             element={<MarkdownView source={hilfeText} contentLanguage={contentLanguage} />}
           />
+          <Route path="/kontakt" element={<ContactPage />} />
           <Route
             path="/lehrkraefte"
             element={<MarkdownView source={lehrkraefteText} contentLanguage={contentLanguage} />}
