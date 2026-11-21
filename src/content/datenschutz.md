@@ -9,7 +9,7 @@ Alte Ziegelei 7
 26197 Großenkneten  
 Deutschland
 
-E-Mail: christianhaake@gmail.com
+E-Mail: [apps@haak3.de](mailto:apps@haak3.de)
 
 ## 2. Bereitstellung der Website
 
@@ -29,11 +29,15 @@ USA
 Weitere Informationen:  
 [Cloudflare Privacy Policy](https://www.cloudflare.com/privacypolicy/)
 
-## 3. Einsatz von Cloudflare-Diensten
+## 3. Einsatz von Cloudflare-Diensten und Web Analytics
 
 Zur Bereitstellung der Domain, DNS-Dienste, Netzwerksicherheit sowie Performanceoptimierung wird Cloudflare eingesetzt. Dabei können technische Verbindungsdaten über die Infrastruktur von Cloudflare verarbeitet werden.
 
-Diese Anwendung verwendet keine Analyse- oder Tracking-Dienste.
+Zusätzlich ist Cloudflare Web Analytics aktiviert. Dabei werden Nutzungsdaten wie aufgerufene Seiten, Referrer, Browser- und Geräteinformationen sowie Zeitpunkt des Aufrufs verarbeitet, um die Nutzung und technische Qualität der Anwendung auszuwerten. Cloudflare Web Analytics setzt nach Angaben von Cloudflare keine Cookies und verwendet keinen localStorage.
+
+Die Verarbeitung erfolgt auf Grundlage von Art. 6 Abs. 1 lit. f DSGVO. Das berechtigte Interesse liegt in der bedarfsgerechten und sicheren Weiterentwicklung des Webangebots.
+
+Weitere Informationen: [Cloudflare Web Analytics](https://developers.cloudflare.com/web-analytics/) und [Cloudflare Privacy Policy](https://www.cloudflare.com/privacypolicy/)
 
 ## 4. Lokale Verarbeitung und Speicherung
 
@@ -78,8 +82,10 @@ Sie haben im Rahmen der gesetzlichen Bestimmungen insbesondere folgende Rechte:
 
 Außerdem haben Sie das Recht, Beschwerde bei einer Datenschutzaufsichtsbehörde einzulegen.
 
+Für Anfragen zu Ihren Rechten schreiben Sie an [apps@haak3.de](mailto:apps@haak3.de).
+
 ## 9. Änderungen dieser Datenschutzerklärung
 
 Diese Datenschutzerklärung kann angepasst werden, wenn technische oder rechtliche Änderungen dies erforderlich machen. Es gilt jeweils die auf dieser Website veröffentlichte aktuelle Fassung.
 
-_Stand: Oktober 2026_
+_Stand: 19. November 2026_

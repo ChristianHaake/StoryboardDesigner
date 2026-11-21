@@ -107,7 +107,9 @@ Bis zu 200. Für einen Kurzfilm reichen meist 8–15 Szenen.
 
 ## Fehler oder Ideen melden
 
-Wenn du einen Fehler findest oder eine Idee für eine neue Funktion hast, schreib
-bitte App, Gerät und den letzten Arbeitsschritt an
-[apps@haak3.de](mailto:apps@haak3.de). Bitte schicke keine Projekt- oder
-Personendaten mit.
+- [Fehler melden](https://haak3.atlassian.net/jira/software/form/69a50efc-0474-445e-8f01-66eb6b747cc1)
+- [Funktion vorschlagen](https://haak3.atlassian.net/jira/software/form/50d4fc51-bff4-4e21-b46e-8fd987b90d24)
+
+Die Formulare öffnen extern. Bitte schicke keine Projekt- oder Personendaten
+mit. Für allgemeine Anfragen erreichst du uns unter
+[apps@haak3.de](mailto:apps@haak3.de).

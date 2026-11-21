@@ -4,6 +4,7 @@ test.describe('Content pages and navigation', () => {
   test('every route and wizard step has its own document title', async ({ page }) => {
     const routes: [string, string][] = [
       ['/hilfe', 'Hilfe'],
+      ['/kontakt', 'Kontakt'],
       ['/ueber', 'Über'],
       ['/lehrkraefte', 'Für Lehrkräfte'],
       ['/agb', 'AGB'],
@@ -75,6 +76,47 @@ test.describe('Content pages and navigation', () => {
       'rel',
       'noopener noreferrer',
     );
+  });
+
+  test('legal pages show the shared contact address and analytics disclosure', async ({ page }) => {
+    for (const path of ['/datenschutz', '/impressum', '/agb']) {
+      await page.goto(path);
+      await expect(page.getByRole('link', { name: 'apps@haak3.de' }).first()).toHaveAttribute(
+        'href',
+        'mailto:apps@haak3.de',
+      );
+    }
+    await page.goto('/datenschutz');
+    await expect(page.getByRole('link', { name: 'Cloudflare Web Analytics' })).toBeVisible();
+  });
+
+  test('contact page exposes safe creator social links', async ({ page }) => {
+    await page.goto('/kontakt');
+    for (const [name, href] of [
+      ['LinkedIn', 'https://www.linkedin.com/in/christianhaake/'],
+      ['Instagram', 'https://www.instagram.com/_haake/'],
+      ['Threads', 'https://www.threads.com/@_haake'],
+    ]) {
+      const link = page.getByRole('link', { name, exact: true });
+      await expect(link).toHaveAttribute('href', href);
+      await expect(link).toHaveAttribute('target', '_blank');
+      await expect(link).toHaveAttribute('rel', 'noopener noreferrer');
+    }
+  });
+
+  test('help and support link safely to the creator feedback forms', async ({ page }) => {
+    for (const path of ['/hilfe', '/unterstuetzen']) {
+      await page.goto(path);
+      for (const [name, href] of [
+        ['Fehler melden', 'https://haak3.atlassian.net/jira/software/form/69a50efc-0474-445e-8f01-66eb6b747cc1'],
+        ['Funktion vorschlagen', 'https://haak3.atlassian.net/jira/software/form/50d4fc51-bff4-4e21-b46e-8fd987b90d24'],
+      ]) {
+        const link = page.getByRole('link', { name, exact: true });
+        await expect(link).toHaveAttribute('href', href);
+        await expect(link).toHaveAttribute('target', '_blank');
+        await expect(link).toHaveAttribute('rel', 'noopener noreferrer');
+      }
+    }
   });
 
   test('review step jumps to the chosen scene in the editor', async ({ page }) => {

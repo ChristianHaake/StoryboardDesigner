@@ -16,6 +16,7 @@ export default function Footer() {
           className="flex min-w-0 flex-1 basis-full flex-wrap items-center gap-x-2 gap-y-1 text-xs font-medium text-slate-600 sm:basis-auto [&_a]:inline-flex [&_a]:min-h-11 [&_a]:min-w-11 [&_a]:items-center [&_a]:justify-center [&_a]:rounded-lg [&_a]:px-2 [&_a]:transition-colors [&_a]:hover:bg-slate-100 [&_a]:hover:text-blue-600"
         >
           <Link to="/hilfe">{t('footer.help')}</Link>
+          <Link to="/kontakt">{t('footer.contact')}</Link>
           <Link to="/ueber">{t('footer.about')}</Link>
           <Link to="/agb">{t('footer.terms')}</Link>
           <Link to="/datenschutz">{t('footer.privacy')}</Link>
