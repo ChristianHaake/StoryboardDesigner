@@ -542,6 +542,7 @@ const de = {
   footer: {
     nav: 'Rechtliches und Hilfe',
     help: 'Hilfe',
+    contact: 'Kontakt',
     about: 'Über',
     terms: 'AGB',
     support: 'Unterstützen',
@@ -550,6 +551,13 @@ const de = {
     repository: 'Quellcode',
     coffee: 'Spendier mir einen Kaffee',
     localNote: 'Storyboard-Creator · Inhalte bleiben auf deinem Gerät',
+  },
+  contact: {
+    title: 'Kontakt',
+    description:
+      'Allgemeine Fragen zu dieser App kannst du per E-Mail senden. Fehler und Funktionsvorschläge gehören in die Formulare auf der Hilfeseite.',
+    emailHeading: 'E-Mail',
+    socialHeading: 'Social Media',
   },
   fields: {
     labelEmpty: 'Bitte eine Feldbezeichnung eingeben.',

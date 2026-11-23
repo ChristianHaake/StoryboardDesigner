@@ -546,6 +546,7 @@ const en: Translations = {
   footer: {
     nav: 'Legal and help',
     help: 'Help',
+    contact: 'Contact',
     about: 'About',
     terms: 'Terms',
     support: 'Support',
@@ -554,6 +555,13 @@ const en: Translations = {
     repository: 'Source code',
     coffee: 'Buy me a coffee',
     localNote: 'Storyboard-Creator · Content stays on your device',
+  },
+  contact: {
+    title: 'Contact',
+    description:
+      'Send general questions about this app by email. Use the forms on the help page for errors and feature suggestions.',
+    emailHeading: 'Email',
+    socialHeading: 'Social media',
   },
   fields: {
     labelEmpty: 'Please enter a field name.',

@@ -9,7 +9,7 @@ Deutschland
 
 ## Kontakt
 
-E-Mail: christianhaake@gmail.com
+E-Mail: [apps@haak3.de](mailto:apps@haak3.de)
 
 ## Verantwortlich für den Inhalt nach § 18 Abs. 2 MStV
 
@@ -21,3 +21,5 @@ Deutschland
 ---
 
 Diese Anwendung ist ein nicht-kommerzielles Bildungsangebot. Der Quellcode ist offen verfügbar.
+
+_Stand: 19. November 2026_
