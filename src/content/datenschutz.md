@@ -33,7 +33,7 @@ Weitere Informationen:
 
 Zur Bereitstellung der Domain, DNS-Dienste, Netzwerksicherheit sowie Performanceoptimierung wird Cloudflare eingesetzt. Dabei können technische Verbindungsdaten über die Infrastruktur von Cloudflare verarbeitet werden.
 
-Zusätzlich ist Cloudflare Web Analytics aktiviert. Dabei werden Nutzungsdaten wie aufgerufene Seiten, Referrer, Browser- und Geräteinformationen sowie Zeitpunkt des Aufrufs verarbeitet, um die Nutzung und technische Qualität der Anwendung auszuwerten. Cloudflare Web Analytics setzt nach Angaben von Cloudflare keine Cookies und verwendet keinen localStorage.
+Cloudflare Web Analytics ist für dieses Angebot aktiviert. Wenn Cloudflare das Analyseskript ausliefert und der Browser es ausführt, sendet der Browser technische Nutzungsdaten wie die aufgerufene Seite, den Referrer und Ladezeiten an Cloudflare. Diese Daten helfen, die Nutzung und technische Qualität der Anwendung auszuwerten. Cloudflare Web Analytics setzt nach Angaben von Cloudflare keine Cookies und verwendet keinen localStorage.
 
 Die Verarbeitung erfolgt auf Grundlage von Art. 6 Abs. 1 lit. f DSGVO. Das berechtigte Interesse liegt in der bedarfsgerechten und sicheren Weiterentwicklung des Webangebots.
 

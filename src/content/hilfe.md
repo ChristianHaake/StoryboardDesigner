@@ -100,7 +100,7 @@ Präsentation.
 Hast du das Gerät oder den Browser gewechselt? Die automatische Sicherung gilt nur für ein Gerät und einen Browser. Lade deine zuletzt gespeicherte `.storyboard`-Datei.
 
 **Kann jemand meine Daten sehen?**
-Nein. Alles bleibt auf deinem Gerät. Es wird nichts ins Internet hochgeladen.
+Deine Projekttexte und Bilder bleiben auf deinem Gerät. Wer dasselbe Browserprofil nutzt, kann das gespeicherte Projekt öffnen. Informationen zu technischen Zugriffsdaten findest du im [Datenschutz](/datenschutz).
 
 **Wie viele Szenen kann ich anlegen?**
 Bis zu 200. Für einen Kurzfilm reichen meist 8–15 Szenen.

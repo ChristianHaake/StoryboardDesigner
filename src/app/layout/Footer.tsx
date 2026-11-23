@@ -28,7 +28,7 @@ export default function Footer() {
           className="inline-flex min-h-11 shrink-0 items-center gap-1.5 rounded-full border border-black bg-[#ffdd00] px-3 text-xs font-bold text-black transition-[background-color,transform] motion-safe:active:scale-[0.96] hover:bg-[#ffe838] max-sm:px-3"
         >
           <Coffee className="h-4 w-4" strokeWidth={1.8} aria-hidden="true" />
-          <span className="max-sm:hidden">{t('footer.coffee')}</span>
+          <span className="max-sm:sr-only">{t('footer.coffee')}</span>
         </Link>
         <a
           href="https://github.com/ChristianHaake/StoryboardDesigner"

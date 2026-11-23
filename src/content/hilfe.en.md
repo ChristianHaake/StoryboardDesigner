@@ -98,7 +98,7 @@ projector. Use the arrow keys (or the space bar for “next”) to change scenes
 Did you switch devices or browsers? The automatic backup only applies to one device and one browser. Load your most recently saved `.storyboard` file.
 
 **Can anyone see my data?**
-No. Everything stays on your device. Nothing is uploaded to the internet.
+Your project text and images stay on your device. Anyone using the same browser profile can open the saved project. The [privacy notice](/datenschutz) explains which technical data is processed when you visit the app.
 
 **How many scenes can I create?**
 Up to 200. For a short film, 8–15 scenes are usually enough.

@@ -50,6 +50,7 @@ test.describe('Content pages and navigation', () => {
   });
 
   test('footer routes to terms and internal support with safe feedback links', async ({ page }) => {
+    await page.setViewportSize({ width: 360, height: 800 });
     await page.goto('/');
     await page.getByRole('link', { name: 'AGB' }).click();
     await expect(page).toHaveURL(/\/agb$/);
