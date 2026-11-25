@@ -14,6 +14,7 @@ import ConfirmDialog from '../shared/ui/ConfirmDialog';
 // Lazy: react-markdown bleibt aus dem Editor-Bundle (Hilfe-Seiten selten besucht).
 const MarkdownView = lazy(() => import('../features/markdown/MarkdownView'));
 const ContactPage = lazy(() => import('../features/markdown/ContactPage'));
+const SupportPage = lazy(() => import('../features/markdown/SupportPage'));
 const PresentationView = lazy(() => import('../features/presentation/PresentationView'));
 import { useStoryboardStore, selectProject } from './store/useStoryboardStore';
 import {
@@ -41,8 +42,6 @@ import datenschutzText from '../content/datenschutz.md?raw';
 import impressumText from '../content/impressum.md?raw';
 import agbDe from '../content/agb.md?raw';
 import agbEn from '../content/agb.en.md?raw';
-import supportDe from '../content/unterstuetzung.md?raw';
-import supportEn from '../content/unterstuetzung.en.md?raw';
 
 // Titel-Keys: Route hat Vorrang, auf "/" bestimmt der Wizard-Schritt den Titel.
 const ROUTE_TITLE_KEYS: Partial<Record<string, ParseKeys>> = {
@@ -73,7 +72,6 @@ export default function App() {
   const lehrkraefteText = contentLanguage === 'en' ? lehrkraefteEn : lehrkraefteDe;
   const ueberText = contentLanguage === 'en' ? ueberEn : ueberDe;
   const agbText = contentLanguage === 'en' ? agbEn : agbDe;
-  const supportText = contentLanguage === 'en' ? supportEn : supportDe;
 
   // Dokument-Sprache an die UI-Sprache koppeln (Seitentitel: AppShell, pro Route).
   useEffect(() => {
@@ -191,7 +189,6 @@ export default function App() {
         datenschutzText={datenschutzText}
         impressumText={impressumText}
         agbText={agbText}
-        supportText={supportText}
       />
     </BrowserRouter>
   );
@@ -205,7 +202,6 @@ function AppShell({
   datenschutzText,
   impressumText,
   agbText,
-  supportText,
 }: {
   contentLanguage: ContentLanguage;
   hilfeText: string;
@@ -214,7 +210,6 @@ function AppShell({
   datenschutzText: string;
   impressumText: string;
   agbText: string;
-  supportText: string;
 }) {
   const { t } = useTranslation();
   const location = useLocation();
@@ -279,10 +274,7 @@ function AppShell({
             path="/agb"
             element={<MarkdownView source={agbText} contentLanguage={contentLanguage} />}
           />
-          <Route
-            path="/unterstuetzen"
-            element={<MarkdownView source={supportText} contentLanguage={contentLanguage} />}
-          />
+          <Route path="/unterstuetzen" element={<SupportPage />} />
           <Route
             path="/datenschutz"
             element={<MarkdownView source={datenschutzText} contentLanguage="de" />}

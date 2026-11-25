@@ -557,8 +557,17 @@ const fr: Translations = {
     privacy: 'Confidentialité',
     imprint: 'Mentions légales',
     repository: 'Code source',
-    coffee: 'Offre-moi un café',
     localNote: 'Storyboard-Creator · Le contenu reste sur ton appareil',
+  },
+  support: {
+    title: "Soutenir Storyboard-Creator",
+    intro: "Vous créez des storyboards pour des films, des romans-photos ou des podcasts ? Un café, si vous le souhaitez, m’aide à maintenir l’éditeur et à tester ses outils sur différents appareils. Toutes les fonctionnalités de l’application restent gratuites pour tout le monde.",
+    coffee: "Offrir un café",
+    privacy: "Ce lien ouvre Buy Me a Coffee dans un nouvel onglet. Le prestataire reçoit des données de connexion à l’ouverture du lien. Sa politique de confidentialité s’applique alors.",
+    feedback: "Aider gratuitement",
+    feedbackNote: "Les formulaires ouvrent Jira dans un nouvel onglet. Merci de ne pas y inclure de données de projet ni de données personnelles.",
+    bug: "Signaler un problème",
+    idea: "Proposer une fonctionnalité",
   },
   contact: {
     title: 'Contact',

@@ -59,8 +59,12 @@ test.describe('Content pages and navigation', () => {
       'mailto:apps@haak3.de',
     );
     await page.goto('/');
-    await page.getByRole('link', { name: 'Spendier mir einen Kaffee' }).click();
+    const support = page.getByRole('link', { name: 'Unterstützen' });
+    await expect(support).toHaveText('Unterstützen');
+    expect((await support.boundingBox())?.height).toBeGreaterThanOrEqual(44);
+    await support.click();
     await expect(page).toHaveURL(/\/unterstuetzen$/);
+    await expect(page.locator('main a').first()).toHaveText('Kaffee spendieren');
     await expect(page.getByRole('link', { name: 'apps@haak3.de' })).toHaveAttribute(
       'href',
       'mailto:apps@haak3.de',
@@ -77,6 +81,43 @@ test.describe('Content pages and navigation', () => {
       'rel',
       'noopener noreferrer',
     );
+  });
+
+  test('support uses the selected language and fits a narrow screen', async ({ page }) => {
+    await page.setViewportSize({ width: 320, height: 640 });
+    await page.goto('/unterstuetzen');
+    for (const [lang, title, coffee] of [
+      ['de', 'Storyboard-Creator unterstützen', 'Kaffee spendieren'],
+      ['en', 'Support Storyboard-Creator', 'Buy me a coffee'],
+      ['es', 'Apoyar a Storyboard-Creator', 'Invitar a un café'],
+      ['fr', 'Soutenir Storyboard-Creator', 'Offrir un café'],
+    ]) {
+      await page.evaluate((value) => localStorage.setItem('storyboard-creator:lang', value), lang);
+      await page.reload();
+      await expect(page.locator('html')).toHaveAttribute('lang', lang);
+      await expect(page.getByRole('heading', { level: 1 })).toHaveText(title);
+      const primaryLink = page.locator('main a').first();
+      await expect(primaryLink).toHaveText(coffee);
+      expect((await primaryLink.boundingBox())?.height).toBeGreaterThanOrEqual(44);
+      expect(await page.evaluate(() => document.documentElement.scrollWidth)).toBe(320);
+    }
+  });
+
+  test('opening support and returning keeps the active editor project', async ({ page }) => {
+    await page.goto('/');
+    await page.locator('button', { hasText: 'Kurzfilm' }).first().click();
+    await page.locator('#projectName').fill('Mein Storyboard');
+    await page.getByRole('button', { name: 'Zum Editor' }).click();
+    await page.getByRole('button', { name: 'Szene hinzufügen' }).click();
+    const scene = page.locator('article[id^="scene-"]').first();
+    await expect(scene).toBeVisible();
+
+    await page.getByRole('link', { name: 'Unterstützen' }).click();
+    await expect(page).toHaveURL(/\/unterstuetzen$/);
+    await page.locator('main a[href="/editor"]').click();
+    await expect(page).toHaveURL(/\/editor$/);
+    await expect(scene).toBeVisible();
+    await expect(page.getByText('Mein Storyboard', { exact: true }).first()).toBeVisible();
   });
 
   test('legal pages show the shared contact address and analytics disclosure', async ({ page }) => {

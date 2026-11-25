@@ -553,8 +553,17 @@ const en: Translations = {
     privacy: 'Privacy',
     imprint: 'Imprint',
     repository: 'Source code',
-    coffee: 'Buy me a coffee',
     localNote: 'Storyboard-Creator · Content stays on your device',
+  },
+  support: {
+    title: "Support Storyboard-Creator",
+    intro: "Do you make storyboards for films, photo stories, or podcasts? An optional coffee helps me maintain the editor and test its tools across devices. All app features stay free for everyone.",
+    coffee: "Buy me a coffee",
+    privacy: "This link opens Buy Me a Coffee in a new tab. The provider receives connection data when you open the link, and its privacy policy applies from that point.",
+    feedback: "Help for free",
+    feedbackNote: "The forms open Jira in a new tab. Please leave out project details and personal information.",
+    bug: "Report a bug",
+    idea: "Suggest a feature",
   },
   contact: {
     title: 'Contact',

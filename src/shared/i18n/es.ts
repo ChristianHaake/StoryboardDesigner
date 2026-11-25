@@ -555,8 +555,17 @@ const es: Translations = {
     privacy: 'Privacidad',
     imprint: 'Aviso legal',
     repository: 'Código fuente',
-    coffee: 'Invítame a un café',
     localNote: 'Storyboard-Creator · El contenido permanece en tu dispositivo',
+  },
+  support: {
+    title: "Apoyar a Storyboard-Creator",
+    intro: "¿Creas guiones gráficos para vídeos, fotohistorias o pódcasts? Si quieres invitarme a un café, tu aportación me ayuda a mantener el editor y a probar sus herramientas en distintos dispositivos. Todas las funciones de la aplicación siguen siendo gratuitas para todo el mundo.",
+    coffee: "Invitar a un café",
+    privacy: "El enlace abre Buy Me a Coffee en una pestaña nueva. El proveedor recibe datos de conexión al abrir el enlace. A partir de entonces se aplica su política de privacidad.",
+    feedback: "Ayudar gratis",
+    feedbackNote: "Los formularios abren Jira en una pestaña nueva. Por favor, evita incluir datos personales o información del proyecto.",
+    bug: "Informar de un error",
+    idea: "Sugerir una función",
   },
   contact: {
     title: 'Contacto',
