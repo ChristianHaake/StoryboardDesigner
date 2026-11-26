@@ -62,4 +62,4 @@ Historische Planungsdokumente (Sprints, UI-Konzepte) befinden sich zur Nachvollz
 ## ⚖️ Lizenz
 
 GPL-3.0-only — siehe [LICENSE](LICENSE).
-Diese App folgt dem [haak3 Web App Standard](https://github.com/ChristianHaake/haak3-webapp-standard). Agenten-Vorgaben stehen in [AGENTS.md](AGENTS.md).
+Diese App folgt dem [haak3 Web App Standard](https://github.com/ChristianHaake/DEV-Memory/tree/main/standards/haak3-webapps). Das private Repository erfordert Zugriffsberechtigung. Agenten-Vorgaben stehen in [AGENTS.md](AGENTS.md).
