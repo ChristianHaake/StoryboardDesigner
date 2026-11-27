@@ -44,7 +44,7 @@ npm run format   # Prettier
 
 Das Deployment erfolgt auf **Cloudflare** (Workers-Flow, statische Assets):
 
-1. **Infrastruktur:** Serviert `dist/` mit SPA-Fallback (`not_found_handling: single-page-application`) via `wrangler.jsonc`.
+1. **Infrastruktur:** Serviert `dist/` über Workers Static Assets. Die exakten Pfade in `public/_redirects` liefern bei direktem Aufruf und Reload die App unter der angefragten URL aus.
 2. **CI-Workflow:** GitHub Actions (`ci.yml`) prüft bei jedem Push und Pull Request Typen, Linting und Tests.
 3. **Deployment:** Ein Push/Merge in den `main`-Branch löst das Cloudflare-Deployment automatisch aus.
 

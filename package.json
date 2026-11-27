@@ -23,7 +23,7 @@
   "scripts": {
     "dev": "vite",
     "prebuild": "node scripts/clean-build-output.mjs",
-    "build": "tsc -b && vite build && node scripts/clean-cloudflare-assets.mjs",
+    "build": "tsc -b && vite build",
     "preview": "vite preview",
     "test": "vitest run",
     "test:e2e": "playwright test",
