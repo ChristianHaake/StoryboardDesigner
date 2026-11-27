@@ -3,7 +3,7 @@ import { useTranslation } from 'react-i18next';
 import DisplaySettings from './DisplaySettings';
 import { Code2, Coffee } from 'lucide-react';
 
-import { CreatorFooter } from "../../creator/CreatorFooter";
+import { CreatorFooter } from '../../creator/CreatorFooter';
 
 export default function Footer() {
   const { t, i18n } = useTranslation();
@@ -14,7 +14,11 @@ export default function Footer() {
       innerClassName="mx-auto flex max-w-screen-xl flex-wrap items-center gap-2 px-4 py-3 sm:gap-3"
       navClassName="flex min-w-0 flex-1 basis-full flex-wrap items-center gap-x-2 gap-y-1 text-xs font-medium text-slate-600 sm:basis-auto [&_a]:inline-flex [&_a]:min-h-11 [&_a]:min-w-11 [&_a]:items-center [&_a]:justify-center [&_a]:rounded-lg [&_a]:px-2 [&_a]:transition-colors [&_a]:hover:bg-slate-100 [&_a]:hover:text-blue-600"
       navigationLabel={t('footer.nav')}
-      identity={<span className="px-4 text-xs font-semibold text-slate-600 max-md:hidden">{t('footer.localNote')}</span>}
+      identity={
+        <span className="px-4 text-xs font-semibold text-slate-600 max-md:hidden">
+          {t('footer.localNote')}
+        </span>
+      }
       links={
         <>
           <Link to="/hilfe">{t('footer.help')}</Link>

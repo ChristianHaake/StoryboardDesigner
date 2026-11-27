@@ -1,38 +1,16 @@
 import { useTranslation } from 'react-i18next';
+import { CreatorLanguageMenu } from '../../creator/CreatorShell';
 import { SUPPORTED_LANGUAGES, type Language } from '../../shared/i18n';
 
-interface LanguageToggleProps {
-  className?: string;
-}
-
-// Segmented Control DE/EN. changeLanguage cached die Wahl via Detector in localStorage.
-export default function LanguageToggle({ className = '' }: LanguageToggleProps) {
-  const { t, i18n } = useTranslation();
-  const current = (i18n.resolvedLanguage ?? i18n.language) as Language;
-
+export default function LanguageToggle({ className }: { className?: string }) {
+  const { i18n } = useTranslation();
   return (
-    <div
-      role="group"
-      aria-label={t('language.label')}
-      className={`inline-flex shrink-0 rounded-lg border border-slate-300 bg-slate-100 p-0.5 ${className}`}
-    >
-      {SUPPORTED_LANGUAGES.map((lng) => {
-        const active = current === lng;
-        return (
-          <button
-            key={lng}
-            type="button"
-            onClick={() => void i18n.changeLanguage(lng)}
-            aria-pressed={active}
-            aria-label={t(`language.switchTo${lng.charAt(0).toUpperCase()}${lng.slice(1)}`)}
-            className={`min-h-11 min-w-11 rounded-md px-2.5 text-sm font-semibold transition-[color,background-color,box-shadow,transform] motion-safe:active:scale-[0.96] ${
-              active ? 'bg-blue-600 text-white shadow-sm' : 'text-slate-600 hover:bg-white'
-            }`}
-          >
-            {t(`language.${lng}`)}
-          </button>
-        );
-      })}
-    </div>
+    <CreatorLanguageMenu
+      className={className}
+      selectClassName="rounded-lg border border-slate-300 bg-white px-2 text-sm"
+      value={(i18n.resolvedLanguage ?? i18n.language) as Language}
+      languages={SUPPORTED_LANGUAGES}
+      onChange={(language) => void i18n.changeLanguage(language)}
+    />
   );
 }

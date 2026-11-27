@@ -1,4 +1,5 @@
 import { useEffect } from 'react';
+import { CreatorStatus } from '../../creator/CreatorShell';
 import { useTranslation } from 'react-i18next';
 import { useStoryboardStore } from '../store/useStoryboardStore';
 
@@ -43,8 +44,8 @@ export default function Notifications() {
   return (
     <div className="fixed right-4 bottom-20 left-4 z-50 flex flex-col items-center gap-2 sm:right-auto sm:left-1/2 sm:-translate-x-1/2 print:hidden">
       {errorMessage && (
-        <div
-          role="alert"
+        <CreatorStatus
+          urgent
           className="flex w-full max-w-lg items-center justify-between gap-4 rounded-xl bg-red-700 px-4 py-3 text-sm text-white shadow-xl shadow-red-950/15"
         >
           <span>{errorMessage}</span>
@@ -56,13 +57,10 @@ export default function Notifications() {
           >
             OK
           </button>
-        </div>
+        </CreatorStatus>
       )}
       {successMessage && (
-        <div
-          role="status"
-          className="flex w-full max-w-lg items-center justify-between gap-4 rounded-xl bg-emerald-600 px-4 py-3 text-sm text-white shadow-xl shadow-emerald-900/20"
-        >
+        <CreatorStatus className="flex w-full max-w-lg items-center justify-between gap-4 rounded-xl bg-emerald-600 px-4 py-3 text-sm text-white shadow-xl shadow-emerald-900/20">
           <span>{successMessage}</span>
           <button
             type="button"
@@ -72,13 +70,10 @@ export default function Notifications() {
           >
             OK
           </button>
-        </div>
+        </CreatorStatus>
       )}
       {lastDeleted && (
-        <div
-          role="status"
-          className="flex w-full max-w-lg items-center justify-between gap-4 rounded-xl bg-slate-950 px-4 py-3 text-sm text-white shadow-xl shadow-slate-950/20"
-        >
+        <CreatorStatus className="flex w-full max-w-lg items-center justify-between gap-4 rounded-xl bg-slate-950 px-4 py-3 text-sm text-white shadow-xl shadow-slate-950/20">
           <span>{t('notifications.sceneDeleted', { n: lastDeleted.index + 1 })}</span>
           <button
             type="button"
@@ -87,7 +82,7 @@ export default function Notifications() {
           >
             {t('notifications.undo')}
           </button>
-        </div>
+        </CreatorStatus>
       )}
     </div>
   );
