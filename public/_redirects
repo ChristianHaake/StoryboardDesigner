@@ -1,0 +1,14 @@
+# Direct visits and reloads resolve wizard and content routes on Workers Static Assets.
+/setup /index.html 200
+/editor /index.html 200
+/review /index.html 200
+/export /index.html 200
+/play /index.html 200
+/hilfe /index.html 200
+/kontakt /index.html 200
+/lehrkraefte /index.html 200
+/ueber /index.html 200
+/agb /index.html 200
+/unterstuetzen /index.html 200
+/datenschutz /index.html 200
+/impressum /index.html 200
