@@ -81,7 +81,7 @@ test.describe('Storyboard Creator Additional Features E2E Suite', () => {
     // on "Gespeichert" from the earlier metadata save, so poll the stored
     // payload until the scene title has actually landed before reloading —
     // otherwise the reload races the debounced write (flaky on WebKit).
-    await expect(page.locator('span[role="status"]')).toContainText('Gespeichert');
+    await expect(page.getByRole('banner').getByRole('status')).toContainText('Gespeichert');
     await expect
       .poll(() => readAutosaveRaw(page), { timeout: 10000 })
       .toContain('Gesicherte Szene');
@@ -195,7 +195,7 @@ test.describe('Storyboard Creator Additional Features E2E Suite', () => {
     // IndexedDB before reloading. The status indicator stays on "Gespeichert"
     // from earlier saves, so asserting on it can race the pending write and
     // reload before the last edit is persisted (flaky on WebKit).
-    await expect(page.locator('span[role="status"]')).toContainText('Gespeichert');
+    await expect(page.getByRole('banner').getByRole('status')).toContainText('Gespeichert');
     await expect
       .poll(() => readAutosaveRaw(page), { timeout: 10000 })
       .toMatch(/Kaffeetasse[\s\S]*Vogel|Vogel[\s\S]*Kaffeetasse/);
