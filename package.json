@@ -20,13 +20,10 @@
   ],
   "license": "GPL-3.0-only",
   "type": "module",
-  "workspaces": [
-    "packages/*"
-  ],
   "scripts": {
     "dev": "vite",
     "prebuild": "node scripts/clean-build-output.mjs",
-    "build": "tsc -b && vite build && node scripts/clean-cloudflare-assets.mjs",
+    "build": "tsc -b && vite build",
     "preview": "vite preview",
     "test": "vitest run",
     "test:e2e": "playwright test",
@@ -38,7 +35,6 @@
     "@dnd-kit/core": "^6.3.1",
     "@dnd-kit/sortable": "^10.0.0",
     "@dnd-kit/utilities": "^3.2.2",
-    "@haak3/ui": "workspace:*",
     "fflate": "^0.8.3",
     "file-saver": "^2.0.5",
     "html-to-image": "^1.11.13",

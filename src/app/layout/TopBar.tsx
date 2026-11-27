@@ -15,7 +15,7 @@ import LanguageToggle from './LanguageToggle';
 import { buttonPrimary, buttonSecondary } from '../../shared/ui/fieldStyles';
 import { MessageSquare, Undo, Redo, Printer, FileText, Play, GraduationCap } from 'lucide-react';
 
-import { SharedTopBar } from '@haak3/ui';
+import { CreatorHeader } from '../../creator/CreatorShell';
 
 export default function TopBar() {
   const { t } = useTranslation();
@@ -68,9 +68,10 @@ export default function TopBar() {
 
   return (
     <>
-      <SharedTopBar
-        brandArea={<BrandLogo />}
-        controlsArea={
+      <CreatorHeader
+        className="storyboard-header relative z-10 border-b border-slate-200 bg-white/95 px-4 py-2.5 shadow-sm backdrop-blur sm:sticky sm:top-0 print:hidden"
+        identity={<BrandLogo />}
+        controls={
           <>
             <SaveIndicator />
             <StatusPill label={t('brand.localPill')} className="max-md:hidden" />
@@ -99,8 +100,7 @@ export default function TopBar() {
             </button>
           </>
         }
-        actionsAriaLabel={t('topbar.actions')}
-        actionsArea={
+        actions={{ label: t('topbar.actions'), content: (
           <div className="flex min-w-0 w-full flex-wrap items-center gap-2">
             <span id="document-actions-require-scene" className="sr-only">
               {t('topbar.needScenes')}
@@ -201,7 +201,7 @@ export default function TopBar() {
               </>
             ) : null}
           </div>
-        }
+        ) }}
       />
       <input
         ref={fileInputRef}

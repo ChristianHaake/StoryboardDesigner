@@ -13,12 +13,12 @@ test.describe('Storyboard Creator E2E Browser Click Test Suite', () => {
     await expect(page.locator('button', { hasText: 'Kurzfilm' })).toBeVisible();
 
     // B. Switch to English
-    await page.locator('button', { hasText: /^EN$/ }).click();
+    await page.locator('[data-creator-language] select').selectOption('en');
     // Verify translation occurred
     await expect(page.locator('button', { hasText: 'Short Film' })).toBeVisible();
 
     // C. Switch back to German
-    await page.locator('button', { hasText: /^DE$/ }).click();
+    await page.locator('[data-creator-language] select').selectOption('de');
     await expect(page.locator('button', { hasText: 'Kurzfilm' })).toBeVisible();
 
     // D. Cycle Themes (light -> dark -> contrast -> light)

@@ -1,3 +1,4 @@
+import { CreatorStatus } from '../../creator/CreatorShell';
 import { useTranslation } from 'react-i18next';
 import { useStoryboardStore } from '../store/useStoryboardStore';
 import { Loader2, AlertCircle, Check } from 'lucide-react';
@@ -15,9 +16,7 @@ export default function SaveIndicator({ className = '' }: { className?: string }
   const label = saving ? t('save.saving') : error ? t('save.error') : t('save.saved');
 
   return (
-    <span
-      role="status"
-      aria-live="polite"
+    <CreatorStatus
       className={`inline-flex items-center gap-1.5 text-xs font-medium ${
         error ? 'text-red-700' : 'text-slate-500'
       } ${className}`}
@@ -34,6 +33,6 @@ export default function SaveIndicator({ className = '' }: { className?: string }
         <Check className="w-3.5 h-3.5" strokeWidth={2.4} aria-hidden="true" />
       )}
       {label}
-    </span>
+    </CreatorStatus>
   );
 }
