@@ -7,5 +7,12 @@
     "directory": "./dist",
     // SPA-Fallback: unbekannte Routen liefern index.html (react-router, Sprint 5).
     "not_found_handling": "single-page-application"
+  },
+  "env": {
+    "stage": {
+      "routes": [
+        { "pattern": "stage.sbc.haak3.de", "custom_domain": true }
+      ]
+    }
   }
 }
