@@ -25,10 +25,10 @@ export default function Footer() {
         <DisplaySettings />
         <Link
           to="/unterstuetzen"
-          className="inline-flex min-h-11 shrink-0 items-center gap-1.5 rounded-full border border-black bg-[#ffdd00] px-3 text-xs font-bold text-black transition-[background-color,transform] motion-safe:active:scale-[0.96] hover:bg-[#ffe838] max-sm:px-3"
+          className="inline-flex min-h-11 min-w-11 shrink-0 items-center gap-1.5 rounded-lg bg-[#b84a00] px-3 text-xs font-bold text-white hover:bg-[#943900] focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#943900]"
         >
           <Coffee className="h-4 w-4" strokeWidth={1.8} aria-hidden="true" />
-          <span className="max-sm:sr-only">{t('footer.coffee')}</span>
+          <span>{t('footer.support')}</span>
         </Link>
         <a
           href="https://github.com/ChristianHaake/StoryboardDesigner"

@@ -549,8 +549,17 @@ const de = {
     privacy: 'Datenschutz',
     imprint: 'Impressum',
     repository: 'Quellcode',
-    coffee: 'Spendier mir einen Kaffee',
     localNote: 'Storyboard-Creator · Inhalte bleiben auf deinem Gerät',
+  },
+  support: {
+    title: "Storyboard-Creator unterstützen",
+    intro: "Erstellst du Storyboards für Filme, Fotostorys oder Podcasts? Ein freiwilliger Kaffee hilft mir, den Editor zu pflegen und seine Werkzeuge auf verschiedenen Geräten zu testen. Alle Funktionen der App bleiben für alle kostenlos.",
+    coffee: "Kaffee spendieren",
+    privacy: "Der Link öffnet Buy Me a Coffee in einem neuen Tab. Der Anbieter erhält erst beim Öffnen des Links Verbindungsdaten. Ab dann gilt seine Datenschutzerklärung.",
+    feedback: "Kostenlos helfen",
+    feedbackNote: "Die Formulare öffnen Jira in einem neuen Tab. Bitte sende keine Projekt- oder Personendaten mit.",
+    bug: "Fehler melden",
+    idea: "Funktion vorschlagen",
   },
   contact: {
     title: 'Kontakt',
